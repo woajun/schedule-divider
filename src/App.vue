@@ -60,6 +60,13 @@ const makePeople = (names: string[], wl: number, hl: number, shifts: string[], p
   const restholidayHaveTo = (holidayHaveTo * names.length) - (holidayRealHaveTo * names.length);
   console.log('restWeekdayHaveTo', restWeekdayHaveTo);
   console.log('restholidayHaveTo', restholidayHaveTo);
+
+  /** 사람 객체를 생성한다. */
+  const people = names.map((e) => ({
+    name: e,
+  }));
+
+  return people;
 };
 
 const onClick = () => {
@@ -70,6 +77,7 @@ const onClick = () => {
   const shifts = ['낮', '저녁'];
   const perShift = 2;
   const people = makePeople(names, workdays.length, holidays.length, shifts, perShift);
+  console.log('people', people);
   const assigned = assignDate(people);
 
   // const inputNames = ['홍길동', '유재석', '박명수', '정준하', '노홍철', '정형돈'];
