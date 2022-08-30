@@ -42,6 +42,12 @@ const makePeople = (names: string[], wl: number, hl: number, shifts: string[], p
   /** 그리고 사람 수대로 나눈다. */
   const oneHaveTo = wholeNumber / names.length;
   console.log('oneHaveTo', oneHaveTo);
+
+  /** 주말과 평일을 비율로 나눈다 */
+  const weekdayHaveTo = oneHaveTo * (wl / (wl + hl));
+  const holidayHaveTo = oneHaveTo * (hl / (wl + hl));
+  console.log(weekdayHaveTo);
+  console.log(holidayHaveTo);
 };
 
 const onClick = () => {
