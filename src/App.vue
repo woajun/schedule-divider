@@ -6,12 +6,12 @@
 interface PartTime {
   type: string,
   number: number,
-  assing: Person[]
+  assign?: Person[]
 }
 
 interface Date {
   holiday: boolean,
-  partTime: PartTime[]
+  partTimes: PartTime[]
 }
 
 interface Person {
@@ -19,7 +19,7 @@ interface Person {
   name: string
 }
 
-type Calendar = Date[];
+type Calendar = Map<number, Date>;
 
 function shuffle<T>(rawArr:Array<T>):Array<T> {
   const arr = JSON.parse(JSON.stringify(rawArr));
@@ -36,7 +36,23 @@ function shuffle<T>(rawArr:Array<T>):Array<T> {
   return arr;
 }
 
-const assignDate = (people: Person[]) => {};
+const makeCalendar = (workdays: number[], holidays: number[], shifts: string[], perShift: number): Calendar => {
+  const partTimes = ():PartTime[] => shifts.map((e) => ({
+    type: e,
+    number: perShift,
+  }));
+  const calendar: Calendar = new Map();
+
+  workdays.forEach((e) => {
+    calendar.set(e, { holiday: false, partTimes: partTimes() });
+  });
+
+  holidays.forEach((e) => {
+    calendar.set(e, { holiday: true, partTimes: partTimes() });
+  });
+
+  return calendar;
+};
 
 const makePeople = (names: string[], wl: number, hl: number, shifts: string[], perShift:number) => {
   /**
@@ -86,9 +102,12 @@ const onClick = () => {
   const holidays = [6, 7, 13, 14, 20, 21, 27, 28];
   const shifts = ['낮', '저녁'];
   const perShift = 2;
-  const people = makePeople(names, workdays.length, holidays.length, shifts, perShift);
-  console.log('people', people);
-  const assigned = assignDate(people);
+
+  const calendar = makeCalendar(workdays, holidays, shifts, perShift);
+  console.log(calendar);
+  // const people = makePeople(names, workdays.length, holidays.length, shifts, perShift);
+  // console.log('people', people);
+  // const assigned = assignDate(people);
 
   // const inputNames = ['홍길동', '유재석', '박명수', '정준하', '노홍철', '정형돈'];
   // const names = shuffle(inputNames);
