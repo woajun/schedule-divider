@@ -4,6 +4,10 @@
 <!-- eslint-disable operator-assignment -->
 <!-- eslint-disable no-plusplus -->
 <script setup lang="ts">
+interface Assignee {
+  assignee?: Person;
+}
+
 interface PartTimeType {
   id: number,
   name: string,
@@ -11,8 +15,7 @@ interface PartTimeType {
 
 interface PartTime {
   type: PartTimeType,
-  number: number,
-  assign?: Person[]
+  assign: Assignee[]
 }
 
 interface Date {
@@ -65,7 +68,7 @@ const makePartTimeTypes = (shifts: string[]) => shifts.map((name):PartTimeType =
 const makeCalendar = (workdays: number[], holidays: number[], partTimeTypes: PartTimeType[], perShift: number): Calendar => {
   const partTimes = ():PartTime[] => partTimeTypes.map((type) => ({
     type,
-    number: perShift,
+    assign: Array(perShift).fill({ assignee: undefined }),
   }));
   const calendar: Calendar = new Map();
 
@@ -80,56 +83,73 @@ const makeCalendar = (workdays: number[], holidays: number[], partTimeTypes: Par
   return calendar;
 };
 
-const makePeople = (names: string[], wl: number, partTimeTypes: PartTimeType[], perShift:number) => {
+const makePeople = (names: string[], workdays: number, partTimeTypes: PartTimeType[], perShift:number) => {
   const numOfPerson = names.length;
   const numOfShift = partTimeTypes.length;
 
-  /** 일을 객체로 만든다. */
-
   /** 사람 수대로 나눈다. */
-  const oneHaveTo = (wl * numOfShift * perShift) / numOfPerson;
+  const oneHaveTo = (workdays * numOfShift * perShift) / numOfPerson;
   console.log('oneHaveTo', oneHaveTo);
-
-  /** 사람 수대로 나눈 것을 배열로 만든다. */
-  const apple = names.map((name) => ({
-    name,
-    oneHaveTo,
-  }));
-  console.log(apple);
 
   /** 내림하여 한 사람 당 실제 공수를 구한다. */
   const realHaveTo = Math.floor(oneHaveTo);
   console.log('realHaveTo', realHaveTo);
 
-  /** 교대근무를 나눈다. */
-  const weekdayShifts = partTimeTypes.map((e) => {
-    return { type: e, number: realHaveTo / numOfShift };
-  });
-  console.log('weekdayShifts', weekdayShifts);
-
-  /** 교대근무를 분배한다. */
+  /** 사람 수대로 나눈 것을 배열로 만든다. */
+  const people = names.map((name) => ({
+    id: newID(),
+    name,
+    realHaveTo,
+  }));
+  console.log(people);
 
   /** 잔업량을 구한다 */
-  const restWeekdayHaveTo = (oneHaveTo * names.length) - (realHaveTo * names.length);
-  console.log('restWeekdayHaveTo', restWeekdayHaveTo);
+  const rest = (oneHaveTo * names.length) - (realHaveTo * names.length);
+  console.log('rest', rest);
+
+  /** 잔업을 분배한다. */
+  Array(rest).fill(1).forEach((e, i) => {
+    people[i].realHaveTo = people[i].realHaveTo + e;
+  });
+
+  /** 교대근무로 나눈다 */
+  const applePeople = people.map((e, i) => {
+    const flag = i % 2 === 0;
+    const apple = e.realHaveTo / numOfShift;
+    if (apple % 1 === 0) {
+      const weekdayHaveTo = partTimeTypes.map((type) => ({
+        type,
+        number: apple,
+      }));
+      return {
+        id: e.id,
+        name: e.name,
+        weekdayHaveTo,
+      };
+    }
+    // TODO 7.66 이면 (8, 8, 7) 나누는 로직
+    const weekdayHaveTo = partTimeTypes.map((type) => ({
+      type,
+      number: Math.floor(apple),
+    }));
+    return {
+      id: e.id,
+      name: e.name,
+      weekdayHaveTo,
+    };
+  });
+  console.log('applePeople', applePeople);
 
 
-  /** 사람 객체를 생성한다. */
-  /** 사람 객체에 파트타임 객체를 만든다. */
-  const people: Person[] = names.map((e) => ({
-    name: e,
-
-  }));
 
 
-
-  return people;
+  return applePeople;
 };
 
 const onClick = () => {
   const workdays = [1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 15, 16, 17, 18, 19, 22, 23, 24, 25, 26, 29, 30, 31];
   const holidays = [6, 7, 13, 14, 20, 21, 27, 28];
-  const shifts = ['낮', '저녁', '초저녁'];
+  const shifts = ['낮', '저녁'];
   const perShift = 2;
 
   const partTimeType = makePartTimeTypes(shifts);
