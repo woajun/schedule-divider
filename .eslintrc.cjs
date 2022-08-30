@@ -2,13 +2,25 @@
 require("@rushstack/eslint-patch/modern-module-resolution");
 
 module.exports = {
-  "root": true,
-  "extends": [
-    "plugin:vue/vue3-essential",
-    "eslint:recommended",
-    "@vue/eslint-config-typescript/recommended"
+  root: true,
+  env: {
+    es2021: true,
+  },
+  extends: [
+    'plugin:vue/vue3-recommended',
+    '@vue/airbnb',
+    'airbnb-typescript/base',
+    '@vue/typescript/recommended',
   ],
-  "parserOptions": {
-    "ecmaVersion": "latest"
-  }
-}
+  parser: 'vue-eslint-parser',
+  parserOptions: {
+    parser: '@typescript-eslint/parser',
+    project: './tsconfig.json',
+    ecmaVersion: 2020,
+  },
+  rules: {
+    'linebreak-style': 'off',
+    'vuejs-accessibility/form-control-has-label': 'off',
+  },
+  ignorePatterns: ['dist/**', 'debug.js'],
+};
