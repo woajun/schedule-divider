@@ -5,15 +5,21 @@
 <script setup lang="ts">
 interface PartTime {
   type: string,
-  num: number, // 근무하는 날들
-  date?: number[], // 근무하는 날들
-  holiday: boolean, // 주말근무 여부
+  number: number,
+  assing: Person[]
+}
+
+interface Date {
+  holiday: boolean,
+  partTime: PartTime[]
 }
 
 interface Person {
+  id: number
   name: string
-  schedule?: PartTime[],
 }
+
+type Calendar = Date[];
 
 function shuffle<T>(rawArr:Array<T>):Array<T> {
   const arr = JSON.parse(JSON.stringify(rawArr));
@@ -62,9 +68,13 @@ const makePeople = (names: string[], wl: number, hl: number, shifts: string[], p
   console.log('restholidayHaveTo', restholidayHaveTo);
 
   /** 사람 객체를 생성한다. */
-  const people = names.map((e) => ({
+  /** 사람 객체에 파트타임 객체를 만든다. */
+  const people: Person[] = names.map((e) => ({
     name: e,
+
   }));
+
+
 
   return people;
 };
