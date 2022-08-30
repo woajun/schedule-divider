@@ -127,7 +127,9 @@ const onClick = () => {
   ,'노홍철'
   ,'정형돈'
 ]
-  calc(people, 31, [6,7,13,14,20,21,27,28],2,2)
+const workerPerShift = 2;
+const shifts = 2;
+  calc(people, 31, [6,7,13,14,20,21,27,28],workerPerShift,shifts);
 }
 
 </script>
