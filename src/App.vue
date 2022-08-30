@@ -48,16 +48,16 @@ const makeDays = (length:number, holidays: number[]):Day[] => {
     })
 }
 
-const makePeople = (names: string[], lng: number, hLng: number):Person[] => {
+const makePeople = (names: string[], lng: number, hLng: number, howMany:number, shifts: number):Person[] => {
   const wLng = lng - hLng;
 
-  const rwNeed = wLng * 2 * 2 / names.length; 
-  const rhNeed = hLng * 2 * 2 / names.length; 
+  const rwNeed = wLng * howMany * shifts / names.length; 
+  const rhNeed = hLng * howMany * shifts / names.length; 
   console.log('rwNeed', rwNeed);
   console.log('rhNeed', rhNeed);
 
-  const wNeed = Math.floor(wLng * 2 * 2 / names.length); 
-  const hNeed = Math.floor(hLng * 2 * 2 / names.length); 
+  const wNeed = Math.floor(wLng * howMany * shifts / names.length); 
+  const hNeed = Math.floor(hLng * howMany * shifts / names.length); 
   console.log('wNeed', wNeed);
   console.log('hNeed', hNeed);
 
@@ -84,7 +84,7 @@ type Calculator = (names: string[], length: number, holidays: number[]) => Day[]
 
 const calc: Calculator = (names, length, holidays) => {
   const shuffleNames = shuffle(names);
-  const people = makePeople(names, length, holidays.length);
+  const people = makePeople(names, length, holidays.length,2,2);
   const days = makeDays(length,holidays);
   
   const result: Day[] = [];
