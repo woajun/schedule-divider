@@ -34,12 +34,12 @@ const assignDate = (people: Person[]) => {};
 
 const makePeople = (names: string[], wl: number, hl: number, shifts: string[], perShift:number) => {
   /**
-   * 우선 공수를 구한다.
+   * 총 공수를 구한다.
    */
   const wholeNumber = (wl + hl) * shifts.length * perShift;
   console.log('wholeNumber', wholeNumber);
 
-  /** 그리고 사람 수대로 나눈다. */
+  /** 사람 수대로 나눈다. */
   const oneHaveTo = wholeNumber / names.length;
   console.log('oneHaveTo', oneHaveTo);
 
@@ -49,17 +49,17 @@ const makePeople = (names: string[], wl: number, hl: number, shifts: string[], p
   console.log('weekdayHaveTo', weekdayHaveTo);
   console.log('holidayHaveTo', holidayHaveTo);
 
-  /** 내림한다. */
-  const weekdayNum = Math.floor(weekdayHaveTo);
-  const holidayNum = Math.floor(holidayHaveTo);
-  console.log('weekdayNum', weekdayNum);
-  console.log('holidayNum', holidayNum);
+  /** 내림하여 한 사람 당 실제 공수를 구한다. */
+  const weekdayRealHaveTo = Math.floor(weekdayHaveTo);
+  const holidayRealHaveTo = Math.floor(holidayHaveTo);
+  console.log('weekdayRealHaveTo', weekdayRealHaveTo);
+  console.log('holidayRealHaveTo', holidayRealHaveTo);
 
   /** 잔업량을 구한다 */
-  const restWeekdayNum = (weekdayHaveTo * names.length) - (weekdayNum * names.length);
-  const restholidayNum = (holidayHaveTo * names.length) - (holidayNum * names.length);
-  console.log('restWeekdayNum', restWeekdayNum);
-  console.log('restholidayNum', restholidayNum);
+  const restWeekdayHaveTo = (weekdayHaveTo * names.length) - (weekdayRealHaveTo * names.length);
+  const restholidayHaveTo = (holidayHaveTo * names.length) - (holidayRealHaveTo * names.length);
+  console.log('restWeekdayHaveTo', restWeekdayHaveTo);
+  console.log('restholidayHaveTo', restholidayHaveTo);
 };
 
 const onClick = () => {
