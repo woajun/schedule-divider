@@ -6,7 +6,7 @@
 interface PartTime {
   type: string,
   num: number, // 근무하는 날들
-  date: number[], // 근무하는 날들
+  date?: number[], // 근무하는 날들
   holiday: boolean, // 주말근무 여부
 }
 
@@ -30,13 +30,18 @@ function shuffle<T>(rawArr:Array<T>):Array<T> {
   return arr;
 }
 
+const assignDate = (people: Person[]) => {};
 
-const makePeople = (names: string[], workdays: number[], holidays: number[], shifts: string[], perShift:number) => {
+const makePeople = (names: string[], wl: number, hl: number, shifts: string[], perShift:number) => {
   /**
-   * 우선 근무해야 하는 날들을 구한다.
-   *
+   * 우선 공수를 구한다.
    */
-  const wl = workdays;
+  const wholeNumber = (wl + hl) * shifts.length * perShift;
+  console.log('wholeNumber', wholeNumber);
+
+  /** 그리고 사람 수대로 나눈다. */
+  const oneHaveTo = wholeNumber / names.length;
+  console.log('oneHaveTo', oneHaveTo);
 };
 
 const onClick = () => {
@@ -46,7 +51,8 @@ const onClick = () => {
   const holidays = [6, 7, 13, 14, 20, 21, 27, 28];
   const shifts = ['낮', '저녁'];
   const perShift = 2;
-  makePeople(names, workdays, holidays, shifts, perShift);
+  const people = makePeople(names, workdays.length, holidays.length, shifts, perShift);
+  const assigned = assignDate(people);
 };
 
 </script>
