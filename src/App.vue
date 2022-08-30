@@ -48,33 +48,35 @@ const makeDays = (length:number, holidays: number[]):Day[] => {
     })
 }
 
+const floor = Math.floor;
+const ceil = Math.ceil;
+
 const makePeople = (names: string[], lng: number, hLng: number, howMany:number, shifts: number):Person[] => {
   const num = names.length;
   const wLng = lng - hLng;
 
   const calcWork = (aLng:number) => aLng * howMany * shifts / num;
-  const calcRest = (aLng:number) => (calcWork(aLng) * num) - (Math.floor(calcWork(aLng)) * num);
+  const calcRest = (aLng:number) => (calcWork(aLng) * num) - (floor(calcWork(aLng)) * num);
 
-  const wNeed = Math.floor(calcWork(wLng));
-  const hNeed = Math.floor(calcWork(hLng)); 
+  const wNeed = floor(calcWork(wLng));
+  const hNeed = floor(calcWork(hLng)); 
 
   const restW = calcRest(wLng);
   const restH = calcRest(hLng);
+  console.log('restW',restW)
+  console.log('restH',restH)
 
-  const people = names.map((e,i) => {
-    const flag = i%2 === 0;
-    const numDay = flag?Math.floor(wNeed/2):Math.ceil(wNeed/2);
-    const numNight = wNeed - numDay;
-    const numHDay = flag?Math.floor(hNeed/2):Math.ceil(hNeed/2);
-    const numHNight = hNeed - numHDay;
-    return {
-      name: e,
-      numDay,
-      numNight,
-      numHDay,
-      numHNight,
-    }
+  const floorOrCeilAndHarf = (target:number, flag:boolean) => flag ? floor(target/2) : ceil(target/2);
+  const flag = (i:number) => i%2 === 0;
+  const toPeople = (name:string, i:number):Person => ({
+      name,
+      numDay : floorOrCeilAndHarf(wNeed, flag(i)),
+      numNight : floorOrCeilAndHarf(wNeed, !flag(i)),
+      numHDay : floorOrCeilAndHarf(hNeed, flag(i)),
+      numHNight : floorOrCeilAndHarf(hNeed, !flag(i)),
   })
+
+  const people = names.map(toPeople);
 
   let index = 0;
   Array(restW).fill(0).forEach((e,i)=>{
@@ -108,12 +110,13 @@ const calc: Calculator = (rawNames, length, holidays) => {
 
   const days = makeDays(length,holidays);
   
+  console.log(people);
   const result: Day[] = [];
   return result;
 }
 
 const onClick = () => {
-  const people = ['홍길동','유재석','박명수','정준하','하하','노홍철']
+  const people = ['홍길동','유재석','박명수','정준하','노홍철','정형돈']
   calc(people, 31, [6,7,13,14,20,21,27,28])
 }
 
