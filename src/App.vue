@@ -61,11 +61,12 @@ const { ceil } = Math;
 const makePeople = (
   names: string[],
   lng: number,
-  hLng: number,
+  rawHLng: number,
   workerPerShift:number,
   shifts: number,
 ): Person[] => {
   const num = names.length;
+  const hLng = rawHLng;
   const wLng = lng - hLng;
 
   const calcWork = (aLng:number) => (aLng * workerPerShift * shifts) / num;
