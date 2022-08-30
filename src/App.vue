@@ -1,7 +1,14 @@
 <script setup lang="ts">
-
 interface Person {
   name: string
+  numHDay: number,
+  numHNight: number,
+  numDay: number,
+  numNight: number,
+  hDay: number[],
+  hNight: number[],
+  day: number[],
+  night: number[],
 }
 
 interface Day {
@@ -11,10 +18,8 @@ interface Day {
   night?: Person[]
 }
 
-
-
-
-function shuffle(arr:Array<unknown>){
+function shuffle<T>(arr:Array<T>):Array<T>|undefined{
+  if(arr.length < 1) return undefined;
   let i = arr.length;
   let randomI : number;
 
@@ -28,17 +33,12 @@ function shuffle(arr:Array<unknown>){
 }
 
 
-type Calculator = (people: Person[], length: number, holiday: number[]) => Day[]
-
-const calc: Calculator = (rawPeople, length, holidays) => {
-  console.log('run')
-  // const people = shuffle(rawPeople);
-  const days: Day[] = Array(length)
-    .fill(0)
-    .map((e,i)=>{
-      const date = i + 1
+const makeDays = (length:number, holidays: number[]):Day[] => {
+  return Array(length)
+  .fill(0)
+  .map((e,i)=>{
+    const date = i + 1
       const holiday = holidays.find((e)=> e===date) !== undefined
-
       return {
         date,
         holiday,
@@ -46,22 +46,54 @@ const calc: Calculator = (rawPeople, length, holidays) => {
         night:[],
       }
     })
-    console.log(days);
+}
 
+const makePeople = (names: string[], lng: number, hLng: number):Person[] => {
+  const wLng = lng - hLng;
+
+  const rwNeed = wLng * 2 * 2 / names.length; 
+  const rhNeed = hLng * 2 * 2 / names.length; 
+  console.log('rwNeed', rwNeed);
+  console.log('rhNeed', rhNeed);
+
+  const wNeed = Math.floor(wLng * 2 * 2 / names.length); 
+  const hNeed = Math.floor(hLng * 2 * 2 / names.length); 
+  console.log('wNeed', wNeed);
+  console.log('hNeed', hNeed);
+
+  const sumWNeed = rwNeed * names.length;
+  const sumHNeed = rhNeed * names.length;
+  console.log('sumWNeed', sumWNeed)
+  console.log('sumHNeed', sumHNeed)
+  
+  const floorWNeed = wNeed * names.length;
+  const floorHNeed = hNeed * names.length;
+  console.log('floorWNeed', floorWNeed)
+  console.log('floorHNeed', floorHNeed)
+
+  const restW = sumWNeed - floorWNeed
+  const restH = sumHNeed - floorHNeed
+  console.log('restW', restW)
+  console.log('restH', restH)
+
+
+  return result
+};
+
+type Calculator = (names: string[], length: number, holidays: number[]) => Day[]
+
+const calc: Calculator = (names, length, holidays) => {
+  const shuffleNames = shuffle(names);
+  const people = makePeople(names, length, holidays.length);
+  const days = makeDays(length,holidays);
+  
   const result: Day[] = [];
   return result;
 }
 
 const onClick = () => {
-  const people: Person[] = [
-  {name: 'A'},
-  {name: 'B'},
-  {name: 'C'},
-  {name: 'D'},
-  {name: 'E'},
-  {name: 'F'}
-]
-  calc(people, 31, [3,4,10,11,17])
+  const people = ['A','B','C','D','E','F']
+  calc(people, 31, [6,7,13,14,20,21,27,28])
 }
 
 </script>
@@ -83,5 +115,4 @@ const onClick = () => {
       </select>
     </div>
     <div><button @click="onClick">계산</button></div>
-    <div>{{result}}</div>
 </template>
