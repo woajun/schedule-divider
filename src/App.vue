@@ -58,8 +58,6 @@ const makePeople = (names: string[], lng: number, hLng: number, howMany:number, 
   const calcWork = (aLng:number) => aLng * howMany * shifts / num;
   const calcRest = (aLng:number) => (calcWork(aLng) * num) - (floor(calcWork(aLng)) * num);
 
-  const wNeed = floor(calcWork(wLng));
-  const hNeed = floor(calcWork(hLng)); 
 
   const restW = calcRest(wLng);
   const restH = calcRest(hLng);
@@ -68,12 +66,12 @@ const makePeople = (names: string[], lng: number, hLng: number, howMany:number, 
 
   const floorOrCeilAndHarf = (target:number, flag:boolean) => flag ? floor(target/2) : ceil(target/2);
   const flag = (i:number) => i%2 === 0;
-  const toPeople = (name:string, i:number):Person => ({
+  const toPeople = (name:string, i:number): Person => ({
       name,
-      numDay : floorOrCeilAndHarf(wNeed, flag(i)),
-      numNight : floorOrCeilAndHarf(wNeed, !flag(i)),
-      numHDay : floorOrCeilAndHarf(hNeed, flag(i)),
-      numHNight : floorOrCeilAndHarf(hNeed, !flag(i)),
+      numDay : floorOrCeilAndHarf(floor(calcWork(wLng)), flag(i)),
+      numNight : floorOrCeilAndHarf(floor(calcWork(wLng)), !flag(i)),
+      numHDay : floorOrCeilAndHarf(floor(calcWork(hLng)), flag(i)),
+      numHNight : floorOrCeilAndHarf(floor(calcWork(hLng)), !flag(i)),
   })
 
   const people = names.map(toPeople);
