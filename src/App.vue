@@ -56,14 +56,6 @@ const makePeople = (names: string[], lng: number, hLng: number, howMany:number, 
   const wLng = lng - hLng;
 
   const calcWork = (aLng:number) => aLng * howMany * shifts / num;
-  const calcRest = (aLng:number) => (calcWork(aLng) * num) - (floor(calcWork(aLng)) * num);
-
-
-  const restW = calcRest(wLng);
-  const restH = calcRest(hLng);
-  console.log('restW',restW)
-  console.log('restH',restH)
-
   const floorOrCeilAndHarf = (target:number, flag:boolean) => flag ? floor(target/2) : ceil(target/2);
   const flag = (i:number) => i%2 === 0;
   const toPeople = (name:string, i:number): Person => ({
@@ -75,6 +67,13 @@ const makePeople = (names: string[], lng: number, hLng: number, howMany:number, 
   })
 
   const people = names.map(toPeople);
+
+
+  const calcRest = (aLng:number) => (calcWork(aLng) * num) - (floor(calcWork(aLng)) * num);
+  const restW = calcRest(wLng);
+  const restH = calcRest(hLng);
+  console.log('restW',restW)
+  console.log('restH',restH)
 
   let index = 0;
   Array(restW).fill(0).forEach((e,i)=>{
