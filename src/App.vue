@@ -1,3 +1,4 @@
+<!-- eslint-disable arrow-body-style -->
 <!-- eslint-disable vue/max-len -->
 <!-- eslint-disable no-multiple-empty-lines -->
 <!-- eslint-disable operator-assignment -->
@@ -81,26 +82,35 @@ const makeCalendar = (workdays: number[], holidays: number[], partTimeTypes: Par
 
 const makePeople = (names: string[], wl: number, partTimeTypes: PartTimeType[], perShift:number) => {
   const numOfPerson = names.length;
-  /**
-   * 총 공수를 구한다.
-   */
-  const wholeNumber = wl * partTimeTypes.length * perShift;
-  console.log('wholeNumber', wholeNumber);
+  const numOfShift = partTimeTypes.length;
+
+  /** 일을 객체로 만든다. */
 
   /** 사람 수대로 나눈다. */
-  const oneHaveTo = wholeNumber / numOfPerson;
+  const oneHaveTo = (wl * numOfShift * perShift) / numOfPerson;
   console.log('oneHaveTo', oneHaveTo);
 
+  /** 사람 수대로 나눈 것을 배열로 만든다. */
+  const apple = names.map((name) => ({
+    name,
+    oneHaveTo,
+  }));
+  console.log(apple);
+
   /** 내림하여 한 사람 당 실제 공수를 구한다. */
-  const weekdayRealHaveTo = Math.floor(oneHaveTo);
-  console.log('weekdayRealHaveTo', weekdayRealHaveTo);
+  const realHaveTo = Math.floor(oneHaveTo);
+  console.log('realHaveTo', realHaveTo);
 
   /** 교대근무를 나눈다. */
-  const weekdayShifts = partTimeTypes.map(() => weekdayRealHaveTo / partTimeTypes.length);
+  const weekdayShifts = partTimeTypes.map((e) => {
+    return { type: e, number: realHaveTo / numOfShift };
+  });
   console.log('weekdayShifts', weekdayShifts);
 
+  /** 교대근무를 분배한다. */
+
   /** 잔업량을 구한다 */
-  const restWeekdayHaveTo = (oneHaveTo * names.length) - (weekdayRealHaveTo * names.length);
+  const restWeekdayHaveTo = (oneHaveTo * names.length) - (realHaveTo * names.length);
   console.log('restWeekdayHaveTo', restWeekdayHaveTo);
 
 
@@ -119,13 +129,13 @@ const makePeople = (names: string[], wl: number, partTimeTypes: PartTimeType[], 
 const onClick = () => {
   const workdays = [1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 15, 16, 17, 18, 19, 22, 23, 24, 25, 26, 29, 30, 31];
   const holidays = [6, 7, 13, 14, 20, 21, 27, 28];
-  const shifts = ['낮', '저녁'];
+  const shifts = ['낮', '저녁', '초저녁'];
   const perShift = 2;
 
   const partTimeType = makePartTimeTypes(shifts);
   const calendar = makeCalendar(workdays, holidays, partTimeType, perShift);
 
-  const inputNames = ['홍길동', '유재석', '박명수', '정준하', '노홍철', '정형돈'];
+  const inputNames = ['홍길동', '유재석', '박명수', '정준하', '노홍철', '임꺽정'];
   const names = shuffle(inputNames);
   const people = makePeople(names, workdays.length, partTimeType, perShift);
 
