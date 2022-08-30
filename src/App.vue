@@ -1,6 +1,13 @@
 <script setup lang="ts">
+interface Shift {
+  part: number, // 예를들어, 2교대면 0: 오전, 1: 오후
+  number: number, // 한 달동한 근무하는 횟수
+  holiday: boolean, // 주말근무 여부
+}
+
 interface Person {
   name: string
+  shift?: Shift[],
   numDay: number,
   numNight: number,
   numHDay: number,
@@ -51,11 +58,11 @@ const makeDays = (length:number, holidays: number[]):Day[] => {
 const floor = Math.floor;
 const ceil = Math.ceil;
 
-const makePeople = (names: string[], lng: number, hLng: number, howMany:number, shifts: number):Person[] => {
+const makePeople = (names: string[], lng: number, hLng: number, workerPerShift:number, shifts: number):Person[] => {
   const num = names.length;
   const wLng = lng - hLng;
 
-  const calcWork = (aLng:number) => aLng * howMany * shifts / num;
+  const calcWork = (aLng:number) => aLng * workerPerShift * shifts / num;
   const floorOrCeilAndHarf = (target:number, flag:boolean) => flag ? floor(target/2) : ceil(target/2);
   const flag = (i:number) => i%2 === 0;
   const toPeople = (name:string, i:number): Person => ({
@@ -98,12 +105,12 @@ const makePeople = (names: string[], lng: number, hLng: number, howMany:number, 
   return people
 };
 
-type Calculator = (names: string[], length: number, holidays: number[]) => Day[]
+type Calculator = (names: string[], length: number, holidays: number[], workerPerShift: number, shifts: number) => Day[]
 
-const calc: Calculator = (rawNames, length, holidays) => {
+const calc: Calculator = (rawNames, length, holidays, workerPerShift, shifts) => {
   const names = shuffle(rawNames);
   if(!names) return;
-  const people = makePeople(names, length, holidays.length,2,2);
+  const people = makePeople(names, length, holidays.length,workerPerShift,shifts);
 
   const days = makeDays(length,holidays);
   
@@ -113,8 +120,14 @@ const calc: Calculator = (rawNames, length, holidays) => {
 }
 
 const onClick = () => {
-  const people = ['홍길동','유재석','박명수','정준하','노홍철','정형돈']
-  calc(people, 31, [6,7,13,14,20,21,27,28])
+  const people = ['홍길동'
+  ,'유재석'
+  ,'박명수'
+  ,'정준하'
+  ,'노홍철'
+  ,'정형돈'
+]
+  calc(people, 31, [6,7,13,14,20,21,27,28],2,2)
 }
 
 </script>
@@ -133,6 +146,18 @@ const onClick = () => {
       근무자 수 : 
       <select>
         <option value="6">6</option>
+      </select>
+    </div>
+    <div>
+      한 타임 당 근무자 수 : 
+      <select>
+        <option value="2">2</option>
+      </select>
+    </div>
+    <div>
+      하루의 교대 횟수 : 
+      <select>
+        <option value="2">2</option>
       </select>
     </div>
     <div><button @click="onClick">계산</button></div>
