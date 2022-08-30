@@ -49,33 +49,26 @@ const makeDays = (length:number, holidays: number[]):Day[] => {
 }
 
 const makePeople = (names: string[], lng: number, hLng: number, howMany:number, shifts: number):Person[] => {
+  const num = names.length;
   const wLng = lng - hLng;
 
-  const rwNeed = wLng * howMany * shifts / names.length; 
-  const rhNeed = hLng * howMany * shifts / names.length; 
-  console.log('rwNeed', rwNeed);
-  console.log('rhNeed', rhNeed);
+  const calcWork = (aLng:number) => aLng * howMany * shifts / num;
+  const calcRest = (aLng:number) => (calcWork(aLng) * num) - (Math.floor(calcWork(aLng)) * num);
 
-  const wNeed = Math.floor(wLng * howMany * shifts / names.length); 
-  const hNeed = Math.floor(hLng * howMany * shifts / names.length); 
+  const wNeed = Math.floor(calcWork(wLng));
+  const restW = calcRest(wLng);
+
+  const hNeed = Math.floor(calcWork(hLng)); 
+  const restH = calcRest(hLng);
+
   console.log('wNeed', wNeed);
   console.log('hNeed', hNeed);
 
-  const sumWNeed = rwNeed * names.length;
-  const sumHNeed = rhNeed * names.length;
-  console.log('sumWNeed', sumWNeed)
-  console.log('sumHNeed', sumHNeed)
-  
-  const floorWNeed = wNeed * names.length;
-  const floorHNeed = hNeed * names.length;
-  console.log('floorWNeed', floorWNeed)
-  console.log('floorHNeed', floorHNeed)
-
-  const restW = sumWNeed - floorWNeed
-  const restH = sumHNeed - floorHNeed
   console.log('restW', restW)
   console.log('restH', restH)
 
+
+  
 
   return result
 };
