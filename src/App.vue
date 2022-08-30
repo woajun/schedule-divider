@@ -1,14 +1,14 @@
 <script setup lang="ts">
 interface Person {
   name: string
-  numHDay: number,
-  numHNight: number,
   numDay: number,
   numNight: number,
-  hDay: number[],
-  hNight: number[],
-  day: number[],
-  night: number[],
+  numHDay: number,
+  numHNight: number,
+  day?: number[],
+  night?: number[],
+  hDay?: number[],
+  hNight?: number[],
 }
 
 interface Day {
@@ -56,28 +56,56 @@ const makePeople = (names: string[], lng: number, hLng: number, howMany:number, 
   const calcRest = (aLng:number) => (calcWork(aLng) * num) - (Math.floor(calcWork(aLng)) * num);
 
   const wNeed = Math.floor(calcWork(wLng));
-  const restW = calcRest(wLng);
-
   const hNeed = Math.floor(calcWork(hLng)); 
+
+  const restW = calcRest(wLng);
   const restH = calcRest(hLng);
 
-  console.log('wNeed', wNeed);
-  console.log('hNeed', hNeed);
+  const people = names.map((e,i) => {
+    const flag = i%2 === 0;
+    const numDay = flag?Math.floor(wNeed/2):Math.ceil(wNeed/2);
+    const numNight = wNeed - numDay;
+    const numHDay = flag?Math.floor(hNeed/2):Math.ceil(hNeed/2);
+    const numHNight = hNeed - numHDay;
+    return {
+      name: e,
+      numDay,
+      numNight,
+      numHDay,
+      numHNight,
+    }
+  })
 
-  console.log('restW', restW)
-  console.log('restH', restH)
+  let index = 0;
+  Array(restW).fill(0).forEach((e,i)=>{
+    const flag = i%2 === 0;
+    if(flag) {
+      people[i].numDay = people[i].numDay + 1
+    } else {
+      people[i].numNight = people[i].numNight + 1
+    }
+    index = i+1;
+  })
 
+  for (let i = index; i < restH+index; i++) {
+    const flag = i%2 === 0;
+    if(flag) {
+      people[i].numHDay = people[i].numHDay + 1
+    } else {
+      people[i].numHNight = people[i].numHNight + 1
+    }
+  }
 
-  
-
-  return result
+  return people
 };
 
 type Calculator = (names: string[], length: number, holidays: number[]) => Day[]
 
-const calc: Calculator = (names, length, holidays) => {
-  const shuffleNames = shuffle(names);
+const calc: Calculator = (rawNames, length, holidays) => {
+  const names = shuffle(rawNames);
+  if(!names) return;
   const people = makePeople(names, length, holidays.length,2,2);
+
   const days = makeDays(length,holidays);
   
   const result: Day[] = [];
@@ -85,7 +113,7 @@ const calc: Calculator = (names, length, holidays) => {
 }
 
 const onClick = () => {
-  const people = ['A','B','C','D','E','F']
+  const people = ['홍길동','유재석','박명수','정준하','하하','노홍철']
   calc(people, 31, [6,7,13,14,20,21,27,28])
 }
 
