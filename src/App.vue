@@ -1,34 +1,22 @@
+<!-- eslint-disable vue/max-len -->
+<!-- eslint-disable no-multiple-empty-lines -->
 <!-- eslint-disable operator-assignment -->
 <!-- eslint-disable no-plusplus -->
 <script setup lang="ts">
-interface Shift {
-  part: number, // 예를들어, 2교대면 0: 오전, 1: 오후
-  number: number, // 한 달동한 근무하는 횟수
+interface PartTime {
+  type: string,
+  num: number, // 근무하는 날들
+  date: number[], // 근무하는 날들
   holiday: boolean, // 주말근무 여부
 }
 
 interface Person {
   name: string
-  shift?: Shift[],
-  numDay: number,
-  numNight: number,
-  numHDay: number,
-  numHNight: number,
-  day?: number[],
-  night?: number[],
-  hDay?: number[],
-  hNight?: number[],
+  schedule?: PartTime[],
 }
 
-interface Day {
-  date: number
-  holiday: boolean
-  day?: Person[]
-  night?: Person[]
-}
-
-function shuffle<T>(arr:Array<T>):Array<T> | undefined {
-  if (arr.length < 1) return undefined;
+function shuffle<T>(rawArr:Array<T>):Array<T> {
+  const arr = JSON.parse(JSON.stringify(rawArr));
   let i = arr.length;
   let randomI : number;
 
@@ -42,108 +30,23 @@ function shuffle<T>(arr:Array<T>):Array<T> | undefined {
   return arr;
 }
 
-const makeDays = (length:number, holidays: number[]):Day[] => Array(length)
-  .fill(0)
-  .map((e, i) => {
-    const date = i + 1;
-    const holiday = holidays.find((el) => el === date) !== undefined;
-    return {
-      date,
-      holiday,
-      day: [],
-      night: [],
-    };
-  });
 
-const { floor } = Math;
-const { ceil } = Math;
-
-const makePeople = (
-  names: string[],
-  lng: number,
-  rawHLng: number,
-  workerPerShift:number,
-  shifts: number,
-): Person[] => {
-  const num = names.length;
-  const hLng = rawHLng;
-  const wLng = lng - hLng;
-
-  const calcWork = (aLng:number) => (aLng * workerPerShift * shifts) / num;
-  const floorOrCeilAndHarf = (target:number, flag:boolean) => (
-    flag ? floor(target / 2) : ceil(target / 2)
-  );
-  const flag = (i:number) => i % 2 === 0;
-  const toPeople = (name:string, i:number): Person => ({
-    name,
-    numDay: floorOrCeilAndHarf(floor(calcWork(wLng)), flag(i)),
-    numNight: floorOrCeilAndHarf(floor(calcWork(wLng)), !flag(i)),
-    numHDay: floorOrCeilAndHarf(floor(calcWork(hLng)), flag(i)),
-    numHNight: floorOrCeilAndHarf(floor(calcWork(hLng)), !flag(i)),
-  });
-
-  const people = names.map(toPeople);
-
-  const calcRest = (aLng:number) => (calcWork(aLng) * num) - (floor(calcWork(aLng)) * num);
-  const restW = calcRest(wLng);
-  const restH = calcRest(hLng);
-  console.log('restW', restW);
-  console.log('restH', restH);
-
-  let index = 0;
-  Array(restW).fill(0).forEach((e, i) => {
-    const flagA = i % 2 === 0;
-    if (flagA) {
-      people[i].numDay = people[i].numDay + 1;
-    } else {
-      people[i].numNight = people[i].numNight + 1;
-    }
-    index = i + 1;
-  });
-
-  for (let i = index; i < restH + index; i++) {
-    const flagB = i % 2 === 0;
-    if (flagB) {
-      people[i].numHDay = people[i].numHDay + 1;
-    } else {
-      people[i].numHNight = people[i].numHNight + 1;
-    }
-  }
-
-  return people;
-};
-
-type Calculator = (
-  names: string[],
-  length: number,
-  holidays: number[],
-  workerPerShift: number,
-  shifts: number
-) => Day[];
-
-const calc: Calculator = (rawNames, length, holidays, workerPerShift, shifts) => {
-  const names = shuffle(rawNames);
-  if (!names) return;
-  const people = makePeople(names, length, holidays.length, workerPerShift, shifts);
-
-  const days = makeDays(length, holidays);
-
-  console.log(people);
-  const result: Day[] = [];
-  return result;
+const makePeople = (names: string[], workdays: number[], holidays: number[], shifts: string[], perShift:number) => {
+  /**
+   * 우선 근무해야 하는 날들을 구한다.
+   *
+   */
+  const wl = workdays;
 };
 
 const onClick = () => {
-  const people = ['홍길동',
-    '유재석',
-    '박명수',
-    '정준하',
-    '노홍철',
-    '정형돈',
-  ];
-  const workerPerShift = 2;
-  const shifts = 2;
-  calc(people, 31, [6, 7, 13, 14, 20, 21, 27, 28], workerPerShift, shifts);
+  const inputNames = ['홍길동', '유재석', '박명수', '정준하', '노홍철', '정형돈'];
+  const names = shuffle(inputNames);
+  const workdays = [1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 15, 16, 17, 18, 19, 22, 23, 24, 25, 26, 29, 30, 31];
+  const holidays = [6, 7, 13, 14, 20, 21, 27, 28];
+  const shifts = ['낮', '저녁'];
+  const perShift = 2;
+  makePeople(names, workdays, holidays, shifts, perShift);
 };
 
 </script>
