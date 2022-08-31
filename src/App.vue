@@ -125,12 +125,21 @@ const mergeDayHoli = (arrA:number[][], arrB:number[][]) => {
   return iterate(arrA.length).map((i) => [arrA[i], arrB[i]]);
 };
 
-const makePeople = (names: string[], dayWork: number, holiWrok: number, partTimeTypes: PartTimeType[], perShift:number) => {
-  const dayWorkArr = distribute(dayWork * perShift, partTimeTypes.length, names.length);
-  console.log('dayWorkArr', dayWorkArr);
-  const holiWorkArr = distribute(holiWrok * perShift, partTimeTypes.length, names.length);
-  console.log('holiWorkArr', holiWorkArr);
-  console.log('merge day+holi', mergeDayHoli(dayWorkArr, holiWorkArr));
+const makePeople = (names: string[], dayWorkNum: number, holiWrokNum: number, partTimeTypes: PartTimeType[], perShift:number) => {
+  const dayWorkArr = distribute(dayWorkNum * perShift, partTimeTypes.length, names.length);
+  const holiWorkArr = distribute(holiWrokNum * perShift, partTimeTypes.length, names.length);
+  const workArray = mergeDayHoli(dayWorkArr, holiWorkArr);
+  const makeWork = (i:number, type: 'day' | 'holi') => workArray[i][type === 'day' ? 0 : 1]
+    .map((num, key) => ({
+      type: partTimeTypes[key],
+      number: num,
+    }));
+  return names.map((name, i) => ({
+    id: newID(),
+    name,
+    dayWork: makeWork(i, 'day'),
+    holiWork: makeWork(i, 'holi'),
+  }));
 };
 
 const onClick = () => {
@@ -151,6 +160,7 @@ const onClick = () => {
   const inputNames = ['홍길동', '유재석', '박명수', '정준하', '노홍철', '임꺽정'];
   const names = shuffle(inputNames);
   const people = makePeople(names, workdays.length, holidays.length, partTimeType, perShift);
+  console.log('people', people);
 
   // console.log(calendar);
 };
