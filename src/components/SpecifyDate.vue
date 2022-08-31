@@ -1,19 +1,31 @@
 <script lang="ts" setup>
+import { ref } from 'vue';
+import { iterate } from './helper';
 
+const now = new Date();
+const years = iterate(5).map((i) => now.getFullYear() + i);
+const months = iterate(12).map((i) => i + 1);
+
+const year = ref(now.getFullYear());
+const month = ref(now.getMonth() + 2);
 </script>
 <template>
   <div>
-    <select>
-      <option value="2022">
-        2022
+    <select v-model="year">
+      <option v-for="y in years" :key="y" :value="y">
+        {{ y }}
       </option>
     </select>
-    <select>
-      <option value="9">
-        9
+    년
+    <select v-model="month">
+      <option v-for="m in months" :key="m" :value="m">
+        {{ m }}
       </option>
     </select>
     월
+  </div>
+  <div>
+    {{ year }} 년 {{ month }} 월
   </div>
   <div>
     <div>
