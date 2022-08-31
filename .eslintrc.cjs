@@ -19,6 +19,7 @@ module.exports = {
     'linebreak-style': 'off',
     'vuejs-accessibility/form-control-has-label': 'off',
     'vue/html-button-has-type': 'off',
+    'vuejs-accessibility/label-has-for': 'off',
   },
   ignorePatterns: ['dist/**', 'debug.js'],
 };
