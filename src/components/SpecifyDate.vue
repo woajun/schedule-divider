@@ -1,6 +1,15 @@
 <script lang="ts" setup>
 import { computed, reactive, ref } from 'vue';
 import { iterate } from './helper';
+import DateButton from './SpecifyDate/DateButton.vue';
+import DateButtonTable from './SpecifyDate/DateButtonTable.vue';
+
+interface Day {
+  date: number,
+  weekday: number,
+  isHoliday: boolean,
+  disabled: boolean,
+}
 
 const now = new Date();
 const opYears = iterate(5).map((i) => now.getFullYear() + i);
@@ -9,19 +18,12 @@ const opMonths = iterate(12).map((i) => i + 1);
 const year = ref(now.getFullYear());
 const month = ref(now.getMonth() + 2);
 
-interface Day {
-  date: number,
-  weekday: string,
-  isHoliday: boolean,
-  disabled: boolean,
-}
-
 const days = computed<Day[]>(() => {
   const lastDay = new Date(year.value, month.value, 0);
   const length = lastDay.getDate();
   const result = iterate(length).map((i) => {
     const aDay = new Date(year.value, month.value - 1, i + 1);
-    const weekday = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][aDay.getDay()];
+    const weekday = aDay.getDay();
     const isHoliday = !!(aDay.getDay() === 0 || aDay.getDay() === 6);
     return reactive({
       date: aDay.getDate(),
@@ -51,6 +53,11 @@ const days = computed<Day[]>(() => {
   <div>
     {{ year }} 년 {{ month }} 월
   </div>
+  <DateButtonTable :array="days" />
+  <!-- <div v-for="day in days" :key="day.date">
+    <DateButton v-bind="day" />
+  </div>
+
   <div>
     <label>
       평일:
@@ -104,5 +111,5 @@ const days = computed<Day[]>(() => {
         </button>
       </div>
     </div>
-  </div>
+  </div> -->
 </template>
