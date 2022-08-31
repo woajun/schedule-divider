@@ -269,6 +269,47 @@ const onClick = () => {
       <button>
         근무자추가
       </button>
+    </div>
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th />
+            <th>이름</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>1.</th>
+            <td>홍길동</td>
+          </tr>
+          <tr>
+            <th>2.</th>
+            <td>유재석</td>
+          </tr>
+          <tr>
+            <th>3.</th>
+            <td>박명수</td>
+          </tr>
+          <tr>
+            <th>4.</th>
+            <td>정준하</td>
+          </tr>
+          <tr>
+            <th>5.</th>
+            <td>노홍철</td>
+          </tr>
+          <tr>
+            <th>6.</th>
+            <td>임꺽정</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <hr />
+  <div>
+    <div>
       <button type="button" @click="onClick">
         근무일분배
       </button>
@@ -374,6 +415,11 @@ const onClick = () => {
         </tbody>
       </table>
     </div>
+  </div>
+  <hr />
+  <div>
+    <button>날짜 분배</button>
+    오후 근무시 다음날 오전은 가능한 피하기.
   </div>
   <div />
 </template>
