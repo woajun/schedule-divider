@@ -83,6 +83,13 @@ const makeCalendar = (workdays: number[], holidays: number[], partTimeTypes: Par
   return calendar;
 };
 
+const iterate = (num: number, el?:unknown) => {
+  if (el !== undefined) {
+    return Array(num).fill(el);
+  }
+  return Array(num).fill(0).map((e, i) => i);
+};
+
 // 해야할 날짜가 15일이고, 2교대이며, 총 4명이 나눈다.
 // [15,15,15] expect [ [3,4],[4,3],[4,4],[4,4] ]
 // 해야할 날짜가 20일이고, 3교대이며 3명이 나눈다.
@@ -91,42 +98,21 @@ const makeCalendar = (workdays: number[], holidays: number[], partTimeTypes: Par
 // [19,19,19] expect [ [7,6,6],[6,7,6],[6,6,7] ]
 // 해야할 날짜가 19일이고, 3교대이며 4명이 나눈다.
 // [19,19,19] expect [ [4,5,5],[5,4,5],[5,5,4],[5,5,5] ]
-/**
- * x = 19, z = 4
- * 19 / 4 * 4
- *
- *
- * 5, 5, 5, 4
- *
- * 날짜를 교대로 나눈다.
- *
- * [4.75, 4.75, 4.75], [4.75, 4.75, 4.75], [4.75, 4.75, 4.75], [4.75, 4.75, 4.75]
- *
- * 그것에 명수를 곱한다.
-
- * [5, 5, 4], [5, 5, 4], [5, 5, 4], [5, 5, 4]
- *
-*/
-const iterate = (num: number) => Array(num).fill(0);
-
-const divide = (date:number, shifts: number, people: number) => {
-  const element = Math.floor(date / people);
+const distribute = (date:number, shifts: number, people: number) => {
+  const el = Math.floor(date / people);
   const rest = date % people;
-  const aArr = Array(people).fill(element);
+  const aArr = iterate(people, el);
 
-  iterate(rest).forEach((e, i) => {
+  iterate(rest).forEach((i) => {
     aArr[i] = aArr[i] + 1;
   });
 
   const arrs = iterate(shifts).map(() => {
     aArr.unshift(aArr.pop());
-    return aArr.map((el) => el);
+    return aArr.map((e) => e);
   });
 
-  const apple = iterate(people).map((_no, i) => arrs.map((e) => e[i]));
-
-  // console.log(apple);
-  return apple;
+  return iterate(people).map((i) => arrs.map((e) => e[i]));
 };
 
 const makePeople = (names: string[], workdays: number, partTimeTypes: PartTimeType[], perShift:number) => {
@@ -190,10 +176,11 @@ const makePeople = (names: string[], workdays: number, partTimeTypes: PartTimeTy
 };
 
 const onClick = () => {
-  console.log('1번', divide(15, 2, 4));
-  console.log('2번', divide(20, 3, 3));
-  console.log('3번', divide(19, 3, 3));
-  console.log('4번', divide(19, 3, 4));
+  console.log(iterate(50));
+  console.log('1번', distribute(15, 2, 4));
+  console.log('2번', distribute(20, 3, 3));
+  console.log('3번', distribute(19, 3, 3));
+  console.log('4번', distribute(19, 3, 4));
 
   // const workdays = [1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 15, 16, 17, 18, 19, 22, 23, 24, 25, 26, 29, 30, 31];
   // const holidays = [6, 7, 13, 14, 20, 21, 27, 28];
