@@ -40,33 +40,29 @@ const weeks = computed(() => {
   return result;
 });
 
-// 배열을 템플릿에서 돌린다.
-
 </script>
 <template>
-  <div>
-    <table>
-      <thead>
-        <tr>
-          <th />
-          <th v-for="e in ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']" :key="e">
-            {{ e }}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(week, i) in weeks" :key="i">
-          <th>{{ i + 1 }}</th>
-          <template v-for="idx in [0, 1, 2, 3, 4, 5, 6]" :key="`${i}-${idx}`">
-            <td v-if="week[idx] === 'empty'" />
-            <td v-else-if="week[idx]">
-              <button>{{ week[idx].date }}</button>
-            </td>
-          </template>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <table>
+    <thead>
+      <tr>
+        <th />
+        <th v-for="e in ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']" :key="e">
+          {{ e }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="(week, i) in weeks" :key="i">
+        <th>{{ i + 1 }}</th>
+        <template v-for="idx in [0, 1, 2, 3, 4, 5, 6]" :key="`${i}-${idx}`">
+          <td v-if="week[idx] === 'empty'" />
+          <td v-else-if="week[idx]">
+            <button>{{ (week[idx] as Day).date }}</button>
+          </td>
+        </template>
+      </tr>
+    </tbody>
+  </table>
 </template>
 
 <style scoped>
