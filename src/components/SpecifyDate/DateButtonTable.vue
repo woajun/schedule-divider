@@ -49,46 +49,20 @@ const weeks = computed(() => {
       <thead>
         <tr>
           <th />
-          <th>Sun</th>
-          <th>Mon</th>
-          <th>Tue</th>
-          <th>Wed</th>
-          <th>Thu</th>
-          <th>Fri</th>
-          <th>Sat</th>
+          <th v-for="e in ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']" :key="e">
+            {{ e }}
+          </th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="(week, i) in weeks" :key="i">
           <th>{{ i + 1 }}</th>
-          <td v-if="week[0] === 'empty'" />
-          <td v-else-if="week[0]">
-            <button>{{ week[0].date }}</button>
-          </td>
-          <td v-if="week[1] === 'empty'" />
-          <td v-else-if="week[1]">
-            <button>{{ week[1].date }}</button>
-          </td>
-          <td v-if="week[2] === 'empty'" />
-          <td v-else-if="week[2]">
-            <button>{{ week[2].date }}</button>
-          </td>
-          <td v-if="week[3] === 'empty'" />
-          <td v-else-if="week[3]">
-            <button>{{ week[3].date }}</button>
-          </td>
-          <td v-if="week[4] === 'empty'" />
-          <td v-else-if="week[4]">
-            <button>{{ week[4].date }}</button>
-          </td>
-          <td v-if="week[5] === 'empty'" />
-          <td v-else-if="week[5]">
-            <button>{{ week[5].date }}</button>
-          </td>
-          <td v-if="week[6] === 'empty'" />
-          <td v-else-if="week[6]">
-            <button>{{ week[6].date }}</button>
-          </td>
+          <template v-for="idx in [0, 1, 2, 3, 4, 5, 6]" :key="`${i}-${idx}`">
+            <td v-if="week[idx] === 'empty'" />
+            <td v-else-if="week[idx]">
+              <button>{{ week[idx].date }}</button>
+            </td>
+          </template>
         </tr>
       </tbody>
     </table>
