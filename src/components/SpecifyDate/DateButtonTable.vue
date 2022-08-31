@@ -1,3 +1,4 @@
+<!-- eslint-disable no-cond-assign -->
 <script lang="ts" setup>
 import { computed, defineProps } from 'vue';
 import { iterate } from '../helper';
@@ -12,13 +13,15 @@ interface Day {
 const props = defineProps<{ array: Day[] }>();
 
 // 모든 일요일 인덱스를 찾는다.
+const everySundayIndexes = computed(() => props.array.reduce((arr, e, i) => {
+  if (e.weekday === 0) arr.push(i);
+  return arr;
+}, [] as number[]));
+
+console.log('everySundayIndexes', everySundayIndexes.value);
+
 // 인덱스를 기준으로 배열을 만든다.
 // 배열을 템플릿에서 돌린다.
-
-console.log(props.array);
-
-const findSunday = props.array.findIndex((e) => e.weekday === 0);
-console.log('findIndex', findSunday);
 
 const month = computed(() => {
   const months = iterate(6).map((i) => ({
@@ -38,6 +41,7 @@ const month = computed(() => {
 </script>
 <template>
   <div>
+    {{ everySundayIndexes }}
     <table>
       <thead>
         <tr>
