@@ -12,30 +12,21 @@ interface Day {
 
 const props = defineProps<{ array: Day[] }>();
 
-// 모든 일요일 인덱스를 찾는다.
-const findSunIndexes = (array: Day[]) => array.reduce((arr, e, i) => {
-  if (e.weekday === 0) arr.push(i);
-  return arr;
-}, [] as number[]);
-
-const addStartEndIndex = (array:Day[]) => {
-  const sundays = array.reduce((arr, e, i) => {
-    if (e.weekday === 0) arr.push(i);
-    return arr;
-  }, [] as number[]);
-  const orange = sundays.includes(0) ? sundays : [0, ...sundays];
-  const lastIndex = array.length - 1;
-  const banana = orange.includes(lastIndex) ? orange : [...orange, lastIndex];
-  return banana;
+const findCutPoint = (array:Day[]) => {
+  const set = array
+    .reduce((arr, e, i) => {
+      if (e.weekday === 0) arr.add(i);
+      return arr;
+    }, new Set<number>())
+    .add(0)
+    .add(array.length - 1);
+  return Array.from(set).sort((a, b) => a - b);
 };
 
-// 일요일 인덱스로 props.array를 쪼갠다.
 const splited = computed(() => {
   const arr = props.array;
-  const sunIndexes = findSunIndexes(arr);
-  // 시작, 마지막, 일요일 인덱스를 찾는다.
-  const apple = addStartEndIndex(arr);
-  console.log('apple', apple);
+  const cutPoints = findCutPoint(arr);
+  console.log('cutPoints', cutPoints);
 
   return [];
 });
