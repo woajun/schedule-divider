@@ -19,32 +19,25 @@ const findCutPoint = (array:Day[]) => {
       return arr;
     }, new Set<number>())
     .add(0)
-    .add(array.length - 1);
+    .add(array.length);
   return Array.from(set).sort((a, b) => a - b);
 };
 
-const splited = computed(() => {
+const weeks = computed(() => {
   const arr = props.array;
   const cutPoints = findCutPoint(arr);
-  console.log('cutPoints', cutPoints);
 
-  return [];
-});
+  const result = cutPoints.reduce((newArr, curPoint, i, a) => {
+    const nextPoint = a[i + 1];
+    const sliced = arr.slice(curPoint, nextPoint);
+    if (sliced.length > 0)newArr.push(sliced);
+    return newArr;
+  }, [] as Array<Day | 'empty'>[]);
 
-// 인덱스를 기준으로 배열을 만든다.
-const computedMonth = computed(() => {
-  const months = iterate(6).map((i) => ({
-    0: undefined,
-    1: undefined,
-    2: undefined,
-    3: undefined,
-    4: undefined,
-    5: undefined,
-    6: undefined,
-  }));
-  console.log('months', months);
-
-  return months;
+  const emptyCnt = 7 - result[0].length;
+  const empties: Array<'empty'> = iterate(emptyCnt).map(() => 'empty');
+  result[0].unshift(...empties);
+  return result;
 });
 
 // 배열을 템플릿에서 돌린다.
@@ -52,7 +45,6 @@ const computedMonth = computed(() => {
 </script>
 <template>
   <div>
-    {{ splited }}
     <table>
       <thead>
         <tr>
@@ -67,28 +59,35 @@ const computedMonth = computed(() => {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(week, i) in computedMonth" :key="i">
+        <tr v-for="(week, i) in weeks" :key="i">
           <th>{{ i + 1 }}</th>
-          <td v-if="week[0]">
-            <button>aaa</button>
+          <td v-if="week[0] === 'empty'" />
+          <td v-else-if="week[0]">
+            <button>{{ week[0].date }}</button>
           </td>
-          <td v-if="week[1]">
-            <button>aaa</button>
+          <td v-if="week[1] === 'empty'" />
+          <td v-else-if="week[1]">
+            <button>{{ week[1].date }}</button>
           </td>
-          <td v-if="week[2]">
-            <button>aaa</button>
+          <td v-if="week[2] === 'empty'" />
+          <td v-else-if="week[2]">
+            <button>{{ week[2].date }}</button>
           </td>
-          <td v-if="week[3]">
-            <button>aaa</button>
+          <td v-if="week[3] === 'empty'" />
+          <td v-else-if="week[3]">
+            <button>{{ week[3].date }}</button>
           </td>
-          <td v-if="week[4]">
-            <button>aaa</button>
+          <td v-if="week[4] === 'empty'" />
+          <td v-else-if="week[4]">
+            <button>{{ week[4].date }}</button>
           </td>
-          <td v-if="week[5]">
-            <button>aaa</button>
+          <td v-if="week[5] === 'empty'" />
+          <td v-else-if="week[5]">
+            <button>{{ week[5].date }}</button>
           </td>
-          <td v-if="week[6]">
-            <button>aaa</button>
+          <td v-if="week[6] === 'empty'" />
+          <td v-else-if="week[6]">
+            <button>{{ week[6].date }}</button>
           </td>
         </tr>
       </tbody>
