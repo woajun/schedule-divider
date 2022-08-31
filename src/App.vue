@@ -84,7 +84,7 @@ const makeCalendar = (workdays: number[], holidays: number[], partTimeTypes: Par
 };
 
 // 해야할 날짜가 15일이고, 2교대이며, 총 4명이 나눈다.
-// [15,15,15] expect [ [8,7],[8,7],[7,8],[7,8] ]
+// [15,15,15] expect [ [3,4],[4,3],[4,4],[4,4] ]
 // 해야할 날짜가 20일이고, 3교대이며 3명이 나눈다.
 // [20,20,20] expect [ [6,7,7],[7,6,7],[7,7,6] ]
 // 해야할 날짜가 19일이고, 3교대이며 3명이 나눈다.
@@ -107,23 +107,26 @@ const makeCalendar = (workdays: number[], holidays: number[], partTimeTypes: Par
  * [5, 5, 4], [5, 5, 4], [5, 5, 4], [5, 5, 4]
  *
 */
+const iterate = (num: number) => Array(num).fill(0);
+
 const divide = (date:number, shifts: number, people: number) => {
   const element = Math.floor(date / people);
   const rest = date % people;
   const aArr = Array(people).fill(element);
 
-  Array(rest).fill(1).forEach((e, i) => {
-    aArr[i] = aArr[i] + e;
+  iterate(rest).forEach((e, i) => {
+    aArr[i] = aArr[i] + 1;
   });
-  console.log(aArr);
 
-  const arrs = Array(shifts).fill(0).map((e, i) => {
-    const popped = aArr.pop();
-    aArr.splice(0, 0, popped);
+  const arrs = iterate(shifts).map(() => {
+    aArr.unshift(aArr.pop());
     return aArr.map((el) => el);
   });
 
-  console.log(arrs);
+  const apple = iterate(people).map((_no, i) => arrs.map((e) => e[i]));
+
+  // console.log(apple);
+  return apple;
 };
 
 const makePeople = (names: string[], workdays: number, partTimeTypes: PartTimeType[], perShift:number) => {
@@ -187,7 +190,10 @@ const makePeople = (names: string[], workdays: number, partTimeTypes: PartTimeTy
 };
 
 const onClick = () => {
-  console.log('divide', divide(19, 3, 4));
+  console.log('1번', divide(15, 2, 4));
+  console.log('2번', divide(20, 3, 3));
+  console.log('3번', divide(19, 3, 3));
+  console.log('4번', divide(19, 3, 4));
 
   // const workdays = [1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 15, 16, 17, 18, 19, 22, 23, 24, 25, 26, 29, 30, 31];
   // const holidays = [6, 7, 13, 14, 20, 21, 27, 28];
