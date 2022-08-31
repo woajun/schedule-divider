@@ -24,7 +24,7 @@ interface Date {
   partTimes: PartTime[]
 }
 
-interface HaveTo {
+interface WorkingDays {
   type: PartTimeType,
   number: number,
 }
@@ -32,8 +32,8 @@ interface HaveTo {
 interface Person {
   id: number
   name: string
-  weekdayHaveTo: HaveTo[],
-  holidayHaveTo: HaveTo[],
+  dayWork: WorkingDays[],
+  holiWork: WorkingDays[],
 }
 
 type Calendar = Map<number, Date>;
@@ -125,10 +125,11 @@ const mergeDayHoli = (arrA:number[][], arrB:number[][]) => {
   return iterate(arrA.length).map((i) => [arrA[i], arrB[i]]);
 };
 
-const makePeople = (names: string[], dayWorkNum: number, holiWrokNum: number, partTimeTypes: PartTimeType[], perShift:number) => {
+const makePeople = (names: string[], dayWorkNum: number, holiWrokNum: number, partTimeTypes: PartTimeType[], perShift:number) : Person[] => {
   const dayWorkArr = distribute(dayWorkNum * perShift, partTimeTypes.length, names.length);
   const holiWorkArr = distribute(holiWrokNum * perShift, partTimeTypes.length, names.length);
   const workArray = mergeDayHoli(dayWorkArr, holiWorkArr);
+  console.log('workArray', workArray);
   const makeWork = (i:number, type: 'day' | 'holi') => workArray[i][type === 'day' ? 0 : 1]
     .map((num, key) => ({
       type: partTimeTypes[key],
@@ -182,32 +183,197 @@ const onClick = () => {
     월
   </div>
   <div>
-    근무자 수 :
-    <select>
-      <option value="6">
-        6
-      </option>
-    </select>
+    <div>
+      <button>
+        근무추가
+      </button>
+    </div>
+    <div>
+      <table>
+        <tbody>
+          <tr>
+            <th>평일</th>
+            <td>1</td>
+            <td>2</td>
+            <td>3</td>
+            <td>4</td>
+            <td>5</td>
+            <td>8</td>
+            <td>9</td>
+            <td>10</td>
+            <td>11</td>
+            <td>12</td>
+            <td>15</td>
+            <td>16</td>
+            <td>17</td>
+            <td>18</td>
+            <td>19</td>
+            <td>22</td>
+            <td>23</td>
+            <td>24</td>
+            <td>25</td>
+            <td>26</td>
+            <td>29</td>
+            <td>30</td>
+            <td>31</td>
+          </tr>
+          <tr>
+            <th>공휴일</th>
+            <td>6</td>
+            <td>7</td>
+            <td>13</td>
+            <td>14</td>
+            <td>20</td>
+            <td>21</td>
+            <td>27</td>
+            <td>28</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
+  <hr>
   <div>
-    한 타임 당 근무자 수 :
-    <select>
-      <option value="2">
-        2
-      </option>
-    </select>
+    <div>
+      <button>
+        근무추가
+      </button>
+    </div>
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th />
+            <th>교대</th>
+            <th>근무인원</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>1.</th>
+            <td>오전근무</td>
+            <td>2</td>
+          </tr>
+          <tr>
+            <th>2.</th>
+            <td>오후근무</td>
+            <td>2</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
+  <hr>
   <div>
-    하루의 교대 횟수 :
-    <select>
-      <option value="2">
-        2
-      </option>
-    </select>
+    <div>
+      <button>
+        근무자추가
+      </button>
+      <button type="button" @click="onClick">
+        근무일분배
+      </button>
+    </div>
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th />
+            <th />
+            <th colspan="2">
+              평일
+            </th>
+            <th colspan="2">
+              공휴일
+            </th>
+            <th colspan="1">
+              평일합
+            </th>
+            <th colspan="1">
+              공휴합
+            </th>
+            <th colspan="1">
+              총합
+            </th>
+          </tr>
+          <tr>
+            <th />
+            <th>이름</th>
+            <th>오전근무</th>
+            <th>오후근무</th>
+            <th>오전근무</th>
+            <th>오후근무</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>1.</th>
+            <td>홍길동</td>
+            <td>7</td>
+            <td>8</td>
+            <td>3</td>
+            <td>3</td>
+            <td>15</td>
+            <td>6</td>
+            <td>21</td>
+          </tr>
+          <tr>
+            <th>2.</th>
+            <td>유재석</td>
+            <td>7</td>
+            <td>8</td>
+            <td>3</td>
+            <td>3</td>
+            <td>15</td>
+            <td>6</td>
+            <td>21</td>
+          </tr>
+          <tr>
+            <th>3.</th>
+            <td>박명수</td>
+            <td>8</td>
+            <td>7</td>
+            <td>3</td>
+            <td>2</td>
+            <td>15</td>
+            <td>5</td>
+            <td>20</td>
+          </tr>
+          <tr>
+            <th>4.</th>
+            <td>정준하</td>
+            <td>8</td>
+            <td>7</td>
+            <td>3</td>
+            <td>2</td>
+            <td>15</td>
+            <td>5</td>
+            <td>20</td>
+          </tr>
+          <tr>
+            <th>5.</th>
+            <td>노홍철</td>
+            <td>8</td>
+            <td>8</td>
+            <td>2</td>
+            <td>3</td>
+            <td>16</td>
+            <td>5</td>
+            <td>21</td>
+          </tr>
+          <tr>
+            <th>6.</th>
+            <td>임꺽정</td>
+            <td>8</td>
+            <td>8</td>
+            <td>2</td>
+            <td>3</td>
+            <td>16</td>
+            <td>5</td>
+            <td>21</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
-  <div>
-    <button type="button" @click="onClick">
-      계산
-    </button>
-  </div>
+  <div />
 </template>
