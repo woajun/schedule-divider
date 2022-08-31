@@ -3,22 +3,29 @@ import { ref } from 'vue';
 import { iterate } from './helper';
 
 const now = new Date();
-const years = iterate(5).map((i) => now.getFullYear() + i);
-const months = iterate(12).map((i) => i + 1);
+const opYears = iterate(5).map((i) => now.getFullYear() + i);
+const opMonths = iterate(12).map((i) => i + 1);
 
 const year = ref(now.getFullYear());
 const month = ref(now.getMonth() + 2);
+
+interface Day {
+  date: number,
+  dayOftheWeek: 'mon' | 'tue' | 'wed' | 'thr' | 'fri' | 'sat' | 'sun',
+  holiday: boolean,
+}
+
 </script>
 <template>
   <div>
     <select v-model="year">
-      <option v-for="y in years" :key="y" :value="y">
+      <option v-for="y in opYears" :key="y" :value="y">
         {{ y }}
       </option>
     </select>
     년
     <select v-model="month">
-      <option v-for="m in months" :key="m" :value="m">
+      <option v-for="m in opMonths" :key="m" :value="m">
         {{ m }}
       </option>
     </select>
