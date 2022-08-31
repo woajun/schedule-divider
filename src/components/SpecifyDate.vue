@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { iterate } from './helper';
 
 const now = new Date();
@@ -13,6 +13,7 @@ interface Day {
   date: number,
   weekday: string,
   isHoliday: boolean,
+  isUsed: boolean,
 }
 
 const days = computed<Day[]>(() => {
@@ -22,12 +23,12 @@ const days = computed<Day[]>(() => {
     const aDay = new Date(year.value, month.value - 1, i + 1);
     const weekday = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][aDay.getDay()];
     const isHoliday = !!(aDay.getDay() === 0 || aDay.getDay() === 6);
-    return {
+    return reactive({
       date: aDay.getDate(),
       weekday,
       isHoliday,
-
-    };
+      isUsed: true,
+    });
   });
   return result;
 });
@@ -53,31 +54,55 @@ const days = computed<Day[]>(() => {
   <div>
     <label>
       평일:
-      <div v-for="day in days" :key="day.date">
-        <div v-if="!day.isHoliday">
-          {{ day.date }}
-          <button>
-            공휴일
-          </button>
-          <button>
-            삭제
-          </button>
-        </div>
-      </div>
     </label>
+    <div v-for="day in days" :key="day.date">
+      <div v-if="!day.isHoliday && day.isUsed">
+        {{ day.date }} - {{ day.weekday }}
+        <button @click="()=> { day.isHoliday = !day.isHoliday }">
+          공휴일
+        </button>
+        <button @click="()=> { day.isUsed = false }">
+          삭제
+        </button>
+      </div>
+    </div>
     <label>
       공휴일:
-      <div v-for="day in days" :key="day.date">
-        <div v-if="day.isHoliday">
-          {{ day.date }}
-          <button>
-            평일
-          </button>
-          <button>
-            삭제
-          </button>
-        </div>
-      </div>
     </label>
+    <div v-for="day in days" :key="day.date">
+      <div v-if="day.isHoliday && day.isUsed">
+        {{ day.date }} - {{ day.weekday }}
+        <button @click="()=> { day.isHoliday = !day.isHoliday }">
+          평일
+        </button>
+        <button @click="()=> { day.isUsed = false }">
+          삭제
+        </button>
+      </div>
+    </div>
+    <label>
+      휴지통:
+    </label>
+    <div v-for="day in days" :key="day.date">
+      <div v-if="!day.isUsed">
+        {{ day.date }} - {{ day.weekday }}
+        <button
+          @click="()=> {
+            day.isHoliday = false;
+            day.isUsed = true
+          }"
+        >
+          평일
+        </button>
+        <button
+          @click="()=> {
+            day.isHoliday = true;
+            day.isUsed = true
+          }"
+        >
+          공휴일
+        </button>
+      </div>
+    </div>
   </div>
 </template>
