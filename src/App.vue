@@ -83,6 +83,49 @@ const makeCalendar = (workdays: number[], holidays: number[], partTimeTypes: Par
   return calendar;
 };
 
+// 해야할 날짜가 15일이고, 2교대이며, 총 4명이 나눈다.
+// [15,15,15] expect [ [8,7],[8,7],[7,8],[7,8] ]
+// 해야할 날짜가 20일이고, 3교대이며 3명이 나눈다.
+// [20,20,20] expect [ [6,7,7],[7,6,7],[7,7,6] ]
+// 해야할 날짜가 19일이고, 3교대이며 3명이 나눈다.
+// [19,19,19] expect [ [7,6,6],[6,7,6],[6,6,7] ]
+// 해야할 날짜가 19일이고, 3교대이며 4명이 나눈다.
+// [19,19,19] expect [ [4,5,5],[5,4,5],[5,5,4],[5,5,5] ]
+/**
+ * x = 19, z = 4
+ * 19 / 4 * 4
+ *
+ *
+ * 5, 5, 5, 4
+ *
+ * 날짜를 교대로 나눈다.
+ *
+ * [4.75, 4.75, 4.75], [4.75, 4.75, 4.75], [4.75, 4.75, 4.75], [4.75, 4.75, 4.75]
+ *
+ * 그것에 명수를 곱한다.
+
+ * [5, 5, 4], [5, 5, 4], [5, 5, 4], [5, 5, 4]
+ *
+*/
+const divide = (date:number, shifts: number, people: number) => {
+  const element = Math.floor(date / people);
+  const rest = date % people;
+  const aArr = Array(people).fill(element);
+
+  Array(rest).fill(1).forEach((e, i) => {
+    aArr[i] = aArr[i] + e;
+  });
+  console.log(aArr);
+
+  const arrs = Array(shifts).fill(0).map((e, i) => {
+    const popped = aArr.pop();
+    aArr.splice(0, 0, popped);
+    return aArr.map((el) => el);
+  });
+
+  console.log(arrs);
+};
+
 const makePeople = (names: string[], workdays: number, partTimeTypes: PartTimeType[], perShift:number) => {
   const numOfPerson = names.length;
   const numOfShift = partTimeTypes.length;
@@ -116,22 +159,19 @@ const makePeople = (names: string[], workdays: number, partTimeTypes: PartTimeTy
   const applePeople = people.map((e, i) => {
     const flag = i % 2 === 0;
     const apple = e.realHaveTo / numOfShift;
+    let weekdayHaveTo;
     if (apple % 1 === 0) {
-      const weekdayHaveTo = partTimeTypes.map((type) => ({
+      weekdayHaveTo = partTimeTypes.map((type) => ({
         type,
         number: apple,
       }));
-      return {
-        id: e.id,
-        name: e.name,
-        weekdayHaveTo,
-      };
+      // TODO
+      // 7.5 이면 (8, 7) 나누는 로직
+      // 7.6666 이면 (7, 8, 8)
+      // 7.3333 이면 (7, 7, 8)
+    } else {
+      console.log(apple);
     }
-    // TODO 7.66 이면 (8, 8, 7) 나누는 로직
-    const weekdayHaveTo = partTimeTypes.map((type) => ({
-      type,
-      number: Math.floor(apple),
-    }));
     return {
       id: e.id,
       name: e.name,
@@ -147,17 +187,19 @@ const makePeople = (names: string[], workdays: number, partTimeTypes: PartTimeTy
 };
 
 const onClick = () => {
-  const workdays = [1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 15, 16, 17, 18, 19, 22, 23, 24, 25, 26, 29, 30, 31];
-  const holidays = [6, 7, 13, 14, 20, 21, 27, 28];
-  const shifts = ['낮', '저녁'];
-  const perShift = 2;
+  console.log('divide', divide(19, 3, 4));
 
-  const partTimeType = makePartTimeTypes(shifts);
-  const calendar = makeCalendar(workdays, holidays, partTimeType, perShift);
+  // const workdays = [1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 15, 16, 17, 18, 19, 22, 23, 24, 25, 26, 29, 30, 31];
+  // const holidays = [6, 7, 13, 14, 20, 21, 27, 28];
+  // const shifts = ['낮', '저녁'];
+  // const perShift = 2;
 
-  const inputNames = ['홍길동', '유재석', '박명수', '정준하', '노홍철', '임꺽정'];
-  const names = shuffle(inputNames);
-  const people = makePeople(names, workdays.length, partTimeType, perShift);
+  // const partTimeType = makePartTimeTypes(shifts);
+  // const calendar = makeCalendar(workdays, holidays, partTimeType, perShift);
+
+  // const inputNames = ['홍길동', '유재석', '박명수', '정준하', '노홍철', '임꺽정'];
+  // const names = shuffle(inputNames);
+  // const people = makePeople(names, workdays.length, partTimeType, perShift);
 
   // console.log(calendar);
 };
