@@ -1,0 +1,111 @@
+<script lang="ts" setup></script>
+<template>
+  <div>
+    <div>
+      <button type="button" @click="onClick">
+        근무일분배
+      </button>
+    </div>
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th />
+            <th />
+            <th colspan="2">
+              평일
+            </th>
+            <th colspan="2">
+              공휴일
+            </th>
+            <th colspan="1">
+              평일합
+            </th>
+            <th colspan="1">
+              공휴합
+            </th>
+            <th colspan="1">
+              총합
+            </th>
+          </tr>
+          <tr>
+            <th />
+            <th>이름</th>
+            <th>오전근무</th>
+            <th>오후근무</th>
+            <th>오전근무</th>
+            <th>오후근무</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>1.</th>
+            <td>홍길동</td>
+            <td>7</td>
+            <td>8</td>
+            <td>3</td>
+            <td>3</td>
+            <td>15</td>
+            <td>6</td>
+            <td>21</td>
+          </tr>
+          <tr>
+            <th>2.</th>
+            <td>유재석</td>
+            <td>7</td>
+            <td>8</td>
+            <td>3</td>
+            <td>3</td>
+            <td>15</td>
+            <td>6</td>
+            <td>21</td>
+          </tr>
+          <tr>
+            <th>3.</th>
+            <td>박명수</td>
+            <td>8</td>
+            <td>7</td>
+            <td>3</td>
+            <td>2</td>
+            <td>15</td>
+            <td>5</td>
+            <td>20</td>
+          </tr>
+          <tr>
+            <th>4.</th>
+            <td>정준하</td>
+            <td>8</td>
+            <td>7</td>
+            <td>3</td>
+            <td>2</td>
+            <td>15</td>
+            <td>5</td>
+            <td>20</td>
+          </tr>
+          <tr>
+            <th>5.</th>
+            <td>노홍철</td>
+            <td>8</td>
+            <td>8</td>
+            <td>2</td>
+            <td>3</td>
+            <td>16</td>
+            <td>5</td>
+            <td>21</td>
+          </tr>
+          <tr>
+            <th>6.</th>
+            <td>임꺽정</td>
+            <td>8</td>
+            <td>8</td>
+            <td>2</td>
+            <td>3</td>
+            <td>16</td>
+            <td>5</td>
+            <td>21</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>

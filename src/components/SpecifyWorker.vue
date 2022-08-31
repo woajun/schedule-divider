@@ -1,0 +1,54 @@
+<script lang="ts" setup>
+
+</script>
+<template>
+  <div>
+    <div>
+      <button>
+        근무자추가
+      </button>
+    </div>
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th />
+            <th>이름</th>
+            <th>피하고 싶은 날</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>1.</th>
+            <td>홍길동</td>
+            <td>3</td>
+          </tr>
+          <tr>
+            <th>2.</th>
+            <td>유재석</td>
+            <td>5</td>
+          </tr>
+          <tr>
+            <th>3.</th>
+            <td>박명수</td>
+            <td>15</td>
+          </tr>
+          <tr>
+            <th>4.</th>
+            <td>정준하</td>
+            <td>16,17</td>
+          </tr>
+          <tr>
+            <th>5.</th>
+            <td>노홍철</td>
+            <td>31</td>
+          </tr>
+          <tr>
+            <th>6.</th>
+            <td>임꺽정</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>
