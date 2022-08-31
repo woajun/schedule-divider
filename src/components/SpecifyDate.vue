@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { iterate } from './helper';
 
 const now = new Date();
@@ -15,9 +15,15 @@ interface Day {
   holiday: boolean,
 }
 
+const days = computed(() => {
+  const lastDay = new Date(year.value, month.value, 0);
+  console.log(lastDay);
+  return '';
+});
 </script>
 <template>
   <div>
+    {{ days }}
     <select v-model="year">
       <option v-for="y in opYears" :key="y" :value="y">
         {{ y }}
