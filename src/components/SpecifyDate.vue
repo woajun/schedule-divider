@@ -13,7 +13,7 @@ interface Day {
   date: number,
   weekday: string,
   isHoliday: boolean,
-  isUsed: boolean,
+  disabled: boolean,
 }
 
 const days = computed<Day[]>(() => {
@@ -27,7 +27,7 @@ const days = computed<Day[]>(() => {
       date: aDay.getDate(),
       weekday,
       isHoliday,
-      isUsed: true,
+      disabled: false,
     });
   });
   return result;
@@ -56,12 +56,12 @@ const days = computed<Day[]>(() => {
       평일:
     </label>
     <div v-for="day in days" :key="day.date">
-      <div v-if="!day.isHoliday && day.isUsed">
+      <div v-if="!day.isHoliday && !day.disabled">
         {{ day.date }} - {{ day.weekday }}
         <button @click="()=> { day.isHoliday = !day.isHoliday }">
           공휴일
         </button>
-        <button @click="()=> { day.isUsed = false }">
+        <button @click="()=> { day.disabled = true }">
           삭제
         </button>
       </div>
@@ -70,12 +70,12 @@ const days = computed<Day[]>(() => {
       공휴일:
     </label>
     <div v-for="day in days" :key="day.date">
-      <div v-if="day.isHoliday && day.isUsed">
+      <div v-if="day.isHoliday && !day.disabled">
         {{ day.date }} - {{ day.weekday }}
         <button @click="()=> { day.isHoliday = !day.isHoliday }">
           평일
         </button>
-        <button @click="()=> { day.isUsed = false }">
+        <button @click="()=> { day.disabled = true }">
           삭제
         </button>
       </div>
@@ -84,12 +84,12 @@ const days = computed<Day[]>(() => {
       휴지통:
     </label>
     <div v-for="day in days" :key="day.date">
-      <div v-if="!day.isUsed">
+      <div v-if="day.disabled">
         {{ day.date }} - {{ day.weekday }}
         <button
           @click="()=> {
             day.isHoliday = false;
-            day.isUsed = true
+            day.disabled = false
           }"
         >
           평일
@@ -97,7 +97,7 @@ const days = computed<Day[]>(() => {
         <button
           @click="()=> {
             day.isHoliday = true;
-            day.isUsed = true
+            day.disabled = false
           }"
         >
           공휴일
