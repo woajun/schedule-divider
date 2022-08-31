@@ -2,12 +2,12 @@
 <script lang="ts" setup>
 import { computed, defineProps } from 'vue';
 import { iterate } from '../helper';
+import DateButton from './DateButton.vue';
 
 interface Day {
   date: number,
   weekday: number,
-  isHoliday: boolean,
-  disabled: boolean,
+  type: 'work' | 'holiday' | 'disabled' | string,
 }
 
 const props = defineProps<{ array: Day[] }>();
@@ -57,7 +57,12 @@ const weeks = computed(() => {
         <template v-for="idx in [0, 1, 2, 3, 4, 5, 6]" :key="`${i}-${idx}`">
           <td v-if="week[idx] === 'empty'" />
           <td v-else-if="week[idx]">
-            <button>{{ (week[idx] as Day).date }}</button>
+            <DateButton
+              v-bind="(week[idx] as Day)"
+              @type="(t) => {
+                (week[idx] as Day).type = t;
+              }"
+            />
           </td>
         </template>
       </tr>

@@ -4,21 +4,44 @@ import { defineProps } from 'vue';
 interface Day {
   date: number,
   weekday: number,
-  isHoliday: boolean,
-  disabled: boolean,
+  type: 'work' | 'holiday' | 'disabled' | string,
 }
 
 const props = defineProps<Day>();
+const emit = defineEmits(['type']);
+
+const changeType = () => {
+  switch (props.type) {
+    case 'work':
+      emit('type', 'holiday');
+      break;
+    case 'holiday':
+      emit('type', 'disabled');
+      break;
+    case 'disabled':
+      emit('type', 'work');
+      break;
+    default:
+      emit('type', 'work');
+      break;
+  }
+};
 
 </script>
 <template>
-  <button>
+  <button
+    :class="type"
+    @click="changeType"
+  >
     {{ props.date }}
   </button>
 </template>
 
 <style scoped>
-.red {
-    background-color: red;
+.holiday {
+    background-color: crimson;
+}
+.disabled {
+    background-color: black;
 }
 </style>

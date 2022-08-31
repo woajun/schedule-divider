@@ -1,14 +1,12 @@
 <script lang="ts" setup>
 import { computed, reactive, ref } from 'vue';
 import { iterate } from './helper';
-import DateButton from './SpecifyDate/DateButton.vue';
 import DateButtonTable from './SpecifyDate/DateButtonTable.vue';
 
 interface Day {
   date: number,
   weekday: number,
-  isHoliday: boolean,
-  disabled: boolean,
+  type: 'work' | 'holiday' | 'disabled' | string,
 }
 
 const now = new Date();
@@ -28,8 +26,7 @@ const days = computed<Day[]>(() => {
     return reactive({
       date: aDay.getDate(),
       weekday,
-      isHoliday,
-      disabled: false,
+      type: isHoliday ? 'holiday' : 'work',
     });
   });
   return result;
@@ -54,62 +51,4 @@ const days = computed<Day[]>(() => {
     {{ year }} 년 {{ month }} 월
   </div>
   <DateButtonTable :array="days" />
-  <!-- <div v-for="day in days" :key="day.date">
-    <DateButton v-bind="day" />
-  </div>
-
-  <div>
-    <label>
-      평일:
-    </label>
-    <div v-for="day in days" :key="day.date">
-      <div v-if="!day.isHoliday && !day.disabled">
-        {{ day.date }} - {{ day.weekday }}
-        <button @click="()=> { day.isHoliday = !day.isHoliday }">
-          공휴일
-        </button>
-        <button @click="()=> { day.disabled = true }">
-          삭제
-        </button>
-      </div>
-    </div>
-    <label>
-      공휴일:
-    </label>
-    <div v-for="day in days" :key="day.date">
-      <div v-if="day.isHoliday && !day.disabled">
-        {{ day.date }} - {{ day.weekday }}
-        <button @click="()=> { day.isHoliday = !day.isHoliday }">
-          평일
-        </button>
-        <button @click="()=> { day.disabled = true }">
-          삭제
-        </button>
-      </div>
-    </div>
-    <label>
-      휴지통:
-    </label>
-    <div v-for="day in days" :key="day.date">
-      <div v-if="day.disabled">
-        {{ day.date }} - {{ day.weekday }}
-        <button
-          @click="()=> {
-            day.isHoliday = false;
-            day.disabled = false
-          }"
-        >
-          평일
-        </button>
-        <button
-          @click="()=> {
-            day.isHoliday = true;
-            day.disabled = false
-          }"
-        >
-          공휴일
-        </button>
-      </div>
-    </div>
-  </div> -->
 </template>
