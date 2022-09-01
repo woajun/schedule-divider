@@ -12,74 +12,6 @@ import SpecifyWorker from './components/SpecifyWorker/SpecifyWorker.vue';
 import DistributeWorking from './components/DistributeWorking/DistributeWorking.vue';
 import AssignSchedule from './components/AssignSchedule/AssignSchedule.vue';
 
-interface Assignee {
-  assignee?: Person;
-}
-
-interface PartTimeType {
-  id: number,
-  name: string,
-}
-
-interface PartTime {
-  type: PartTimeType,
-  assign: Assignee[]
-}
-
-interface Date {
-  holiday: boolean,
-  partTimes: PartTime[]
-}
-
-interface WorkingDays {
-  type: PartTimeType,
-  number: number,
-}
-
-type Calendar = Map<number, Date>;
-
-let idGenerator = 0;
-const newID = () => {
-  idGenerator = idGenerator + 1;
-  return idGenerator;
-};
-
-const makePartTimeTypes = (shifts: string[]) => shifts.map((name):PartTimeType => ({
-  id: newID(),
-  name,
-}));
-
-
-const makeCalendar = (workdays: number[], holidays: number[], partTimeTypes: PartTimeType[], perShift: number): Calendar => {
-  const partTimes = ():PartTime[] => partTimeTypes.map((type) => ({
-    type,
-    assign: Array(perShift).fill({ assignee: undefined }),
-  }));
-  const calendar: Calendar = new Map();
-
-  workdays.forEach((e) => {
-    calendar.set(e, { holiday: false, partTimes: partTimes() });
-  });
-
-  holidays.forEach((e) => {
-    calendar.set(e, { holiday: true, partTimes: partTimes() });
-  });
-
-  return calendar;
-};
-
-const onClick = () => {
-  const workdays = [1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 15, 16, 17, 18, 19, 22, 23, 24, 25, 26, 29, 30, 31];
-  const holidays = [6, 7, 13, 14, 20, 21, 27, 28];
-  const shifts = ['낮', '저녁'];
-  const perShift = 2;
-
-  const partTimeType = makePartTimeTypes(shifts);
-  const calendar = makeCalendar(workdays, holidays, partTimeType, perShift);
-
-  console.log(calendar);
-};
-
 interface Workdays {
   weekday: number[],
   holiday: number[],
@@ -138,14 +70,18 @@ const setDistributed = (n:Worker[]) => {
   <hr>
   근무자: {{ workers }}
   <hr />
-  <DistributeWorking :workers="workers" :shifts="shifts" :workdays="workdays" @distributed="setDistributed" />
+  <DistributeWorking
+    :workers="workers"
+    :shifts="shifts"
+    :workdays="workdays"
+    @distributed="setDistributed"
+  />
   <hr>
   distributed: {{ distributed }}
   <hr>
   AssignSchedule 재료:
   1. 평일, 공휴일
   2. distributed + 피하고 싶은 날
-
   <hr />
   <AssignSchedule />
 </template>
