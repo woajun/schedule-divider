@@ -1,9 +1,3 @@
-<!-- eslint-disable @typescript-eslint/no-array-constructor -->
-<!-- eslint-disable arrow-body-style -->
-<!-- eslint-disable vue/max-len -->
-<!-- eslint-disable no-multiple-empty-lines -->
-<!-- eslint-disable operator-assignment -->
-<!-- eslint-disable no-plusplus -->
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
 import SpecifyDate from './components/SpecifyDate/SpecifyDate.vue';
@@ -13,15 +7,21 @@ import DistributeWorking from './components/DistributeWorking/DistributeWorking.
 import AssignSchedule from './components/AssignSchedule/AssignSchedule.vue';
 
 interface Workdays {
+  year:number,
+  month:number,
   weekday: number[],
   holiday: number[],
 }
 
 const workdays = reactive<Workdays>({
+  year: 0,
+  month: 0,
   weekday: [],
   holiday: [],
 });
 const setWorkdays = (n: Workdays) => {
+  workdays.year = n.year;
+  workdays.month = n.month;
   workdays.weekday = n.weekday;
   workdays.holiday = n.holiday;
 };
@@ -50,17 +50,25 @@ const setWorkers = (n:Worker[]) => {
   workers.value = n;
 };
 
-const distributed = ref<Worker[]>([]);
+const calendarIO = reactive<{
+  year: number,
+  month: number,
+  worker: Worker[] }>({
+  year: 0,
+  month: 0,
+  worker: [],
+});
 const setDistributed = (n:Worker[]) => {
-  distributed.value = n;
+  calendarIO.year = workdays.year;
+  calendarIO.month = workdays.month;
+  calendarIO.worker = n;
 };
 </script>
 
 <template>
   <SpecifyDate @workdays="setWorkdays" />
   <hr>
-  평일 : {{ workdays.weekday }}
-  공휴일 : {{ workdays.holiday }}
+  {{ workdays }}
   <hr>
   <SpecifyShifts @shifts="setShifts" />
   <hr>
@@ -77,11 +85,7 @@ const setDistributed = (n:Worker[]) => {
     @distributed="setDistributed"
   />
   <hr>
-  distributed: {{ distributed }}
-  <hr>
-  AssignSchedule 재료:
-  1. 평일, 공휴일
-  2. distributed + 피하고 싶은 날
+  calendarIO: {{ calendarIO }}
   <hr />
   <AssignSchedule />
 </template>

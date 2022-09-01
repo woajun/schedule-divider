@@ -46,6 +46,8 @@ watchEffect(() => {
     }
     return obj;
   }, {
+    year: year.value,
+    month: month.value,
     weekday: Array<number>(),
     holiday: Array<number>(),
   });
