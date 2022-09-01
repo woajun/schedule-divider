@@ -138,10 +138,6 @@ const setWorkers = (n:Worker[]) => {
   <hr>
   근무자: {{ workers }}
   <hr />
-  <button @click="onClick">
-    test
-  </button>
-  <hr />
   <DistributeWorking :workers="workers" :shifts="shifts" :workdays="workdays" />
   <hr />
   <AssignSchedule />

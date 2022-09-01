@@ -1,5 +1,6 @@
 <!-- eslint-disable operator-assignment -->
-<script lang="ts" setup>import { iterate, newID, shuffle } from '../helper';
+<script lang="ts" setup>import { ref } from 'vue';
+import { iterate, newID, shuffle } from '../helper';
 
 interface Worker {
   id: number,
@@ -104,6 +105,8 @@ const makePeople = (
   }));
 };
 
+const refPeople = ref<Person[]>([]);
+
 const onClick = () => {
   // console.log('1번', distribute(15, 2, 4));
   // console.log('2번', distribute(20, 3, 3));
@@ -111,7 +114,7 @@ const onClick = () => {
   // console.log('4번', distribute(19, 3, 4));
   // console.log('5번', distribute(30, 2, 4));
   const workdays = props.workdays.weekday;
-  const holidays = props.workdays.weekday;
+  const holidays = props.workdays.holiday;
   const shifts = props.shifts.map((e) => e.name);
   const perShift = props.shifts[0].num;
   const partTimeType = makePartTimeTypes(shifts);
@@ -120,7 +123,7 @@ const onClick = () => {
   const people = makePeople(names, workdays.length, holidays.length, partTimeType, perShift);
   console.log('people', people);
 
-  // console.log(calendar);
+  refPeople.value = people;
 };
 
 </script>
@@ -137,10 +140,10 @@ const onClick = () => {
           <tr>
             <th />
             <th />
-            <th colspan="2">
+            <th :colspan="props.shifts.length">
               평일
             </th>
-            <th colspan="2">
+            <th :colspan="props.shifts.length">
               공휴일
             </th>
             <th colspan="1">
@@ -156,78 +159,30 @@ const onClick = () => {
           <tr>
             <th />
             <th>이름</th>
-            <th>오전근무</th>
-            <th>오후근무</th>
-            <th>오전근무</th>
-            <th>오후근무</th>
+            <template v-for="shift in props.shifts" :key="shift.id">
+              <th>{{ shift.name }}</th>
+            </template>
+            <template v-for="shift in props.shifts" :key="shift.id">
+              <th>{{ shift.name }}</th>
+            </template>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <th>1.</th>
-            <td>홍길동</td>
-            <td>7</td>
-            <td>8</td>
-            <td>3</td>
-            <td>3</td>
-            <td>15</td>
-            <td>6</td>
-            <td>21</td>
-          </tr>
-          <tr>
-            <th>2.</th>
-            <td>유재석</td>
-            <td>7</td>
-            <td>8</td>
-            <td>3</td>
-            <td>3</td>
-            <td>15</td>
-            <td>6</td>
-            <td>21</td>
-          </tr>
-          <tr>
-            <th>3.</th>
-            <td>박명수</td>
-            <td>8</td>
-            <td>7</td>
-            <td>3</td>
-            <td>2</td>
-            <td>15</td>
-            <td>5</td>
-            <td>20</td>
-          </tr>
-          <tr>
-            <th>4.</th>
-            <td>정준하</td>
-            <td>8</td>
-            <td>7</td>
-            <td>3</td>
-            <td>2</td>
-            <td>15</td>
-            <td>5</td>
-            <td>20</td>
-          </tr>
-          <tr>
-            <th>5.</th>
-            <td>노홍철</td>
-            <td>8</td>
-            <td>8</td>
-            <td>2</td>
-            <td>3</td>
-            <td>16</td>
-            <td>5</td>
-            <td>21</td>
-          </tr>
-          <tr>
-            <th>6.</th>
-            <td>임꺽정</td>
-            <td>8</td>
-            <td>8</td>
-            <td>2</td>
-            <td>3</td>
-            <td>16</td>
-            <td>5</td>
-            <td>21</td>
+          <tr v-for="(person, i) in refPeople" :key="person.id">
+            <th>{{ i }}.</th>
+            <td>{{ person.name }}</td>
+            <template v-for="weekday in person.dayWork" :key="weekday">
+              <td>{{ weekday.number }}</td>
+            </template>
+            <template v-for="weekday in person.holiWork" :key="weekday">
+              <td>{{ weekday.number }}</td>
+            </template>
+            <td>{{ person.dayWork.reduce((p, c)=>p + c.number, 0) }}</td>
+            <td>{{ person.holiWork.reduce((p, c)=>p + c.number, 0) }}</td>
+            <td>
+              {{ person.dayWork.reduce((p, c)=>p + c.number, 0)
+                + person.holiWork.reduce((p, c)=>p + c.number, 0) }}
+            </td>
           </tr>
         </tbody>
       </table>
