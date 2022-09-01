@@ -67,13 +67,14 @@ const makeWorkdayArray = (
 
 const result = ref<Worker[]>([]);
 
+const shifts = ref<Shift[]>([]);
 const onClick = () => {
   const workers = props.workers.length;
   const weekdays = props.workdays.weekday.length;
   const weekends = props.workdays.holiday.length;
-  const shifts = props.shifts.length;
+  shifts.value = props.shifts;
   const perShift = props.shifts[0].num;
-  const arr = makeWorkdayArray(workers, weekdays, weekends, shifts, perShift);
+  const arr = makeWorkdayArray(workers, weekdays, weekends, shifts.value.length, perShift);
 
   const shuffled = shuffle(props.workers);
 
@@ -101,10 +102,10 @@ const onClick = () => {
           <tr>
             <th />
             <th />
-            <th :colspan="props.shifts.length">
+            <th :colspan="shifts.length">
               평일
             </th>
-            <th :colspan="props.shifts.length">
+            <th :colspan="shifts.length">
               공휴일
             </th>
             <th>
@@ -120,10 +121,10 @@ const onClick = () => {
           <tr>
             <th />
             <th>이름</th>
-            <template v-for="shift in props.shifts" :key="shift.id">
+            <template v-for="shift in shifts" :key="shift.id">
               <th>{{ shift.name }}</th>
             </template>
-            <template v-for="shift in props.shifts" :key="shift.id">
+            <template v-for="shift in shifts" :key="shift.id">
               <th>{{ shift.name }}</th>
             </template>
           </tr>
