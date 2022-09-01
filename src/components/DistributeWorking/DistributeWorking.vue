@@ -1,3 +1,4 @@
+<!-- eslint-disable prefer-destructuring -->
 <!-- eslint-disable operator-assignment -->
 <script lang="ts" setup>import { ref } from 'vue';
 import { iterate, shuffle } from '../helper';
@@ -6,6 +7,8 @@ interface Worker {
   id: number,
   name: string,
   avoidDays: number[],
+  weekday: number[],
+  weekend: number[],
 }
 
 interface Shift {
@@ -19,6 +22,7 @@ interface Workdays {
   holiday: number[],
 }
 
+const emit = defineEmits(['distributed']);
 const props = defineProps<{
   workers: Worker[],
   shifts: Shift[],
@@ -61,14 +65,7 @@ const makeWorkdayArray = (
   return mergeWeek(weekday, weekend);
 };
 
-interface Person {
-  id: number,
-  name: string,
-  weekday: number[],
-  weekend: number[],
-}
-
-const result = ref<Person[]>([]);
+const result = ref<Worker[]>([]);
 
 const onClick = () => {
   const workers = props.workers.length;
@@ -80,13 +77,13 @@ const onClick = () => {
 
   const shuffled = shuffle(props.workers);
 
-  const people:Person[] = shuffled.map((e, i) => ({
-    id: e.id,
-    name: e.name,
-    weekday: arr[i][0],
-    weekend: arr[i][1],
-  }));
+  const people:Worker[] = shuffled.map((e, i) => {
+    e.weekday = arr[i][0];
+    e.weekend = arr[i][1];
+    return e;
+  });
 
+  emit('distributed', people);
   result.value = people;
 };
 

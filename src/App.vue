@@ -36,13 +36,6 @@ interface WorkingDays {
   number: number,
 }
 
-interface Person {
-  id: number
-  name: string
-  dayWork: WorkingDays[],
-  holiWork: WorkingDays[],
-}
-
 type Calendar = Map<number, Date>;
 
 let idGenerator = 0;
@@ -116,29 +109,43 @@ interface Worker {
   id: number,
   name: string,
   avoidDays: number[],
+  weekday: number[],
+  weekend: number[],
 }
 
 const workers = ref<Worker[]>([]);
 const setWorkers = (n:Worker[]) => {
   workers.value = n;
 };
+
+const distributed = ref<Worker[]>([]);
+const setDistributed = (n:Worker[]) => {
+  distributed.value = n;
+};
 </script>
 
 <template>
   <SpecifyDate @workdays="setWorkdays" />
-  <!-- <hr>
+  <hr>
   평일 : {{ workdays.weekday }}
-  공휴일 : {{ workdays.holiday }} -->
+  공휴일 : {{ workdays.holiday }}
   <hr>
   <SpecifyShifts @shifts="setShifts" />
-  <!-- <hr>
-  근무: {{ shifts }} -->
+  <hr>
+  근무: {{ shifts }}
   <hr>
   <SpecifyWorker @workers="setWorkers" />
-  <!-- <hr>
-  근무자: {{ workers }} -->
+  <hr>
+  근무자: {{ workers }}
   <hr />
-  <DistributeWorking :workers="workers" :shifts="shifts" :workdays="workdays" />
+  <DistributeWorking :workers="workers" :shifts="shifts" :workdays="workdays" @distributed="setDistributed" />
+  <hr>
+  distributed: {{ distributed }}
+  <hr>
+  AssignSchedule 재료:
+  1. 평일, 공휴일
+  2. distributed + 피하고 싶은 날
+
   <hr />
   <AssignSchedule />
 </template>
