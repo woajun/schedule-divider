@@ -16,10 +16,18 @@ const props = defineProps<{
     </thead>
     <tbody>
       <tr v-for="(week, i) in props.month" :key="i">
-        <template v-for="day in week" :key="`${i}-${day}`">
+        <template v-for="(day, idx) in week" :key="`${i}-${idx}`">
           <td v-if="day === 0" />
           <td v-else>
-            {{ day }}
+            <div>
+              {{ day }}
+            </div>
+            <div>
+              노홍철
+            </div>
+            <div>
+              박명수
+            </div>
           </td>
         </template>
       </tr>

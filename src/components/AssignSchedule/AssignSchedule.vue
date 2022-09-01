@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { iterate } from '../helper';
 import CalendarShape from './CalendarShape.vue';
 
@@ -40,7 +40,9 @@ const props = defineProps<{
   io:CalendarIO
 }>();
 
-const calendarShape = computed(() => {
+const calendarShape = ref<number[][]>([[]]);
+
+const createCalendarShape = () => {
   const y = props.io.year;
   const m = props.io.month;
   const length = new Date(y, m, 0).getDate();
@@ -50,16 +52,25 @@ const calendarShape = computed(() => {
   const marginDate = margin.concat(date);
 
   const count = Math.ceil(marginDate.length / 7);
-  const result = iterate(count).map((i) => marginDate.slice((i) * 7, (i + 1) * 7));
-  return result;
-});
+  calendarShape.value = iterate(count).map((i) => marginDate.slice((i) * 7, (i + 1) * 7));
+};
+
+const onClick = () => {
+  console.log('aaa');
+  createCalendarShape();
+};
 
 </script>
 <template>
   {{ calendarShape }}
   <div>
-    <button>날짜 분배</button>
+    <button @click="onClick">
+      날짜 분배
+    </button>
+    <br>
     오후 근무시 다음날 오전은 가능한 피하기.
+    <br>
+    {{ props.io.year }} 년 {{ props.io.month }} 월 근무표
     <CalendarShape :month="calendarShape" />
   </div>
 </template>
