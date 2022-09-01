@@ -1,5 +1,8 @@
+<!-- eslint-disable no-param-reassign -->
 <script lang="ts" setup>
-import { computed, reactive, ref } from 'vue';
+import {
+  computed, reactive, ref, watch, watchEffect,
+} from 'vue';
 import { iterate } from './helper';
 import DateButtonTable from './SpecifyDate/DateButtonTable.vue';
 
@@ -31,24 +34,39 @@ const days = computed<Day[]>(() => {
   });
   return result;
 });
+
+const emit = defineEmits(['workdays']);
+
+watchEffect(() => {
+  const workdays = days.value.reduce((p, c) => {
+    if (c.type === 'work') {
+      p[0] += 1;
+    } else if (c.type === 'holiday') {
+      p[1] += 1;
+    }
+    return p;
+  }, [0, 0]);
+  emit('workdays', workdays);
+});
 </script>
 <template>
   <div>
-    <select v-model="year">
-      <option v-for="y in opYears" :key="y" :value="y">
-        {{ y }}
-      </option>
-    </select>
-    년
-    <select v-model="month">
-      <option v-for="m in opMonths" :key="m" :value="m">
-        {{ m }}
-      </option>
-    </select>
-    월
-  </div>
-  <div>
-    {{ year }} 년 {{ month }} 월
+    <label>
+      <select v-model="year">
+        <option v-for="y in opYears" :key="y" :value="y">
+          {{ y }}
+        </option>
+      </select>
+      년
+    </label>
+    <label>
+      <select v-model="month">
+        <option v-for="m in opMonths" :key="m" :value="m">
+          {{ m }}
+        </option>
+      </select>
+      월
+    </label>
   </div>
   <DateButtonTable :array="days" />
 </template>

@@ -68,6 +68,11 @@ const weeks = computed(() => {
       </tr>
     </tbody>
   </table>
+  <br />
+  <DateButton date="평일근무" type="work" :weekday="99" />
+  <DateButton date="주말근무" type="holiday" :weekday="99" />
+  <DateButton date="근무없음" type="disabled" :weekday="99" />
+  <br />
 </template>
 
 <style scoped>

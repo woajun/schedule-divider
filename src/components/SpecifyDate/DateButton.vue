@@ -2,7 +2,7 @@
 import { defineProps } from 'vue';
 
 interface Day {
-  date: number,
+  date: number | string,
   weekday: number,
   type: 'work' | 'holiday' | 'disabled' | string,
 }

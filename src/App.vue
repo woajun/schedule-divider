@@ -5,6 +5,7 @@
 <!-- eslint-disable operator-assignment -->
 <!-- eslint-disable no-plusplus -->
 <script setup lang="ts">
+import { reactive } from 'vue';
 import SpecifyDate from './components/SpecifyDate.vue';
 import SpecifyShifts from './components/SpecifyShifts.vue';
 import SpecifyWorker from './components/SpecifyWorker.vue';
@@ -172,10 +173,19 @@ const onClick = () => {
   // console.log(calendar);
 };
 
+
+const workdays = reactive([0, 0]);
+const setWorkdays = ([day, holi]: [number, number]) => {
+  workdays[0] = day;
+  workdays[1] = holi;
+};
 </script>
 
 <template>
-  <SpecifyDate />
+  <SpecifyDate @workdays="setWorkdays" />
+  <hr>
+  평일 : {{ workdays[0] }}
+  공휴일 : {{ workdays[1] }}
   <hr>
   <SpecifyShifts />
   <hr>
