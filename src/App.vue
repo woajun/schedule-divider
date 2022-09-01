@@ -191,6 +191,10 @@ const setWorkdays = ([day, holi]: [number, number]) => {
   <hr>
   <SpecifyWorker />
   <hr />
+  <button @click="onClick">
+    test
+  </button>
+  <hr />
   <DistributeWorking />
   <hr />
   <AssignSchedule />

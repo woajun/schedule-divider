@@ -1,35 +1,69 @@
 <script lang="ts" setup>
+import { reactive } from 'vue';
+import { newID } from '../helper';
 
+interface Shift {
+  id: number,
+  name: string,
+  num: number,
+}
+
+const shifts = reactive<Shift[]>([
+  {
+    id: newID(),
+    name: '오전근무',
+    num: 2,
+  },
+  {
+    id: newID(),
+    name: '오후근무',
+    num: 2,
+  },
+]);
+
+const addShift = () => {
+  shifts.push({
+    id: newID(),
+    name: '',
+    num: 2,
+  });
+};
+
+const removeShift = (id: number) => {
+  const i = shifts.findIndex((s) => s.id === id);
+  shifts.splice(i, 1);
+};
 </script>
 <template>
   <div>
-    <div>
-      <button>
-        근무추가
-      </button>
-    </div>
-    <div>
-      <table>
-        <thead>
-          <tr>
-            <th />
-            <th>교대</th>
-            <th>근무인원</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th>1.</th>
-            <td>오전근무</td>
-            <td>2</td>
-          </tr>
-          <tr>
-            <th>2.</th>
-            <td>오후근무</td>
-            <td>2</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <button @click="addShift">
+      근무추가
+    </button>
+    <table>
+      <thead>
+        <tr>
+          <th />
+          <th>근무이름</th>
+          <th>근무인원</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(shift, i) in shifts" :key="shift.id">
+          <th>{{ i }}.</th>
+          <td><input v-model="shift.name" :class="{ invalid: shift.name.length < 1 }" type="text"></td>
+          <td><input v-model="shift.num" type="number"></td>
+          <td>
+            <button @click="()=>removeShift(shift.id)">
+              삭제
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
+<style>
+  .invalid {
+    background-color: brown;
+  }
+</style>

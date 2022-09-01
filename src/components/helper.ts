@@ -11,3 +11,9 @@ export const iterate: Iterate = (num: number, el?:unknown) => {
   }
   return Array(num).fill(0).map((e, i) => i);
 };
+
+let idGenerator = 0;
+export const newID = () => {
+  idGenerator += 1;
+  return idGenerator;
+};
