@@ -3,6 +3,13 @@ import { computed, ref, watch } from 'vue';
 import { iterate } from '../helper';
 import CalendarShape from './CalendarShape.vue';
 
+interface Workdays {
+  year:number,
+  month:number,
+  weekday: number[],
+  holiday: number[],
+}
+
 interface Worker {
   id: number,
   name: string,
@@ -12,9 +19,8 @@ interface Worker {
 }
 
 interface CalendarIO {
-  year: number,
-  month: number,
-  worker: Worker[]
+  workers: Worker[]
+  workdays: Workdays
 }
 
 interface Output {
@@ -43,8 +49,8 @@ const props = defineProps<{
 const calendarShape = ref<number[][]>([[]]);
 
 const createCalendarShape = () => {
-  const y = props.io.year;
-  const m = props.io.month;
+  const y = props.io.workdays.year;
+  const m = props.io.workdays.month;
   const length = new Date(y, m, 0).getDate();
   const firstday = new Date(y, m - 1, 1).getDay();
   const date = iterate(length).map((i) => i + 1);
@@ -70,7 +76,7 @@ const onClick = () => {
     <br>
     오후 근무시 다음날 오전은 가능한 피하기.
     <br>
-    {{ props.io.year }} 년 {{ props.io.month }} 월 근무표
+    {{ props.io.workdays.year }} 년 {{ props.io.workdays.month }} 월 근무표
     <CalendarShape :month="calendarShape" />
   </div>
 </template>

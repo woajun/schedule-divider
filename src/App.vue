@@ -51,21 +51,23 @@ const setWorkers = (n:Worker[]) => {
 };
 
 interface CalendarIO {
-  year: number,
-  month: number,
-  worker: Worker[]
+  workers: Worker[]
+  workdays: Workdays
 }
 
 const calendarIO = reactive<CalendarIO>({
-  year: 0,
-  month: 0,
-  worker: [],
+  workers: [],
+  workdays: {
+    year: 0,
+    month: 0,
+    weekday: [],
+    holiday: [],
+  },
 });
 
 const setDistributed = (n:Worker[]) => {
-  calendarIO.year = workdays.year;
-  calendarIO.month = workdays.month;
-  calendarIO.worker = n;
+  calendarIO.workdays = workdays;
+  calendarIO.workers = n;
 };
 </script>
 
