@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 /* eslint-disable import/prefer-default-export */
 
 type Iterate = {
@@ -17,3 +18,18 @@ export const newID = () => {
   idGenerator += 1;
   return idGenerator;
 };
+
+export function shuffle<T>(rawArr:Array<T>):Array<T> {
+  const arr = JSON.parse(JSON.stringify(rawArr));
+  let i = arr.length;
+  let randomI : number;
+
+  while (i !== 0) {
+    randomI = Math.floor(Math.random() * i);
+    i--;
+
+    // eslint-disable-next-line no-param-reassign
+    [arr[i], arr[randomI]] = [arr[randomI], arr[i]];
+  }
+  return arr;
+}

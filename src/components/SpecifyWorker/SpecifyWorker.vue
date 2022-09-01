@@ -48,7 +48,8 @@ const removeWorker = (id: number) => {
 };
 
 watchEffect(() => {
-  emit('workers', workers);
+  const newWokrers = workers.filter((e) => e.name.length > 0);
+  emit('workers', newWokrers);
 });
 
 const addWorker = () => {
