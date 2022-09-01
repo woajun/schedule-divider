@@ -50,14 +50,18 @@ const setWorkers = (n:Worker[]) => {
   workers.value = n;
 };
 
-const calendarIO = reactive<{
+interface CalendarIO {
   year: number,
   month: number,
-  worker: Worker[] }>({
+  worker: Worker[]
+}
+
+const calendarIO = reactive<CalendarIO>({
   year: 0,
   month: 0,
   worker: [],
 });
+
 const setDistributed = (n:Worker[]) => {
   calendarIO.year = workdays.year;
   calendarIO.month = workdays.month;
@@ -87,5 +91,5 @@ const setDistributed = (n:Worker[]) => {
   <hr>
   calendarIO: {{ calendarIO }}
   <hr />
-  <AssignSchedule />
+  <AssignSchedule :io="calendarIO" />
 </template>

@@ -3,12 +3,12 @@
 
 type Iterate = {
   (num: number):number[];
-  <T>(num: number, el?:T):T[];
-  (num: number, el?:unknown):unknown[];
+  <T>(num: number, fill?:T):T[];
+  (num: number, fill?:unknown):unknown[];
 };
-export const iterate: Iterate = (num: number, el?:unknown) => {
-  if (el !== undefined) {
-    return Array(num).fill(el);
+export const iterate: Iterate = (num: number, fill?:unknown) => {
+  if (fill !== undefined) {
+    return Array(num).fill(fill);
   }
   return Array(num).fill(0).map((e, i) => i);
 };
