@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, watch } from 'vue';
 import { iterate } from '../helper';
+import CalendarShape from './CalendarShape.vue';
 
 interface Worker {
   id: number,
@@ -46,7 +47,11 @@ const calendarShape = computed(() => {
   const firstday = new Date(y, m - 1, 1).getDay();
   const date = iterate(length).map((i) => i + 1);
   const margin = iterate(firstday, 0);
-  return margin.concat(date);
+  const marginDate = margin.concat(date);
+
+  const count = Math.ceil(marginDate.length / 7);
+  const result = iterate(count).map((i) => marginDate.slice((i) * 7, (i + 1) * 7));
+  return result;
 });
 
 </script>
@@ -55,5 +60,6 @@ const calendarShape = computed(() => {
   <div>
     <button>날짜 분배</button>
     오후 근무시 다음날 오전은 가능한 피하기.
+    <CalendarShape :month="calendarShape" />
   </div>
 </template>
