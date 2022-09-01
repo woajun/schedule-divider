@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { reactive } from 'vue';
+import { reactive, watchEffect } from 'vue';
 import { newID } from '../helper';
 
 interface Shift {
@@ -8,6 +8,7 @@ interface Shift {
   num: number,
 }
 
+const emit = defineEmits(['shifts']);
 const shifts = reactive<Shift[]>([
   {
     id: newID(),
@@ -33,6 +34,10 @@ const removeShift = (id: number) => {
   const i = shifts.findIndex((s) => s.id === id);
   shifts.splice(i, 1);
 };
+
+watchEffect(() => {
+  emit('shifts', shifts);
+});
 </script>
 <template>
   <div>

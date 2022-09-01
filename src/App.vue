@@ -5,7 +5,7 @@
 <!-- eslint-disable operator-assignment -->
 <!-- eslint-disable no-plusplus -->
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 import SpecifyDate from './components/SpecifyDate/SpecifyDate.vue';
 import SpecifyShifts from './components/SpecifyShifts/SpecifyShifts.vue';
 import SpecifyWorker from './components/SpecifyWorker/SpecifyWorker.vue';
@@ -179,6 +179,17 @@ const setWorkdays = ([day, holi]: [number, number]) => {
   workdays[0] = day;
   workdays[1] = holi;
 };
+
+interface Shift {
+  id: number,
+  name: string,
+  num: number,
+}
+
+const shifts = ref<Shift[]>([]);
+const setShifts = (n:Shift[]) => {
+  shifts.value = n;
+};
 </script>
 
 <template>
@@ -187,7 +198,9 @@ const setWorkdays = ([day, holi]: [number, number]) => {
   평일 : {{ workdays[0] }}
   공휴일 : {{ workdays[1] }}
   <hr>
-  <SpecifyShifts />
+  <SpecifyShifts @shifts="setShifts" />
+  <hr>
+  근무: {{ shifts }}
   <hr>
   <SpecifyWorker />
   <hr />
