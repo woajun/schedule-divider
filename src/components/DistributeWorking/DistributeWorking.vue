@@ -49,7 +49,7 @@ const mergeWeek = (arrA:number[][], arrB:number[][]) => {
   return iterate(arrA.length).map((i) => [arrA[i], arrB[i]]);
 };
 
-const workdayArray = (
+const makeWorkdayArray = (
   people: number,
   wd: number,
   hd: number,
@@ -71,11 +71,12 @@ interface Person {
 const result = ref<Person[]>([]);
 
 const onClick = () => {
-  const workdays = props.workdays.weekday;
-  const holidays = props.workdays.holiday;
-  const shifts = props.shifts.map((e) => e.name);
+  const workers = props.workers.length;
+  const weekdays = props.workdays.weekday.length;
+  const weekends = props.workdays.holiday.length;
+  const shifts = props.shifts.length;
   const perShift = props.shifts[0].num;
-  const arr = workdayArray(props.workers.length, workdays.length, holidays.length, shifts.length, perShift);
+  const arr = makeWorkdayArray(workers, weekdays, weekends, shifts, perShift);
 
   const shuffled = shuffle(props.workers);
 
@@ -109,13 +110,13 @@ const onClick = () => {
             <th :colspan="props.shifts.length">
               공휴일
             </th>
-            <th colspan="1">
+            <th>
               평일합
             </th>
-            <th colspan="1">
+            <th>
               공휴합
             </th>
-            <th colspan="1">
+            <th>
               총합
             </th>
           </tr>
@@ -132,7 +133,7 @@ const onClick = () => {
         </thead>
         <tbody>
           <tr v-for="(person, i) in result" :key="person.id">
-            <th>{{ i }}.</th>
+            <th>{{ i + 1 }}.</th>
             <td>{{ person.name }}</td>
             <template v-for="(shift, idx) in person.weekday" :key="idx">
               <td>{{ shift }}</td>

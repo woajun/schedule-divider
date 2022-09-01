@@ -78,7 +78,7 @@ const addWorker = () => {
         </thead>
         <tbody>
           <tr v-for="(worekr, i) in workers" :key="worekr.id">
-            <th>{{ i }}.</th>
+            <th>{{ i + 1 }}.</th>
             <td><input v-model="worekr.name" :class="{ invalid: worekr.name.length < 1 }" type="text"></td>
             <td><input v-model="worekr.avoidDays" type="text"></td>
             <td>

@@ -65,7 +65,7 @@ watchEffect(() => {
     </thead>
     <tbody>
       <tr v-for="(shift, i) in shifts" :key="shift.id">
-        <th>{{ i }}.</th>
+        <th>{{ i + 1 }}.</th>
         <td><input v-model="shift.name" :class="{ invalid: shift.name.length < 1 }" type="text"></td>
         <td>
           <button @click="()=>removeShift(shift.id)">
