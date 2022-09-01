@@ -1,12 +1,7 @@
 <script lang="ts" setup>
 import { reactive, ref, watchEffect } from 'vue';
+import type { Shift } from '@/interfaces';
 import { newID } from '../helper';
-
-interface Shift {
-  id: number,
-  name: string,
-  num: number,
-}
 
 const emit = defineEmits(['shifts']);
 const shifts = reactive<Shift[]>([

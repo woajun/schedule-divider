@@ -1,27 +1,8 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { ref } from 'vue';
+import type { CalendarIO } from '@/interfaces';
 import { iterate } from '../helper';
 import CalendarShape from './CalendarShape.vue';
-
-interface Workdays {
-  year:number,
-  month:number,
-  weekday: number[],
-  holiday: number[],
-}
-
-interface Worker {
-  id: number,
-  name: string,
-  avoidDays: number[],
-  weekday: number[],
-  weekend: number[],
-}
-
-interface CalendarIO {
-  workers: Worker[]
-  workdays: Workdays
-}
 
 interface Output {
   date: number,
@@ -62,7 +43,6 @@ const createCalendarShape = () => {
 };
 
 const onClick = () => {
-  console.log('aaa');
   createCalendarShape();
 };
 

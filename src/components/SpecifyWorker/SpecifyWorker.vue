@@ -1,12 +1,7 @@
 <script lang="ts" setup>
 import { reactive, watchEffect } from 'vue';
+import type { Worker } from '@/interfaces';
 import { newID } from '../helper';
-
-interface Worker {
-  id: number,
-  name: string,
-  avoidDays: number[],
-}
 
 const emit = defineEmits(['workers']);
 const workers = reactive<Worker[]>([
@@ -14,31 +9,43 @@ const workers = reactive<Worker[]>([
     id: newID(),
     name: '유재석',
     avoidDays: [],
+    weekday: [],
+    weekend: [],
   },
   {
     id: newID(),
     name: '박명수',
     avoidDays: [],
+    weekday: [],
+    weekend: [],
   },
   {
     id: newID(),
     name: '정준하',
     avoidDays: [],
+    weekday: [],
+    weekend: [],
   },
   {
     id: newID(),
     name: '하하',
     avoidDays: [],
+    weekday: [],
+    weekend: [],
   },
   {
     id: newID(),
     name: '정형돈',
     avoidDays: [],
+    weekday: [],
+    weekend: [],
   },
   {
     id: newID(),
     name: '노홍철',
     avoidDays: [],
+    weekday: [],
+    weekend: [],
   },
 ]);
 
@@ -57,6 +64,8 @@ const addWorker = () => {
     id: newID(),
     name: '',
     avoidDays: [],
+    weekday: [],
+    weekend: [],
   });
 };
 </script>

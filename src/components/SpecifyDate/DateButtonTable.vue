@@ -3,12 +3,7 @@
 import { computed, defineProps } from 'vue';
 import { iterate } from '../helper';
 import DateButton from './DateButton.vue';
-
-interface Day {
-  date: number,
-  weekday: number,
-  type: 'work' | 'holiday' | 'disabled' | string,
-}
+import type { Day } from './interfaces';
 
 const props = defineProps<{ array: Day[] }>();
 

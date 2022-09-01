@@ -5,13 +5,9 @@ import SpecifyShifts from './components/SpecifyShifts/SpecifyShifts.vue';
 import SpecifyWorker from './components/SpecifyWorker/SpecifyWorker.vue';
 import DistributeWorking from './components/DistributeWorking/DistributeWorking.vue';
 import AssignSchedule from './components/AssignSchedule/AssignSchedule.vue';
-
-interface Workdays {
-  year:number,
-  month:number,
-  weekday: number[],
-  holiday: number[],
-}
+import type {
+  Worker, CalendarIO, Shift, Workdays,
+} from './interfaces';
 
 const workdays = reactive<Workdays>({
   year: 0,
@@ -26,34 +22,15 @@ const setWorkdays = (n: Workdays) => {
   workdays.holiday = n.holiday;
 };
 
-interface Shift {
-  id: number,
-  name: string,
-  num: number,
-}
-
 const shifts = ref<Shift[]>([]);
 const setShifts = (n:Shift[]) => {
   shifts.value = n;
 };
 
-interface Worker {
-  id: number,
-  name: string,
-  avoidDays: number[],
-  weekday: number[],
-  weekend: number[],
-}
-
 const workers = ref<Worker[]>([]);
 const setWorkers = (n:Worker[]) => {
   workers.value = n;
 };
-
-interface CalendarIO {
-  workers: Worker[]
-  workdays: Workdays
-}
 
 const calendarIO = reactive<CalendarIO>({
   workers: [],

@@ -5,12 +5,7 @@ import {
 } from 'vue';
 import { iterate } from '../helper';
 import DateButtonTable from './DateButtonTable.vue';
-
-interface Day {
-  date: number,
-  weekday: number,
-  type: 'work' | 'holiday' | 'disabled' | string,
-}
+import type { Day } from './interfaces';
 
 const emit = defineEmits(['workdays']);
 

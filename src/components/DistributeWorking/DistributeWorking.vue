@@ -1,26 +1,9 @@
 <!-- eslint-disable prefer-destructuring -->
 <!-- eslint-disable operator-assignment -->
-<script lang="ts" setup>import { ref } from 'vue';
+<script lang="ts" setup>
+import { ref } from 'vue';
+import type { Worker, Shift, Workdays } from '@/interfaces';
 import { iterate, shuffle } from '../helper';
-
-interface Worker {
-  id: number,
-  name: string,
-  avoidDays: number[],
-  weekday: number[],
-  weekend: number[],
-}
-
-interface Shift {
-  id: number,
-  name: string,
-  num: number,
-}
-
-interface Workdays {
-  weekday: number[],
-  holiday: number[],
-}
 
 const emit = defineEmits(['distributed']);
 const props = defineProps<{
