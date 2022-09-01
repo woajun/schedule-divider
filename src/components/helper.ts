@@ -1,5 +1,11 @@
 /* eslint-disable import/prefer-default-export */
-export const iterate = (num: number, el?:unknown) => {
+
+type Iterate = {
+  (num: number):number[];
+  <T>(num: number, el?:T):T[];
+  (num: number, el?:unknown):unknown[];
+};
+export const iterate: Iterate = (num: number, el?:unknown) => {
   if (el !== undefined) {
     return Array(num).fill(el);
   }

@@ -12,6 +12,8 @@ interface Day {
   type: 'work' | 'holiday' | 'disabled' | string,
 }
 
+const emit = defineEmits(['workdays']);
+
 const now = new Date();
 const opYears = iterate(5).map((i) => now.getFullYear() + i);
 const opMonths = iterate(12).map((i) => i + 1);
@@ -35,8 +37,6 @@ const days = computed<Day[]>(() => {
   return result;
 });
 
-const emit = defineEmits(['workdays']);
-
 watchEffect(() => {
   const workdays = days.value.reduce((p, c) => {
     if (c.type === 'work') {
@@ -48,6 +48,31 @@ watchEffect(() => {
   }, [0, 0]);
   emit('workdays', workdays);
 });
+
+const previous = () => {
+  if (month.value === 1 && year.value > Math.min(...opYears)) {
+    month.value = 12;
+    year.value -= 1;
+    return;
+  }
+  if (month.value === 1) {
+    return;
+  }
+  month.value -= 1;
+};
+
+const next = () => {
+  if (month.value === 12 && year.value < Math.max(...opYears)) {
+    month.value = 1;
+    year.value += 1;
+    return;
+  }
+  if (month.value === 12) {
+    return;
+  }
+  month.value += 1;
+};
+
 </script>
 <template>
   <div>
@@ -67,6 +92,13 @@ watchEffect(() => {
       </select>
       월
     </label>
+    <button @click="previous">
+      ◀
+    </button>
+    &nbsp;
+    <button @click="next">
+      ▶
+    </button>
   </div>
   <DateButtonTable :array="days" />
 </template>
