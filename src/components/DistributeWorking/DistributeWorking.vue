@@ -1,8 +1,32 @@
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+interface Worker {
+  id: number,
+  name: string,
+  avoidDays: number[],
+}
+
+interface Shift {
+  id: number,
+  name: string,
+  num: number,
+}
+
+interface Workdays {
+  weekday: number[],
+  holiday: number[],
+}
+
+const props = defineProps<{
+  workers: Worker[],
+  shifts: Shift[],
+  workdays: Workdays,
+}>();
+
+</script>
 <template>
   <div>
     <div>
-      <button type="button" @click="onClick">
+      <button type="button">
         근무일분배
       </button>
     </div>

@@ -38,14 +38,17 @@ const days = computed<Day[]>(() => {
 });
 
 watchEffect(() => {
-  const workdays = days.value.reduce((p, c) => {
+  const workdays = days.value.reduce((obj, c) => {
     if (c.type === 'work') {
-      p[0] += 1;
+      obj.weekday.push(c.date);
     } else if (c.type === 'holiday') {
-      p[1] += 1;
+      obj.holiday.push(c.date);
     }
-    return p;
-  }, [0, 0]);
+    return obj;
+  }, {
+    weekday: Array<number>(),
+    holiday: Array<number>(),
+  });
   emit('workdays', workdays);
 });
 

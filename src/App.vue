@@ -173,11 +173,18 @@ const onClick = () => {
   // console.log(calendar);
 };
 
+interface Workdays {
+  weekday: number[],
+  holiday: number[],
+}
 
-const workdays = reactive([0, 0]);
-const setWorkdays = ([day, holi]: [number, number]) => {
-  workdays[0] = day;
-  workdays[1] = holi;
+const workdays = reactive<Workdays>({
+  weekday: [],
+  holiday: [],
+});
+const setWorkdays = (n: Workdays) => {
+  workdays.weekday = n.weekday;
+  workdays.holiday = n.holiday;
 };
 
 interface Shift {
@@ -206,8 +213,8 @@ const setWorkers = (n:Worker[]) => {
 <template>
   <SpecifyDate @workdays="setWorkdays" />
   <hr>
-  평일 : {{ workdays[0] }}
-  공휴일 : {{ workdays[1] }}
+  평일 : {{ workdays.weekday }}
+  공휴일 : {{ workdays.holiday }}
   <hr>
   <SpecifyShifts @shifts="setShifts" />
   <hr>
@@ -221,7 +228,7 @@ const setWorkers = (n:Worker[]) => {
     test
   </button>
   <hr />
-  <DistributeWorking />
+  <DistributeWorking :workers="workers" :shifts="shifts" :workdays="workdays" />
   <hr />
   <AssignSchedule />
 </template>
