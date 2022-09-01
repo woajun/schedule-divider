@@ -190,6 +190,17 @@ const shifts = ref<Shift[]>([]);
 const setShifts = (n:Shift[]) => {
   shifts.value = n;
 };
+
+interface Worker {
+  id: number,
+  name: string,
+  avoidDays: number[],
+}
+
+const workers = ref<Worker[]>([]);
+const setWorkers = (n:Worker[]) => {
+  workers.value = n;
+};
 </script>
 
 <template>
@@ -202,7 +213,9 @@ const setShifts = (n:Shift[]) => {
   <hr>
   근무: {{ shifts }}
   <hr>
-  <SpecifyWorker />
+  <SpecifyWorker @workers="setWorkers" />
+  <hr>
+  근무자: {{ workers }}
   <hr />
   <button @click="onClick">
     test

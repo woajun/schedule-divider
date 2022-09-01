@@ -67,7 +67,7 @@ watchEffect(() => {
     </table>
   </div>
 </template>
-<style>
+<style scoped>
   .invalid {
     background-color: brown;
   }
