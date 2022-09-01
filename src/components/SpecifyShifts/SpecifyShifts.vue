@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { reactive, watchEffect } from 'vue';
+import { reactive, ref, watchEffect } from 'vue';
 import { newID } from '../helper';
 
 interface Shift {
@@ -35,8 +35,13 @@ const removeShift = (id: number) => {
   shifts.splice(i, 1);
 };
 
+const perShift = ref(2);
+
 watchEffect(() => {
-  emit('shifts', shifts);
+  emit('shifts', shifts.map((e) => {
+    e.num = perShift.value;
+    return e;
+  }));
 });
 </script>
 <template>
@@ -44,28 +49,32 @@ watchEffect(() => {
     <button @click="addShift">
       근무추가
     </button>
-    <table>
-      <thead>
-        <tr>
-          <th />
-          <th>근무이름</th>
-          <th>근무인원</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(shift, i) in shifts" :key="shift.id">
-          <th>{{ i }}.</th>
-          <td><input v-model="shift.name" :class="{ invalid: shift.name.length < 1 }" type="text"></td>
-          <td><input v-model="shift.num" type="number"></td>
-          <td>
-            <button @click="()=>removeShift(shift.id)">
-              삭제
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
   </div>
+  <div>
+    <label>
+      근무당 인원
+      <input v-model="perShift" type="number">
+    </label>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th />
+        <th>근무이름</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="(shift, i) in shifts" :key="shift.id">
+        <th>{{ i }}.</th>
+        <td><input v-model="shift.name" :class="{ invalid: shift.name.length < 1 }" type="text"></td>
+        <td>
+          <button @click="()=>removeShift(shift.id)">
+            삭제
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </template>
 <style scoped>
   .invalid {

@@ -126,17 +126,17 @@ const setWorkers = (n:Worker[]) => {
 
 <template>
   <SpecifyDate @workdays="setWorkdays" />
-  <hr>
+  <!-- <hr>
   평일 : {{ workdays.weekday }}
-  공휴일 : {{ workdays.holiday }}
+  공휴일 : {{ workdays.holiday }} -->
   <hr>
   <SpecifyShifts @shifts="setShifts" />
-  <hr>
-  근무: {{ shifts }}
+  <!-- <hr>
+  근무: {{ shifts }} -->
   <hr>
   <SpecifyWorker @workers="setWorkers" />
-  <hr>
-  근무자: {{ workers }}
+  <!-- <hr>
+  근무자: {{ workers }} -->
   <hr />
   <DistributeWorking :workers="workers" :shifts="shifts" :workdays="workdays" />
   <hr />
