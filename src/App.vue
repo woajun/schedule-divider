@@ -6,11 +6,11 @@
 <!-- eslint-disable no-plusplus -->
 <script setup lang="ts">
 import { reactive } from 'vue';
-import SpecifyDate from './components/SpecifyDate.vue';
-import SpecifyShifts from './components/SpecifyShifts.vue';
-import SpecifyWorker from './components/SpecifyWorker.vue';
-import DistributeWorking from './components/DistributeWorking.vue';
-import AssignSchedule from './components/AssignSchedule.vue';
+import SpecifyDate from './components/SpecifyDate/SpecifyDate.vue';
+import SpecifyShifts from './components/SpecifyShifts/SpecifyShifts.vue';
+import SpecifyWorker from './components/SpecifyWorker/SpecifyWorker.vue';
+import DistributeWorking from './components/DistributeWorking/DistributeWorking.vue';
+import AssignSchedule from './components/AssignSchedule/AssignSchedule.vue';
 
 interface Assignee {
   assignee?: Person;

@@ -1,10 +1,10 @@
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts" setup>
 import {
-  computed, reactive, ref, watch, watchEffect,
+  computed, reactive, ref, watchEffect,
 } from 'vue';
-import { iterate } from './helper';
-import DateButtonTable from './SpecifyDate/DateButtonTable.vue';
+import { iterate } from '../helper';
+import DateButtonTable from './DateButtonTable.vue';
 
 interface Day {
   date: number,
