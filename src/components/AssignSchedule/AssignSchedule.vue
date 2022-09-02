@@ -45,20 +45,20 @@ const createCalendarShape = () => {
 
 const outputs = ref<Output[]>([]);
 
-const randomAssign = (workers:Worker[], workdays: Workdays, s: Shift[]) => {
-  const findDayType = (i:number) => {
-    if (workdays.weekday.includes(i)) {
-      return 'weekday';
-    }
-    if (workdays.weekend.includes(i)) {
-      return 'weekend';
-    }
-    return 'empty';
-  };
+const findDayType = (workdays: Workdays, i:number) => {
+  if (workdays.weekday.includes(i)) {
+    return 'weekday';
+  }
+  if (workdays.weekend.includes(i)) {
+    return 'weekend';
+  }
+  return 'empty';
+};
 
+const randomAssign = (workers:Worker[], workdays: Workdays, s: Shift[]) => {
   const apple = iterate(3).reduce((result, i) => {
     const date = i + 1;
-    const type = findDayType(date);
+    const type = findDayType(workdays, date);
 
     const lastOutput = result.length > 1 ? result[result.length - 1] : undefined;
     const lastdayWorker = lastOutput ? lastOutput.shifts[lastOutput.shifts.length - 1] : [];
@@ -116,8 +116,8 @@ const onClick = () => {
   createCalendarShape();
   const workers = deepcopy(props.io.workers);
   const workdays = props.io.workdays;
-  const s = props.io.shifts;
-  const rlt = randomAssign(workers, workdays, s);
+  const shifts = props.io.shifts;
+  const rlt = randomAssign(workers, workdays, shifts);
 
   console.log(rlt);
 };
