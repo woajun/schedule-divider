@@ -40,27 +40,13 @@ const createCalendarShape = () => {
   calendarShape.value = iterate(count).map((i) => marginDate.slice((i) * 7, (i + 1) * 7));
 };
 
-const outputs = ref<Output[]>();
+const outputs = ref<Output[]>([]);
 
 const onClick = () => {
   createCalendarShape();
   const w = deepcopy(props.io.workers);
   const d = props.io.workdays;
   const s = props.io.shifts;
-  // 셔플하고 조건검사하고 붙이고 반복
-
-  // 1일을 잡고 weekend다. 하면 weekend 검사 숫자있는 애들만
-  // 조건검사하고 넣는다.
-  // 2일을 잡고 weekend다. 하면 weekend 검사 숫자있는 애들만
-  // 조건검사하고 넣는다.
-  // 3일을 잡고 weekday다. 하면 weekday 검사 숫자있는 애들만
-  // 조건검사하고 넣는다.
-
-  // 조건검사 항목
-  // 1. weekday,또는 weekend 해당 숫자가 0 이상일 것.
-  // 2. 바로 전 근무가 아닐 것.
-  // 3. avoidDays가 아닐 것.
-  // 4. 인원이 전부 다 불만족하면 처음부터 다시 짤 것.
 
   const findDayType = (i:number) => {
     if (d.weekday.includes(i)) {
@@ -72,7 +58,7 @@ const onClick = () => {
     return 'empty';
   };
 
-  outputs.value = iterate(31).reduce((result, i) => {
+  const apple = iterate(31).reduce((result, i) => {
     const date = i + 1;
     const type = findDayType(date);
 
@@ -83,7 +69,7 @@ const onClick = () => {
 
     // 여기서 근무로 순회해야함.
     const shifts = s.reduce((c, shift, idx) => {
-      if (type === 'empty') return [];
+      if (type === 'empty') return c;
       const lastWorker = idx === 0 ? lastdayWorker : c[c.length - 1];
       const filterd = filteredAvoidDays
         .filter((e) => !lastWorker.includes(e.id))
@@ -105,6 +91,24 @@ const onClick = () => {
 
     return result;
   }, [] as Output[]);
+  outputs.value = apple;
+
+  const findID = (id:number) => {
+    const found = props.io.workers.find((e) => e.id === id);
+    if (!found) return 'invalidID';
+    return found.name;
+  };
+
+  const idsToNames = (ids: number[]) => ids.map((id) => findID(id));
+
+  const shiftsToNames = (shifts: number[][]) => shifts.map((ids) => idsToNames(ids));
+
+  const banana = apple.map((e) => ({
+    date: e.date,
+    shifts: shiftsToNames(e.shifts),
+  }));
+
+  console.log(banana);
 };
 
 </script>

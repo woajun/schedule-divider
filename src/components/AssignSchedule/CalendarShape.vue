@@ -44,11 +44,11 @@ const props = defineProps<{
 <style scoped>
 
 .bg-yellow {
-  background-color: yellow;
+  /* background-color: yellow; */
 }
 
 .bg-brown {
-  background-color: brown;
+  /* background-color: brown; */
 }
 
 </style>
