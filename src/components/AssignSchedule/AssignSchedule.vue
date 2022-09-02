@@ -107,6 +107,14 @@ const randomAssign = (workers:Worker[], workdays: Workdays, s: Shift[]) => {
   return banana;
 };
 
+const makeOutput = (schedule: Output[], { year, month }: Workdays) => {
+  const margin = getMargin(year, month);
+  const ouputMargin = iterate(margin, { date: 0, shifts: [] } as Output);
+  const merged = ouputMargin.concat(schedule);
+  const count = Math.ceil(merged.length / 7);
+  return iterate(count).map((i) => merged.slice((i) * 7, (i + 1) * 7));
+};
+
 const onClick = () => {
   createCalendarShape();
   const workers = deepcopy(props.io.workers);
@@ -114,10 +122,7 @@ const onClick = () => {
   const shifts = props.io.shifts;
   const rlt = randomAssign(workers, workdays, shifts);
 
-  const margin = getMargin(props.io.workdays.year, props.io.workdays.month);
-  const ouputMargin = iterate(margin, { date: 0, shifts: [] } as Output);
-
-  const output = ouputMargin.concat(rlt);
+  const output = makeOutput(rlt, workdays);
 
   console.log(output);
 };
