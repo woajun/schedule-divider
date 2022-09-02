@@ -13,13 +13,13 @@ const workdays = reactive<Workdays>({
   year: 0,
   month: 0,
   weekday: [],
-  holiday: [],
+  weekend: [],
 });
 const setWorkdays = (n: Workdays) => {
   workdays.year = n.year;
   workdays.month = n.month;
   workdays.weekday = n.weekday;
-  workdays.holiday = n.holiday;
+  workdays.weekend = n.weekend;
 };
 
 const shifts = ref<Shift[]>([]);
@@ -38,7 +38,7 @@ const calendarIO = reactive<CalendarIO>({
     year: 0,
     month: 0,
     weekday: [],
-    holiday: [],
+    weekend: [],
   },
 });
 

@@ -4,7 +4,7 @@ import { defineProps } from 'vue';
 interface Day {
   date: number | string,
   weekday: number,
-  type: 'work' | 'holiday' | 'disabled' | string,
+  type: 'work' | 'weekend' | 'disabled' | string,
 }
 
 const props = defineProps<Day>();
@@ -13,9 +13,9 @@ const emit = defineEmits(['type']);
 const changeType = () => {
   switch (props.type) {
     case 'work':
-      emit('type', 'holiday');
+      emit('type', 'weekend');
       break;
-    case 'holiday':
+    case 'weekend':
       emit('type', 'disabled');
       break;
     case 'disabled':
@@ -38,7 +38,7 @@ const changeType = () => {
 </template>
 
 <style scoped>
-.holiday {
+.weekend {
     background-color: crimson;
 }
 .disabled {

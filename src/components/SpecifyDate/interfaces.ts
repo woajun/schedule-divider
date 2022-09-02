@@ -1,5 +1,5 @@
 export interface Day {
   date: number,
   weekday: number,
-  type: 'work' | 'holiday' | 'disabled' | string,
+  type: 'work' | 'weekend' | 'disabled' | string,
 }

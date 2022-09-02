@@ -22,11 +22,11 @@ const days = computed<Day[]>(() => {
   const result = iterate(length).map((i) => {
     const aDay = new Date(year.value, month.value - 1, i + 1);
     const weekday = aDay.getDay();
-    const isHoliday = !!(aDay.getDay() === 0 || aDay.getDay() === 6);
+    const isWeekend = !!(aDay.getDay() === 0 || aDay.getDay() === 6);
     return reactive({
       date: aDay.getDate(),
       weekday,
-      type: isHoliday ? 'holiday' : 'work',
+      type: isWeekend ? 'weekend' : 'work',
     });
   });
   return result;
@@ -36,15 +36,15 @@ watchEffect(() => {
   const workdays = days.value.reduce((obj, c) => {
     if (c.type === 'work') {
       obj.weekday.push(c.date);
-    } else if (c.type === 'holiday') {
-      obj.holiday.push(c.date);
+    } else if (c.type === 'weekend') {
+      obj.weekend.push(c.date);
     }
     return obj;
   }, {
     year: year.value,
     month: month.value,
     weekday: Array<number>(),
-    holiday: Array<number>(),
+    weekend: Array<number>(),
   });
   emit('workdays', workdays);
 });

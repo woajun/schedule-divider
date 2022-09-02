@@ -2,7 +2,7 @@ export interface Workdays {
   year:number,
   month:number,
   weekday: number[],
-  holiday: number[],
+  weekend: number[],
 }
 
 export interface Shift {

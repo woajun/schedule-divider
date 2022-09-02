@@ -62,6 +62,14 @@ const onClick = () => {
   // 3. avoidDays가 아닐 것.
   // 4. 인원이 전부 다 불만족하면 처음부터 다시 짤 것.
   // 5. 10번 다시 짯는데 불만족하면 경고 후 그냥 쓸 것.
+
+  // const findDayType = (i:number, type:'weekday'|'weekend')
+  // iterate(31).map((i)=>{
+  //   const date = i + 1;
+  //   if (findDayType(i,'weekday')){
+
+  //   }
+  // })
 };
 
 </script>
