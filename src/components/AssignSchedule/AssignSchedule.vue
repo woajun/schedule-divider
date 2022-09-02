@@ -101,9 +101,7 @@ const randomAssign = (workers:Worker[], workdays: Workdays, s: Shift[]) => {
 };
 
 const makeOutput = (schedule: Output[], { year, month }: Workdays) => {
-  const margin = getMargin(year, month);
-  const ouputMargin: Output[] = iterate(margin, { date: 0, shifts: [] });
-  const merged = ouputMargin.concat(schedule);
+  const merged = iterate<Output>(getMargin(year, month), { date: 0, shifts: [] }).concat(schedule);
   const count = Math.ceil(merged.length / 7);
   return iterate(count).map((i) => merged.slice((i) * 7, (i + 1) * 7));
 };
