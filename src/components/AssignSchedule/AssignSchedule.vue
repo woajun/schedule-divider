@@ -27,31 +27,32 @@ const findDayType = (workdays: Workdays, i:number) => {
 };
 
 const getLastdayWorker = (result: InnerOutput[]) => {
-  const lastOutput = result.length > 1 ? result[result.length - 1] : undefined;
+  const lastOutput = result.length > 0 ? result[result.length - 1] : undefined;
   return lastOutput ? lastOutput.shifts[lastOutput.shifts.length - 1] : [];
 };
 
 const getLastWorker = (c:number[][]) => (c.length > 0 ? c[c.length - 1] : undefined);
 
+const reduceAllotment = (workers:Worker[], type:'weekday' | 'weekend', shift: number) => {
+  workers.forEach((e) => {
+    e[type][shift] -= 1;
+  });
+};
+
 const doAssign = (l:number, workdays: Workdays, workers: Worker[], s: Shift[]) => iterate(l).reduce((result, i) => {
   const date = i + 1;
   const type = findDayType(workdays, date);
-
-  const filteredAvoidDays = workers.filter((e) => !e.avoidDays.includes(date));
-
   const shifts = s.reduce((c, shift, idx) => {
     if (type === 'empty') return c;
     const lastWorker = idx === 0 ? getLastdayWorker(result) : getLastWorker(c);
-    const filterd = filteredAvoidDays
+    const filterd = workers
+      .filter((e) => !e.avoidDays.includes(date))
       .filter((e) => !lastWorker?.includes(e.id))
       .filter((e) => e[type][idx] > 0);
     const shuffled = shuffle(filterd);
-    const sliced = shuffled.slice(0, shift.num);
-    sliced.forEach((e) => {
-      e[type][idx] -= 1;
-    });
-    const ids = sliced.map((e) => e.id);
-    c.push(ids);
+    const assigned = shuffled.slice(0, shift.num);
+    reduceAllotment(assigned, type, idx);
+    c.push(assigned.map((e) => e.id));
     return c;
   }, Array<number[]>());
   const output: InnerOutput = {
