@@ -1,7 +1,23 @@
 <script lang="ts" setup>
-import { reactive, watchEffect } from 'vue';
+import { computed, reactive, watchEffect } from 'vue';
 import type { Worker } from '@/interfaces';
 import { newID } from '../helper';
+
+const props = defineProps<{
+  year: number,
+  month: number,
+}>();
+
+const range = computed(() => {
+  const date = new Date(props.year, props.month, 0);
+  const y = date.getFullYear();
+  const m = date.getMonth() + 1;
+  const mm = m < 10 ? `0${m}` : m;
+  const d = date.getDate();
+  const dd = d < 10 ? `0${d}` : d;
+
+  return { min: `${y}-${mm}-0${1}`, max: `${y}-${mm}-${dd}` };
+});
 
 const emit = defineEmits(['workers']);
 const workers = reactive<Worker[]>([
@@ -75,6 +91,8 @@ const addWorker = () => {
       <button @click="addWorker">
         근무자추가
       </button>
+      {{ range.min }}
+      {{ range.max }}
     </div>
     <div>
       <table>
@@ -89,7 +107,7 @@ const addWorker = () => {
           <tr v-for="(worekr, i) in workers" :key="worekr.id">
             <th>{{ i + 1 }}.</th>
             <td><input v-model="worekr.name" :class="{ invalid: worekr.name.length < 1 }" type="text"></td>
-            <td><input v-model="worekr.avoidDays" type="text"></td>
+            <td><input type="date" :min="range.min" :max="range.max"></td>
             <td>
               <button @click="()=>removeWorker(worekr.id)">
                 삭제

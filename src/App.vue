@@ -59,7 +59,7 @@ const setDistributed = (n:Worker[]) => {
   <hr>
   근무: {{ shifts }}
   <hr>
-  <SpecifyWorker @workers="setWorkers" />
+  <SpecifyWorker :year="workdays.year" :month="workdays.month" @workers="setWorkers" />
   <hr>
   피하고 싶은 날 유효성 검사
   <hr>
