@@ -4,11 +4,9 @@ import type { CalendarIO, Worker } from '@/interfaces';
 import { deepcopy, iterate, shuffle } from '../helper';
 import CalendarShape from './CalendarShape.vue';
 
-type OutputShift = number[];
-
 interface Output {
   date: number,
-  shifts: OutputShift[],
+  shifts: number[][],
 }
 
 const sample = [
@@ -85,18 +83,17 @@ const onClick = () => {
     const shifts = s.reduce((c, shift, idx) => {
       if (type === 'empty') return [];
       const howmany = shift.num;
-      if (idx === 0) {
-        const filterd = filteredAvoidDays
-          .filter((e) => !lastdayWorker.includes(e.id))
-          .filter((e) => e[type][idx] > 0);
-        const shuffled = shuffle(filterd);
-        const sliced = shuffled.slice(0, howmany);
-        sliced.forEach((e) => {
-          e[type][idx] -= 1;
-        });
-        const ids = sliced.map((e) => e.id);
-        c.push(ids);
-      }
+      const lastWorker = idx === 0 ? lastdayWorker : c[c.length - 1];
+      const filterd = filteredAvoidDays
+        .filter((e) => !lastWorker.includes(e.id))
+        .filter((e) => e[type][idx] > 0);
+      const shuffled = shuffle(filterd);
+      const sliced = shuffled.slice(0, howmany);
+      sliced.forEach((e) => {
+        e[type][idx] -= 1;
+      });
+      const ids = sliced.map((e) => e.id);
+      c.push(ids);
       return c;
     }, [] as number[][]);
     console.log(shifts);
