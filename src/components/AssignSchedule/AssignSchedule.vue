@@ -23,24 +23,7 @@ const props = defineProps<{
   io:CalendarIO
 }>();
 
-const calendarShape = ref<number[][]>([[]]);
-
 const getMargin = (y:number, m:number) => new Date(y, m - 1, 1).getDay();
-
-const createCalendarShape = () => {
-  const y = props.io.workdays.year;
-  const m = props.io.workdays.month;
-  const length = new Date(y, m, 0).getDate();
-  const firstday = new Date(y, m - 1, 1).getDay();
-  const date = iterate(length).map((i) => i + 1);
-  const margin = iterate(firstday, 0);
-  const marginDate = margin.concat(date);
-
-  const count = Math.ceil(marginDate.length / 7);
-  calendarShape.value = iterate(count).map((i) => marginDate.slice((i) * 7, (i + 1) * 7));
-};
-
-const outputs = ref<InnerOutput[]>([]);
 
 const findDayType = (workdays: Workdays, i:number) => {
   if (workdays.weekday.includes(i)) {
@@ -85,31 +68,28 @@ const iterateDate = (workdays: Workdays, workers: Worker[], s: Shift[]) => itera
   return result;
 }, [] as InnerOutput[]);
 
-const randomAssign = (workers:Worker[], workdays: Workdays, s: Shift[]) => {
-  const apple = iterateDate(workdays, workers, s);
-  outputs.value = apple;
-
+const convertIdToName = (schedule: InnerOutput[], workers:Worker[]): Output[] => {
   const findID = (id:number) => {
-    const found = props.io.workers.find((e) => e.id === id);
+    const found = workers.find((e) => e.id === id);
     if (!found) return 'invalidID';
     return found.name;
   };
-
   const idsToNames = (ids: number[]) => ids.map((id) => findID(id));
-
   const shiftsToNames = (shifts: number[][]) => shifts.map((ids) => idsToNames(ids));
-
-  const banana = apple.map((e) => ({
+  return schedule.map((e) => ({
     date: e.date,
     shifts: shiftsToNames(e.shifts),
   }));
+};
 
-  return banana;
+const randomAssign = (workers:Worker[], workdays: Workdays, s: Shift[]) => {
+  const schedule = iterateDate(workdays, workers, s);
+  return convertIdToName(schedule, workers);
 };
 
 const makeOutput = (schedule: Output[], { year, month }: Workdays) => {
   const margin = getMargin(year, month);
-  const ouputMargin = iterate(margin, { date: 0, shifts: [] } as Output);
+  const ouputMargin: Output[] = iterate(margin, { date: 0, shifts: [] });
   const merged = ouputMargin.concat(schedule);
   const count = Math.ceil(merged.length / 7);
   return iterate(count).map((i) => merged.slice((i) * 7, (i + 1) * 7));
@@ -118,11 +98,11 @@ const makeOutput = (schedule: Output[], { year, month }: Workdays) => {
 const output = ref<Output[][]>([]);
 
 const onClick = () => {
-  const workers = deepcopy(props.io.workers);
-  const workdays = props.io.workdays;
-  const shifts = props.io.shifts;
-  const schedule = randomAssign(workers, workdays, shifts);
-  output.value = makeOutput(schedule, workdays);
+  const w = deepcopy(props.io.workers);
+  const d = props.io.workdays;
+  const s = props.io.shifts;
+  const schedule = randomAssign(w, d, s);
+  output.value = makeOutput(schedule, d);
 };
 
 </script>
