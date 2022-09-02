@@ -40,11 +40,13 @@ const calendarIO = reactive<CalendarIO>({
     weekday: [],
     weekend: [],
   },
+  shifts: [],
 });
 
 const setDistributed = (n:Worker[]) => {
   calendarIO.workdays = workdays;
   calendarIO.workers = n;
+  calendarIO.shifts = shifts.value;
 };
 </script>
 

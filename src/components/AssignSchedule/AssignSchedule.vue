@@ -44,8 +44,10 @@ const onClick = () => {
   createCalendarShape();
   const w = deepcopy(props.io.workers);
   const d = props.io.workdays;
+  const s = props.io.shifts;
   console.log('w', w);
   console.log('d', d);
+  console.log('s', s);
   // 셔플하고 조건검사하고 붙이고 반복
 
   // 1일을 잡고 weekend다. 하면 weekend 검사 숫자있는 애들만

@@ -22,4 +22,5 @@ export interface Worker {
 export interface CalendarIO {
   workers: Worker[]
   workdays: Workdays
+  shifts: Shift[]
 }
