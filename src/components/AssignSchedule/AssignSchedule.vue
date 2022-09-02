@@ -88,7 +88,7 @@ const iterateDate = (workdays: Workdays, workers: Worker[], s: Shift[]) => {
   } while (i < 1000 && kiwi !== 0);
 
   if (kiwi !== 0) {
-    alert('1000번 돌렸지만 실패했습니다 ㅠㅠ');
+    alert('1000가지 경우의 수에 실패했습니다 ㅠㅠ');
   }
   return result;
 };

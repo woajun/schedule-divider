@@ -53,26 +53,16 @@ const setDistributed = (n:Worker[]) => {
 <template>
   <SpecifyDate @workdays="setWorkdays" />
   <hr>
-  {{ workdays }}
-  <hr>
   <SpecifyShifts @shifts="setShifts" />
-  <hr>
-  근무: {{ shifts }}
   <hr>
   <SpecifyWorker :year="workdays.year" :month="workdays.month" @workers="setWorkers" />
   <hr>
-  근무자: {{ workers }}
-  <hr>
-  피하고 싶은 날 유효성 검사
-  <hr />
   <DistributeWorking
     :workers="workers"
     :shifts="shifts"
     :workdays="workdays"
     @distributed="setDistributed"
   />
-  <hr>
-  calendarIO: {{ calendarIO }}
   <hr />
   <AssignSchedule :io="calendarIO" />
 </template>
