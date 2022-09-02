@@ -11,26 +11,21 @@ import CalendarShape from './CalendarShape.vue';
 
 interface Output {
   date: number,
-  shifts: number[][],
+  shifts: Array<string[]>,
 }
 
-const sample = [
-  { date: 1, shifts: [[2, 3], [4, 5]] },
-  { date: 2, shifts: [[2, 3], [4, 6]] },
-  { date: 3, shifts: [[2, 5], [3, 6]] },
-  { date: 4, shifts: [[4, 5], [2, 6]] },
-  { date: 5, shifts: [[2, 3], [4, 6]] },
-  { date: 6, shifts: [[2, 3], [4, 6]] },
-  // 7일은 없음
-  { date: 8, shifts: [[4, 5], [2, 3]] },
-  // ...
-];
+interface InnerOutput {
+  date: number,
+  shifts: number[][],
+}
 
 const props = defineProps<{
   io:CalendarIO
 }>();
 
 const calendarShape = ref<number[][]>([[]]);
+
+const getMargin = (y:number, m:number) => new Date(y, m - 1, 1).getDay();
 
 const createCalendarShape = () => {
   const y = props.io.workdays.year;
@@ -45,7 +40,7 @@ const createCalendarShape = () => {
   calendarShape.value = iterate(count).map((i) => marginDate.slice((i) * 7, (i + 1) * 7));
 };
 
-const outputs = ref<Output[]>([]);
+const outputs = ref<InnerOutput[]>([]);
 
 const findDayType = (workdays: Workdays, i:number) => {
   if (workdays.weekday.includes(i)) {
@@ -81,14 +76,14 @@ const iterateDate = (workdays: Workdays, workers: Worker[], s: Shift[]) => itera
     c.push(ids);
     return c;
   }, [] as number[][]);
-  const output: Output = {
+  const output: InnerOutput = {
     date,
     shifts,
   };
   result.push(output);
 
   return result;
-}, [] as Output[]);
+}, [] as InnerOutput[]);
 
 const randomAssign = (workers:Worker[], workdays: Workdays, s: Shift[]) => {
   const apple = iterateDate(workdays, workers, s);
@@ -119,7 +114,12 @@ const onClick = () => {
   const shifts = props.io.shifts;
   const rlt = randomAssign(workers, workdays, shifts);
 
-  console.log(rlt);
+  const margin = getMargin(props.io.workdays.year, props.io.workdays.month);
+  const ouputMargin = iterate(margin, { date: 0, shifts: [] } as Output);
+
+  const output = ouputMargin.concat(rlt);
+
+  console.log(output);
 };
 
 </script>
