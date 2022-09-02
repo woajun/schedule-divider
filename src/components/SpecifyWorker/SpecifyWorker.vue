@@ -46,7 +46,7 @@ const workers = reactive<Worker[]>([
   },
   {
     id: newID(),
-    name: '하하',
+    name: '하정우',
     avoidDays: [],
     weekday: [],
     weekend: [],

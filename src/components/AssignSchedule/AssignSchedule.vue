@@ -115,30 +115,24 @@ const makeOutput = (schedule: Output[], { year, month }: Workdays) => {
   return iterate(count).map((i) => merged.slice((i) * 7, (i + 1) * 7));
 };
 
+const output = ref<Output[][]>([]);
+
 const onClick = () => {
-  createCalendarShape();
   const workers = deepcopy(props.io.workers);
   const workdays = props.io.workdays;
   const shifts = props.io.shifts;
-  const rlt = randomAssign(workers, workdays, shifts);
-
-  const output = makeOutput(rlt, workdays);
-
-  console.log(output);
+  const schedule = randomAssign(workers, workdays, shifts);
+  output.value = makeOutput(schedule, workdays);
 };
 
 </script>
 <template>
-  {{ calendarShape }}
   <div>
     <button @click="onClick">
       날짜 분배
     </button>
-    {{ outputs }}
     <br>
-    오후 근무시 다음날 오전은 가능한 피하기.
-    <br>
-    {{ props.io.workdays.year }} 년 {{ props.io.workdays.month }} 월 근무표
-    <CalendarShape :month="calendarShape" />
+    <h2>{{ props.io.workdays.year }} 년 {{ props.io.workdays.month }} 월 근무표</h2>
+    <CalendarShape :output="output" />
   </div>
 </template>

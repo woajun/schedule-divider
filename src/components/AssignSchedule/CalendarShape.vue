@@ -1,18 +1,16 @@
 <script lang="ts" setup>
 
+interface Output {
+  date: number,
+  shifts: Array<string[]>,
+}
+
 const props = defineProps<{
-  month: number[][]
+  output: Output[][]
 }>();
 
 </script>
 <template>
-  <br />
-  <button class="bg-yellow">
-    오전근무
-  </button>
-  <button class="bg-brown">
-    오후근무
-  </button>
   <table>
     <thead>
       <tr>
@@ -22,19 +20,18 @@ const props = defineProps<{
       </tr>
     </thead>
     <tbody>
-      <tr v-for="(week, i) in props.month" :key="i">
-        <template v-for="(day, idx) in week" :key="`${i}-${idx}`">
-          <td v-if="day === 0" />
+      <tr v-for="(week, i) in props.output" :key="i">
+        <template v-for="(output, idx) in week" :key="`${i}-${idx}`">
+          <td v-if="output.date === 0" />
           <td v-else>
             <div>
-              {{ day }}
+              {{ output.date }}
             </div>
-            <div class="bg-yellow">
-              노홍철, 박명수
-            </div>
-            <div class="bg-brown">
-              유재석, 하하
-            </div>
+            <template v-if="output.shifts">
+              <div v-for="(apple, idx2) in output.shifts" :key="idx2">
+                {{ apple }}
+              </div>
+            </template>
           </td>
         </template>
       </tr>
