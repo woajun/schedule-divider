@@ -38,14 +38,3 @@ const props = defineProps<{
     </tbody>
   </table>
 </template>
-<style scoped>
-
-.bg-yellow {
-  /* background-color: yellow; */
-}
-
-.bg-brown {
-  /* background-color: brown; */
-}
-
-</style>
