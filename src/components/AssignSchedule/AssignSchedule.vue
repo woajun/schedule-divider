@@ -1,3 +1,4 @@
+<!-- eslint-disable no-alert -->
 <!-- eslint-disable no-nested-ternary -->
 <!-- eslint-disable prefer-destructuring -->
 <!-- eslint-disable vue/max-len -->
