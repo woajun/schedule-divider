@@ -1,5 +1,7 @@
 <script lang="ts" setup>
-import { computed, reactive, watchEffect } from 'vue';
+import {
+  computed, reactive, watch, watchEffect,
+} from 'vue';
 import type { Worker } from '@/interfaces';
 import { newID } from '../helper';
 
@@ -70,9 +72,13 @@ const removeWorker = (id: number) => {
   workers.splice(i, 1);
 };
 
-watchEffect(() => {
+const emitWorker = () => {
   const newWokrers = workers.filter((e) => e.name.length > 0);
   emit('workers', newWokrers);
+};
+
+watchEffect(() => {
+  emitWorker();
 });
 
 const addWorker = () => {
@@ -84,6 +90,25 @@ const addWorker = () => {
     weekend: [],
   });
 };
+
+const selectDate = (e:Event, arr: number[]) => {
+  const el = e.target as HTMLInputElement;
+  const date = parseInt(el.value.slice(8), 10);
+  if (!arr.includes(date))arr.push(date);
+  emitWorker();
+};
+
+const empty = (arr: number[]) => {
+  while (arr.pop());
+  emitWorker();
+};
+
+watch([() => props.month, () => props.year], () => {
+  workers.forEach((e) => {
+    empty(e.avoidDays);
+  });
+});
+
 </script>
 <template>
   <div>
@@ -100,17 +125,24 @@ const addWorker = () => {
           <tr>
             <th />
             <th>이름</th>
+            <th />
             <th>피하고 싶은 날</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(worekr, i) in workers" :key="worekr.id">
+          <tr v-for="(worker, i) in workers" :key="worker.id">
             <th>{{ i + 1 }}.</th>
-            <td><input v-model="worekr.name" :class="{ invalid: worekr.name.length < 1 }" type="text"></td>
-            <td><input type="date" :min="range.min" :max="range.max"></td>
+            <td><input v-model="worker.name" :class="{ invalid: worker.name.length < 1 }" type="text"></td>
             <td>
-              <button @click="()=>removeWorker(worekr.id)">
+              <button @click="()=>removeWorker(worker.id)">
                 삭제
+              </button>
+            </td>
+            <td><input type="date" :min="range.min" :max="range.max" @change="(e) => selectDate(e, worker.avoidDays)"></td>
+            <td>{{ worker.avoidDays }}</td>
+            <td>
+              <button @click="()=>empty(worker.avoidDays)">
+                비우기
               </button>
             </td>
           </tr>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import type { CalendarIO, Worker } from '@/interfaces';
-import { deepcopy, iterate } from '../helper';
+import { deepcopy, iterate, shuffle } from '../helper';
 import CalendarShape from './CalendarShape.vue';
 
 type OutputShift = number[];
@@ -47,9 +47,6 @@ const onClick = () => {
   const w = deepcopy(props.io.workers);
   const d = props.io.workdays;
   const s = props.io.shifts;
-  console.log('w', w);
-  console.log('d', d);
-  console.log('s', s);
   // 셔플하고 조건검사하고 붙이고 반복
 
   // 1일을 잡고 weekend다. 하면 weekend 검사 숫자있는 애들만
@@ -84,26 +81,26 @@ const onClick = () => {
 
     const filteredAvoidDays = w.filter((e) => !e.avoidDays.includes(date));
 
-    // 어보이드 데이즈가 말이 되는지 먼저 검사해야 하지 않을까?
-    // 여기서 검사를 해보자.
-
     // 여기서 근무로 순회해야함.
-    s.reduce((c, shift, idx) => {
+    const shifts = s.reduce((c, shift, idx) => {
       if (type === 'empty') return [];
       const howmany = shift.num;
       if (idx === 0) {
-        // 마지막도아니고, 어보이드 데이즈도 아닌 애들.
-        const apple = filteredAvoidDays.filter((e) => !lastdayWorker.includes(e.id));
-        console.log('apple', apple);
-        // 이 해당 근무에 숫자가 있는 애들만
-        const banana = apple.filter((e) => e[type][idx] > 0);
-        console.log('banana', banana);
-        // 그럼 이제 얘네중에 셔플로 지정하고
-        // 지정 한 애들 숫자 쭐이고
-        // 다음으로 가는데
+        const filterd = filteredAvoidDays
+          .filter((e) => !lastdayWorker.includes(e.id))
+          .filter((e) => e[type][idx] > 0);
+        const shuffled = shuffle(filterd);
+        const sliced = shuffled.slice(0, howmany);
+        sliced.forEach((e) => {
+          e[type][idx] -= 1;
+        });
+        const ids = sliced.map((e) => e.id);
+        c.push(ids);
       }
-      return [];
-    }, [] as OutputShift);
+      return c;
+    }, [] as number[][]);
+    console.log(shifts);
+
     return [];
   }, [] as Output[]);
 };

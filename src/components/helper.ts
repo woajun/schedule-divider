@@ -19,8 +19,8 @@ export const newID = () => {
   return idGenerator;
 };
 
-export function shuffle<T>(rawArr:Array<T>):Array<T> {
-  const arr = JSON.parse(JSON.stringify(rawArr));
+export function shuffle<T>(arr:Array<T>):Array<T> {
+  // const arr = JSON.parse(JSON.stringify(rawArr));
   let i = arr.length;
   let randomI : number;
 
