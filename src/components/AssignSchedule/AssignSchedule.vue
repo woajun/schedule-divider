@@ -35,38 +35,41 @@ const findDayType = (workdays: Workdays, i:number) => {
   return 'empty';
 };
 
-const iterateDate = (workdays: Workdays, workers: Worker[], s: Shift[]) => iterate(31).reduce((result, i) => {
-  const date = i + 1;
-  const type = findDayType(workdays, date);
+const iterateDate = (workdays: Workdays, workers: Worker[], s: Shift[]) => {
+  const length = new Date(workdays.year, workdays.month, 0).getDate();
+  return iterate(length).reduce((result, i) => {
+    const date = i + 1;
+    const type = findDayType(workdays, date);
 
-  const lastOutput = result.length > 1 ? result[result.length - 1] : undefined;
-  const lastdayWorker = lastOutput ? lastOutput.shifts[lastOutput.shifts.length - 1] : [];
+    const lastOutput = result.length > 1 ? result[result.length - 1] : undefined;
+    const lastdayWorker = lastOutput ? lastOutput.shifts[lastOutput.shifts.length - 1] : [];
 
-  const filteredAvoidDays = workers.filter((e) => !e.avoidDays.includes(date));
+    const filteredAvoidDays = workers.filter((e) => !e.avoidDays.includes(date));
 
-  const shifts = s.reduce((c, shift, idx) => {
-    if (type === 'empty') return c;
-    const lastWorker = idx === 0 ? lastdayWorker : c.length > 1 ? c[c.length - 1] : undefined;
-    const filterd = filteredAvoidDays
-      .filter((e) => !lastWorker?.includes(e.id))
-      .filter((e) => e[type][idx] > 0);
-    const shuffled = shuffle(filterd);
-    const sliced = shuffled.slice(0, shift.num);
-    sliced.forEach((e) => {
-      e[type][idx] -= 1;
-    });
-    const ids = sliced.map((e) => e.id);
-    c.push(ids);
-    return c;
-  }, [] as number[][]);
-  const output: InnerOutput = {
-    date,
-    shifts,
-  };
-  result.push(output);
+    const shifts = s.reduce((c, shift, idx) => {
+      if (type === 'empty') return c;
+      const lastWorker = idx === 0 ? lastdayWorker : c.length > 0 ? c[c.length - 1] : undefined;
+      const filterd = filteredAvoidDays
+        .filter((e) => !lastWorker?.includes(e.id))
+        .filter((e) => e[type][idx] > 0);
+      const shuffled = shuffle(filterd);
+      const sliced = shuffled.slice(0, shift.num);
+      sliced.forEach((e) => {
+        e[type][idx] -= 1;
+      });
+      const ids = sliced.map((e) => e.id);
+      c.push(ids);
+      return c;
+    }, [] as number[][]);
+    const output: InnerOutput = {
+      date,
+      shifts,
+    };
+    result.push(output);
 
-  return result;
-}, [] as InnerOutput[]);
+    return result;
+  }, [] as InnerOutput[]);
+};
 
 const convertIdToName = (schedule: InnerOutput[], workers:Worker[]): Output[] => {
   const findID = (id:number) => {
@@ -103,6 +106,7 @@ const onClick = () => {
   const s = props.io.shifts;
   const schedule = randomAssign(w, d, s);
   output.value = makeOutput(schedule, d);
+  console.log(w);
 };
 
 </script>
