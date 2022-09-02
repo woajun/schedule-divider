@@ -58,7 +58,7 @@ const doAssign = (l:number, workdays: Workdays, workers: Worker[], s: Shift[]) =
     const ids = sliced.map((e) => e.id);
     c.push(ids);
     return c;
-  }, [] as number[][]);
+  }, Array<number[]>());
   const output: InnerOutput = {
     date,
     shifts,
@@ -66,7 +66,7 @@ const doAssign = (l:number, workdays: Workdays, workers: Worker[], s: Shift[]) =
   result.push(output);
 
   return result;
-}, [] as InnerOutput[]);
+}, Array<InnerOutput>());
 
 const iterateDate = (workdays: Workdays, workers: Worker[], s: Shift[]) => {
   const length = new Date(workdays.year, workdays.month, 0).getDate();
