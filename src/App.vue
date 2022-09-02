@@ -63,6 +63,6 @@ const setDistributed = (n:Worker[]) => {
     :workdays="workdays"
     @distributed="setDistributed"
   />
-  <hr />
+  <hr>
   <AssignSchedule :io="calendarIO" />
 </template>

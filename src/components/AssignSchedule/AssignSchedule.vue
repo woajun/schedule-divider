@@ -72,19 +72,19 @@ const iterateDate = (workdays: Workdays, workers: Worker[], s: Shift[]) => {
   const length = new Date(workdays.year, workdays.month, 0).getDate();
 
   let result:InnerOutput[] = [];
-  let kiwi = 10;
+  let error = 1;
   let i = 0;
   do {
     const w = deepcopy(workers);
     result = doAssign(length, workdays, w, s);
     const banana = w.map((e) => [...e.weekday, ...e.weekend]);
     const orange = banana.flat();
-    kiwi = orange.reduce((p, c) => p + c, 0);
+    error = orange.reduce((p, c) => p + c, 0);
     i += 1;
-  } while (i < 1000 && kiwi !== 0);
+  } while (i < 1000 && error !== 0);
 
-  if (kiwi !== 0) {
-    alert('1000가지 경우의 수에 실패했습니다 ㅠㅠ');
+  if (error !== 0) {
+    alert('1000가지 경우의 수에 실패했습니다. 조건을 변경하고 다시 시도해보세요!');
   }
   return result;
 };
@@ -129,6 +129,19 @@ const onClick = () => {
 </script>
 <template>
   <div>
+    날짜분배옵션
+    <br />
+    <label>
+      <input type="checkbox" />
+      말번 다음 날 초번 제외
+    </label>
+    <br />
+    <label>
+      <input type="checkbox" />
+      하루에 한 번 근무
+    </label>
+    <br />
+    <br />
     <button @click="onClick">
       날짜 분배
     </button>
