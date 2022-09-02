@@ -40,6 +40,8 @@ const createCalendarShape = () => {
   calendarShape.value = iterate(count).map((i) => marginDate.slice((i) * 7, (i + 1) * 7));
 };
 
+const outputs = ref<Output[]>();
+
 const onClick = () => {
   createCalendarShape();
   const w = deepcopy(props.io.workers);
@@ -70,7 +72,7 @@ const onClick = () => {
     return 'empty';
   };
 
-  iterate(1).reduce((result, i) => {
+  outputs.value = iterate(31).reduce((result, i) => {
     const date = i + 1;
     const type = findDayType(date);
 
@@ -82,13 +84,12 @@ const onClick = () => {
     // 여기서 근무로 순회해야함.
     const shifts = s.reduce((c, shift, idx) => {
       if (type === 'empty') return [];
-      const howmany = shift.num;
       const lastWorker = idx === 0 ? lastdayWorker : c[c.length - 1];
       const filterd = filteredAvoidDays
         .filter((e) => !lastWorker.includes(e.id))
         .filter((e) => e[type][idx] > 0);
       const shuffled = shuffle(filterd);
-      const sliced = shuffled.slice(0, howmany);
+      const sliced = shuffled.slice(0, shift.num);
       sliced.forEach((e) => {
         e[type][idx] -= 1;
       });
@@ -96,9 +97,13 @@ const onClick = () => {
       c.push(ids);
       return c;
     }, [] as number[][]);
-    console.log(shifts);
+    const output: Output = {
+      date,
+      shifts,
+    };
+    result.push(output);
 
-    return [];
+    return result;
   }, [] as Output[]);
 };
 
@@ -109,6 +114,7 @@ const onClick = () => {
     <button @click="onClick">
       날짜 분배
     </button>
+    {{ outputs }}
     <br>
     오후 근무시 다음날 오전은 가능한 피하기.
     <br>
