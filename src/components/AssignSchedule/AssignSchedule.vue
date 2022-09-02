@@ -67,14 +67,30 @@ const doAssign = (l:number, workdays: Workdays, workers: Worker[], s: Shift[]) =
 
   return result;
 }, [] as InnerOutput[]);
+
 const iterateDate = (workdays: Workdays, workers: Worker[], s: Shift[]) => {
   const length = new Date(workdays.year, workdays.month, 0).getDate();
-  const apple = doAssign(length, workdays, workers, s);
-  const banana = workers.map((w) => [...w.weekday, ...w.weekend]);
-  const orange = banana.flat();
-  const kiwi = orange.reduce((p, c) => p + c, 0);
-  console.log(kiwi);
-  return apple;
+
+  let result:InnerOutput[] = [];
+  let kiwi = 10;
+  let i = 0;
+  console.log('bbb');
+  do {
+    const w = deepcopy(workers);
+    console.log('aaa');
+    result = doAssign(length, workdays, w, s);
+    console.log(w);
+    const banana = w.map((e) => [...e.weekday, ...e.weekend]);
+    const orange = banana.flat();
+    kiwi = orange.reduce((p, c) => p + c, 0);
+    console.log(kiwi);
+    i += 1;
+  } while (i < 1000 && kiwi !== 0);
+
+  if (kiwi !== 0) {
+    alert('1000번 돌렸지만 실패했습니다 ㅠㅠ');
+  }
+  return result;
 };
 
 const convertIdToName = (schedule: InnerOutput[], workers:Worker[]): Output[] => {
