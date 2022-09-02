@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { CalendarIO } from '@/interfaces';
-import { iterate } from '../helper';
+import type { CalendarIO, Worker } from '@/interfaces';
+import { deepcopy, iterate } from '../helper';
 import CalendarShape from './CalendarShape.vue';
 
 interface Output {
@@ -10,16 +10,15 @@ interface Output {
 }
 
 const sample = [
-  { date: 1, workerIDs: [2, 3] },
-  { date: 2, workerIDs: [3, 2] },
-  { date: 3, workerIDs: [3, 2] },
-  { date: 4, workerIDs: [2, 3] },
-  { date: 5, workerIDs: [3, 2] },
-  { date: 6, workerIDs: [3, 2] },
-  // 8일은 없음
-  { date: 7, workerIDs: [3, 2] },
-  { date: 9, workerIDs: [3, 2] },
-  { date: 10, workerIDs: [3, 2] },
+  { date: 1, shifts: [[2, 3], [4, 5]] },
+  { date: 2, shifts: [[2, 3], [4, 6]] },
+  { date: 3, shifts: [[2, 5], [3, 6]] },
+  { date: 4, shifts: [[4, 5], [2, 6]] },
+  { date: 5, shifts: [[2, 3], [4, 6]] },
+  { date: 6, shifts: [[2, 3], [4, 6]] },
+  // 7일은 없음
+  { date: 8, shifts: [[4, 5], [2, 3]] },
+  // ...
 ];
 
 const props = defineProps<{
@@ -43,7 +42,7 @@ const createCalendarShape = () => {
 
 const onClick = () => {
   createCalendarShape();
-  const w = props.io.workers;
+  const w = deepcopy(props.io.workers);
   const d = props.io.workdays;
   console.log('w', w);
   console.log('d', d);
@@ -61,15 +60,38 @@ const onClick = () => {
   // 2. 바로 전 근무가 아닐 것.
   // 3. avoidDays가 아닐 것.
   // 4. 인원이 전부 다 불만족하면 처음부터 다시 짤 것.
-  // 5. 10번 다시 짯는데 불만족하면 경고 후 그냥 쓸 것.
 
-  // const findDayType = (i:number, type:'weekday'|'weekend')
-  // iterate(31).map((i)=>{
-  //   const date = i + 1;
-  //   if (findDayType(i,'weekday')){
+  const findDayType = (i:number) => {
+    if (d.weekday.includes(i)) {
+      return 'weekday';
+    }
+    if (d.weekend.includes(i)) {
+      return 'weekend';
+    }
+    return 'empty';
+  };
+  const findAbleWorker = (date: number, type: 'weekday' | 'weekend' | 'empty', last: number):Worker[] => {
+    const result = w
+      .filter((e) => !e.avoidDays.includes(date))
+      .filter((e) => e.id !== last);
+    return result;
+  };
+  iterate(31).reduce((result, i) => {
+    const date = i + 1;
+    const type = findDayType(date);
 
-  //   }
-  // })
+    // 여기서 또 근무로 순회해야함.
+
+    // 전날 마지막 근무자
+    const lastOutput = result[result.length - 1];
+    const lastWorker = lastOutput.workerIDs[lastOutput.workerIDs.length - 1];
+
+    // 들어갈 수 있는 id 구하기
+    // 1. 어보이드데이스 피하기
+    // 2. 바로 전 근무한 사람 피하기
+    // 3. 그날 weekend랑 weekday가 0인 사람 피하기.
+    const ableWorker = findAbleWorker(date, type, lastWorker);
+  }, [] as Output[]);
 };
 
 </script>

@@ -33,3 +33,7 @@ export function shuffle<T>(rawArr:Array<T>):Array<T> {
   }
   return arr;
 }
+
+export function deepcopy<T>(target:Array<T>):Array<T> {
+  return JSON.parse(JSON.stringify(target));
+}

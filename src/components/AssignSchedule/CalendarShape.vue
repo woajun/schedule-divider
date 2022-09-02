@@ -6,6 +6,13 @@ const props = defineProps<{
 
 </script>
 <template>
+  <br />
+  <button class="bg-yellow">
+    오전근무
+  </button>
+  <button class="bg-brown">
+    오후근무
+  </button>
   <table>
     <thead>
       <tr>
@@ -22,11 +29,11 @@ const props = defineProps<{
             <div>
               {{ day }}
             </div>
-            <div>
-              노홍철
+            <div class="bg-yellow">
+              노홍철, 박명수
             </div>
-            <div>
-              박명수
+            <div class="bg-brown">
+              유재석, 하하
             </div>
           </td>
         </template>
@@ -34,3 +41,14 @@ const props = defineProps<{
     </tbody>
   </table>
 </template>
+<style scoped>
+
+.bg-yellow {
+  background-color: yellow;
+}
+
+.bg-brown {
+  background-color: brown;
+}
+
+</style>
