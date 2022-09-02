@@ -8,16 +8,7 @@ import type {
 } from '@/interfaces';
 import { deepcopy, iterate, shuffle } from '../helper';
 import CalendarShape from './CalendarShape.vue';
-
-interface Output {
-  date: number,
-  shifts: Array<string[]>,
-}
-
-interface InnerOutput {
-  date: number,
-  shifts: number[][],
-}
+import type { InnerOutput, Output } from './interfaces';
 
 const props = defineProps<{
   io:CalendarIO

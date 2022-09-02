@@ -1,9 +1,4 @@
-<script lang="ts" setup>
-
-interface Output {
-  date: number,
-  shifts: Array<string[]>,
-}
+<script lang="ts" setup>import type { Output } from './interfaces';
 
 const props = defineProps<{
   output: Output[][]
