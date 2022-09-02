@@ -4,9 +4,11 @@ import type { CalendarIO, Worker } from '@/interfaces';
 import { deepcopy, iterate } from '../helper';
 import CalendarShape from './CalendarShape.vue';
 
+type OutputShift = number[];
+
 interface Output {
   date: number,
-  workerIDs: number[],
+  shifts: OutputShift[],
 }
 
 const sample = [
@@ -72,27 +74,37 @@ const onClick = () => {
     }
     return 'empty';
   };
-  const findAbleWorker = (date: number, type: 'weekday' | 'weekend' | 'empty', last: number):Worker[] => {
-    const result = w
-      .filter((e) => !e.avoidDays.includes(date))
-      .filter((e) => e.id !== last);
-    return result;
-  };
-  iterate(31).reduce((result, i) => {
+
+  iterate(1).reduce((result, i) => {
     const date = i + 1;
     const type = findDayType(date);
 
-    // 여기서 또 근무로 순회해야함.
+    const lastOutput = result.length > 1 ? result[result.length - 1] : undefined;
+    const lastdayWorker = lastOutput ? lastOutput.shifts[lastOutput.shifts.length - 1] : [];
 
-    // 전날 마지막 근무자
-    const lastOutput = result[result.length - 1];
-    const lastWorker = lastOutput.workerIDs[lastOutput.workerIDs.length - 1];
+    const filteredAvoidDays = w.filter((e) => !e.avoidDays.includes(date));
 
-    // 들어갈 수 있는 id 구하기
-    // 1. 어보이드데이스 피하기
-    // 2. 바로 전 근무한 사람 피하기
-    // 3. 그날 weekend랑 weekday가 0인 사람 피하기.
-    const ableWorker = findAbleWorker(date, type, lastWorker);
+    // 어보이드 데이즈가 말이 되는지 먼저 검사해야 하지 않을까?
+    // 여기서 검사를 해보자.
+
+    // 여기서 근무로 순회해야함.
+    s.reduce((c, shift, idx) => {
+      if (type === 'empty') return [];
+      const howmany = shift.num;
+      if (idx === 0) {
+        // 마지막도아니고, 어보이드 데이즈도 아닌 애들.
+        const apple = filteredAvoidDays.filter((e) => !lastdayWorker.includes(e.id));
+        console.log('apple', apple);
+        // 이 해당 근무에 숫자가 있는 애들만
+        const banana = apple.filter((e) => e[type][idx] > 0);
+        console.log('banana', banana);
+        // 그럼 이제 얘네중에 셔플로 지정하고
+        // 지정 한 애들 숫자 쭐이고
+        // 다음으로 가는데
+      }
+      return [];
+    }, [] as OutputShift);
+    return [];
   }, [] as Output[]);
 };
 
