@@ -21,15 +21,15 @@ const props = defineProps<{
     </thead>
     <tbody>
       <tr v-for="(week, i) in props.output" :key="i">
-        <template v-for="(output, idx) in week" :key="`${i}-${idx}`">
-          <td v-if="output.date === 0" />
+        <template v-for="(day, idx) in week" :key="`${i}-${idx}`">
+          <td v-if="day.date === 0" />
           <td v-else>
             <div>
-              {{ output.date }}
+              {{ day.date }}
             </div>
-            <template v-if="output.shifts">
-              <div v-for="(apple, idx2) in output.shifts" :key="idx2">
-                {{ apple }}
+            <template v-if="day.shifts">
+              <div v-for="(names, idx2) in day.shifts" :key="idx2">
+                <span v-for="name in names" :key="name"> {{ name }} &nbsp;</span>
               </div>
             </template>
           </td>
