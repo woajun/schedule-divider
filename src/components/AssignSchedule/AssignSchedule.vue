@@ -1,6 +1,9 @@
+<!-- eslint-disable prefer-destructuring -->
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { CalendarIO, Worker } from '@/interfaces';
+import type {
+  CalendarIO, Shift, Workdays, Worker,
+} from '@/interfaces';
 import { deepcopy, iterate, shuffle } from '../helper';
 import CalendarShape from './CalendarShape.vue';
 
@@ -42,37 +45,35 @@ const createCalendarShape = () => {
 
 const outputs = ref<Output[]>([]);
 
-const onClick = () => {
-  createCalendarShape();
-  const w = deepcopy(props.io.workers);
-  const d = props.io.workdays;
-  const s = props.io.shifts;
-
+const randomAssign = (workers:Worker[], workdays: Workdays, s: Shift[]) => {
   const findDayType = (i:number) => {
-    if (d.weekday.includes(i)) {
+    if (workdays.weekday.includes(i)) {
       return 'weekday';
     }
-    if (d.weekend.includes(i)) {
+    if (workdays.weekend.includes(i)) {
       return 'weekend';
     }
     return 'empty';
   };
 
-  const apple = iterate(31).reduce((result, i) => {
+  const apple = iterate(3).reduce((result, i) => {
     const date = i + 1;
     const type = findDayType(date);
 
     const lastOutput = result.length > 1 ? result[result.length - 1] : undefined;
     const lastdayWorker = lastOutput ? lastOutput.shifts[lastOutput.shifts.length - 1] : [];
 
-    const filteredAvoidDays = w.filter((e) => !e.avoidDays.includes(date));
+    const filteredAvoidDays = workers.filter((e) => !e.avoidDays.includes(date));
 
     // 여기서 근무로 순회해야함.
+    console.log('i', i);
     const shifts = s.reduce((c, shift, idx) => {
+      console.log('idx', idx);
       if (type === 'empty') return c;
-      const lastWorker = idx === 0 ? lastdayWorker : c[c.length - 1];
+      // eslint-disable-next-line no-nested-ternary
+      const lastWorker = idx === 0 ? lastdayWorker : c.length > 1 ? c[c.length - 1] : undefined;
       const filterd = filteredAvoidDays
-        .filter((e) => !lastWorker.includes(e.id))
+        .filter((e) => !lastWorker?.includes(e.id))
         .filter((e) => e[type][idx] > 0);
       const shuffled = shuffle(filterd);
       const sliced = shuffled.slice(0, shift.num);
@@ -108,7 +109,17 @@ const onClick = () => {
     shifts: shiftsToNames(e.shifts),
   }));
 
-  console.log(banana);
+  return banana;
+};
+
+const onClick = () => {
+  createCalendarShape();
+  const workers = deepcopy(props.io.workers);
+  const workdays = props.io.workdays;
+  const s = props.io.shifts;
+  const rlt = randomAssign(workers, workdays, s);
+
+  console.log(rlt);
 };
 
 </script>
