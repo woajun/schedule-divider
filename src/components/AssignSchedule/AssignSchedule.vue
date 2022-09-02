@@ -1,4 +1,6 @@
+<!-- eslint-disable no-nested-ternary -->
 <!-- eslint-disable prefer-destructuring -->
+<!-- eslint-disable vue/max-len -->
 <script setup lang="ts">
 import { ref } from 'vue';
 import type {
@@ -55,43 +57,41 @@ const findDayType = (workdays: Workdays, i:number) => {
   return 'empty';
 };
 
+const iterateDate = (workdays: Workdays, workers: Worker[], s: Shift[]) => iterate(31).reduce((result, i) => {
+  const date = i + 1;
+  const type = findDayType(workdays, date);
+
+  const lastOutput = result.length > 1 ? result[result.length - 1] : undefined;
+  const lastdayWorker = lastOutput ? lastOutput.shifts[lastOutput.shifts.length - 1] : [];
+
+  const filteredAvoidDays = workers.filter((e) => !e.avoidDays.includes(date));
+
+  const shifts = s.reduce((c, shift, idx) => {
+    if (type === 'empty') return c;
+    const lastWorker = idx === 0 ? lastdayWorker : c.length > 1 ? c[c.length - 1] : undefined;
+    const filterd = filteredAvoidDays
+      .filter((e) => !lastWorker?.includes(e.id))
+      .filter((e) => e[type][idx] > 0);
+    const shuffled = shuffle(filterd);
+    const sliced = shuffled.slice(0, shift.num);
+    sliced.forEach((e) => {
+      e[type][idx] -= 1;
+    });
+    const ids = sliced.map((e) => e.id);
+    c.push(ids);
+    return c;
+  }, [] as number[][]);
+  const output: Output = {
+    date,
+    shifts,
+  };
+  result.push(output);
+
+  return result;
+}, [] as Output[]);
+
 const randomAssign = (workers:Worker[], workdays: Workdays, s: Shift[]) => {
-  const apple = iterate(3).reduce((result, i) => {
-    const date = i + 1;
-    const type = findDayType(workdays, date);
-
-    const lastOutput = result.length > 1 ? result[result.length - 1] : undefined;
-    const lastdayWorker = lastOutput ? lastOutput.shifts[lastOutput.shifts.length - 1] : [];
-
-    const filteredAvoidDays = workers.filter((e) => !e.avoidDays.includes(date));
-
-    // 여기서 근무로 순회해야함.
-    console.log('i', i);
-    const shifts = s.reduce((c, shift, idx) => {
-      console.log('idx', idx);
-      if (type === 'empty') return c;
-      // eslint-disable-next-line no-nested-ternary
-      const lastWorker = idx === 0 ? lastdayWorker : c.length > 1 ? c[c.length - 1] : undefined;
-      const filterd = filteredAvoidDays
-        .filter((e) => !lastWorker?.includes(e.id))
-        .filter((e) => e[type][idx] > 0);
-      const shuffled = shuffle(filterd);
-      const sliced = shuffled.slice(0, shift.num);
-      sliced.forEach((e) => {
-        e[type][idx] -= 1;
-      });
-      const ids = sliced.map((e) => e.id);
-      c.push(ids);
-      return c;
-    }, [] as number[][]);
-    const output: Output = {
-      date,
-      shifts,
-    };
-    result.push(output);
-
-    return result;
-  }, [] as Output[]);
+  const apple = iterateDate(workdays, workers, s);
   outputs.value = apple;
 
   const findID = (id:number) => {
