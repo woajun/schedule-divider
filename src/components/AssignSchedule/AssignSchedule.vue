@@ -31,6 +31,8 @@ const getLastdayWorker = (result: InnerOutput[]) => {
   return lastOutput ? lastOutput.shifts[lastOutput.shifts.length - 1] : [];
 };
 
+const getLastWorker = (c:number[][]) => (c.length > 0 ? c[c.length - 1] : undefined);
+
 const doAssign = (l:number, workdays: Workdays, workers: Worker[], s: Shift[]) => iterate(l).reduce((result, i) => {
   const date = i + 1;
   const type = findDayType(workdays, date);
@@ -39,7 +41,7 @@ const doAssign = (l:number, workdays: Workdays, workers: Worker[], s: Shift[]) =
 
   const shifts = s.reduce((c, shift, idx) => {
     if (type === 'empty') return c;
-    const lastWorker = idx === 0 ? getLastdayWorker(result) : c.length > 0 ? c[c.length - 1] : undefined;
+    const lastWorker = idx === 0 ? getLastdayWorker(result) : getLastWorker(c);
     const filterd = filteredAvoidDays
       .filter((e) => !lastWorker?.includes(e.id))
       .filter((e) => e[type][idx] > 0);
