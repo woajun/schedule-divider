@@ -68,9 +68,10 @@ const iterateDate = (workdays: Workdays, workers: Worker[], s: Shift[]) => {
   do {
     const w = deepcopy(workers);
     result = doAssign(length, workdays, w, s);
-    const banana = w.map((e) => [...e.weekday, ...e.weekend]);
-    const orange = banana.flat();
-    error = orange.reduce((p, c) => p + c, 0);
+    error = w
+      .map((e) => [...e.weekday, ...e.weekend])
+      .flat()
+      .reduce((p, c) => p + c, 0);
     i += 1;
   } while (i < 1000 && error !== 0);
 
