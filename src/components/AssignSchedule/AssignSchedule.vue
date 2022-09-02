@@ -6,7 +6,6 @@ import CalendarShape from './CalendarShape.vue';
 
 interface Output {
   date: number,
-  weekday: number,
   workerIDs: number[],
 }
 
@@ -44,6 +43,25 @@ const createCalendarShape = () => {
 
 const onClick = () => {
   createCalendarShape();
+  const w = props.io.workers;
+  const d = props.io.workdays;
+  console.log('w', w);
+  console.log('d', d);
+  // 셔플하고 조건검사하고 붙이고 반복
+
+  // 1일을 잡고 weekend다. 하면 weekend 검사 숫자있는 애들만
+  // 조건검사하고 넣는다.
+  // 2일을 잡고 weekend다. 하면 weekend 검사 숫자있는 애들만
+  // 조건검사하고 넣는다.
+  // 3일을 잡고 weekday다. 하면 weekday 검사 숫자있는 애들만
+  // 조건검사하고 넣는다.
+
+  // 조건검사 항목
+  // 1. weekday,또는 weekend 해당 숫자가 0 이상일 것.
+  // 2. 바로 전 근무가 아닐 것.
+  // 3. avoidDays가 아닐 것.
+  // 4. 인원이 전부 다 불만족하면 처음부터 다시 짤 것.
+  // 5. 10번 다시 짯는데 불만족하면 경고 후 그냥 쓸 것.
 };
 
 </script>
