@@ -27,11 +27,6 @@ const findDayType = (workdays: Workdays, i:number) => {
   return 'empty';
 };
 
-const getLastdayWorker = (result: InnerOutput[]) => {
-  const lastOutput = result.length > 0 ? result[result.length - 1] : undefined;
-  return lastOutput ? lastOutput.shifts[lastOutput.shifts.length - 1] : [];
-};
-
 const getLastWorker = (c:number[][]) => (c.length > 0 ? c[c.length - 1] : undefined);
 
 const reduceAllotment = (workers:Worker[], type:'weekday' | 'weekend', shift: number) => {
@@ -42,6 +37,12 @@ const reduceAllotment = (workers:Worker[], type:'weekday' | 'weekend', shift: nu
 
 const lastdayWorkerFlag = ref(true);
 
+const getLastdayWorker = (result: InnerOutput[]) => {
+  if (!lastdayWorkerFlag.value) return undefined;
+  const lastOutput = result.length > 0 ? result[result.length - 1] : undefined;
+  return lastOutput ? lastOutput.shifts[lastOutput.shifts.length - 1] : [];
+};
+
 const workOnceADayFlag = ref(true);
 
 const workContinuousFlag = ref(false);
@@ -51,9 +52,8 @@ const doAssign = (l:number, workdays: Workdays, workers: Worker[], s: Shift[]) =
   const type = findDayType(workdays, date);
   const shifts = s.reduce((c, shift, idx) => {
     if (type === 'empty') return c;
-    const lastDayWorker = lastdayWorkerFlag.value ? getLastdayWorker(result) : undefined;
     const previousWorker = workContinuousFlag.value ? undefined : getLastWorker(c);
-    const lastWorker = idx === 0 ? lastDayWorker : previousWorker;
+    const lastWorker = idx === 0 ? getLastdayWorker(result) : previousWorker;
     const filterd = workers
       .filter((e) => !e.avoidDays.includes(date))
       .filter((e) => !lastWorker?.includes(e.id))
