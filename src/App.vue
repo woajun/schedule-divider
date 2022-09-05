@@ -35,7 +35,10 @@ const setWorkers = (n:Worker[]) => {
 const total = computed(
   () => {
     if (shifts.value.length < 1) return 0;
-    return shifts.value.length * (workdays.weekday.length + workdays.weekend.length) * shifts.value[0].num;
+    return shifts.value.reduce(
+      (c, p) => c + (workdays.weekday.length + workdays.weekend.length) * p.num,
+      0,
+    );
   },
 );
 
