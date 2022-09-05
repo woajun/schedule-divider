@@ -36,28 +36,32 @@ const reduceAllotment = (workers:Worker[], type:'weekday' | 'weekend', shift: nu
 const lastdayWorkerFlag = ref(true);
 
 const getLastdayWorker = (result: InnerOutput[]) => {
-  if (!lastdayWorkerFlag.value) return undefined;
+  if (!lastdayWorkerFlag.value) return [];
   const lastOutput = result.length > 0 ? result[result.length - 1] : undefined;
   return lastOutput ? lastOutput.shifts[lastOutput.shifts.length - 1] : [];
 };
 
-const workOnceADayFlag = ref(true);
-
 const previouseWorkerFlag = ref(false);
+
 const getPreviousWorker = (c:number[][]) => {
-  if (previouseWorkerFlag.value) return undefined;
-  return c.length > 0 ? c[c.length - 1] : undefined;
+  if (previouseWorkerFlag.value) return [];
+  return c.length > 0 ? c[c.length - 1] : [];
 };
+
+const getLastWorker = (idx: number, result: InnerOutput[], c:number[][]) => (
+  idx === 0 ? getLastdayWorker(result) : getPreviousWorker(c)
+);
+
+const workOnceADayFlag = ref(true);
 
 const doAssign = (l:number, workdays: Workdays, workers: Worker[], s: Shift[]) => iterate(l).reduce((result, i) => {
   const date = i + 1;
   const type = findDayType(workdays, date);
   const shifts = s.reduce((c, shift, idx) => {
     if (type === 'empty') return c;
-    const lastWorker = idx === 0 ? getLastdayWorker(result) : getPreviousWorker(c);
     const filterd = workers
       .filter((e) => !e.avoidDays.includes(date))
-      .filter((e) => !lastWorker?.includes(e.id))
+      .filter((e) => !getLastWorker(idx, result, c).includes(e.id))
       .filter((e) => e[type][idx] > 0);
     const shuffled = shuffle(filterd);
     const assigned = shuffled.slice(0, shift.num);
