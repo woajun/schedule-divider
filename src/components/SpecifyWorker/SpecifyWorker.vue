@@ -7,6 +7,7 @@ import {
 } from 'vue';
 import type { Shift, SpecifyWorker, Workdays } from '@/interfaces';
 import { iterate, newID, shuffle } from '../helper';
+import { randomTimes } from './randomTimes';
 
 const props = defineProps<{
   year: number,
@@ -120,6 +121,12 @@ watch([() => props.month, () => props.year], () => {
 const total = computed(() => workers.reduce((c, worker) => c += worker.times, 0));
 
 const random = () => {
+  randomTimes({
+    people: 6,
+    weekdays: 17,
+    weekends: 7,
+    shifts: [4, 2],
+  });
   const el = Math.floor(maximum.value / workers.length);
   const rest = maximum.value % workers.length;
   const arr = iterate(workers.length, el);

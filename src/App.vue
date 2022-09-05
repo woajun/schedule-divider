@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/max-len -->
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue';
+import { reactive, ref } from 'vue';
 import SpecifyDate from './components/SpecifyDate/SpecifyDate.vue';
 import SpecifyShifts from './components/SpecifyShifts/SpecifyShifts.vue';
 import SpecifyWorker from './components/SpecifyWorker/SpecifyWorker.vue';
