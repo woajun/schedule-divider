@@ -116,8 +116,6 @@ watch([() => props.month, () => props.year], () => {
       <button @click="addWorker">
         근무자추가
       </button>
-      {{ range.min }}
-      {{ range.max }}
     </div>
     <div>
       <table>

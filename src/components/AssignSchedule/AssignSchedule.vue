@@ -41,10 +41,10 @@ const getLastdayWorker = (result: InnerOutput[]) => {
   return lastOutput ? lastOutput.shifts[lastOutput.shifts.length - 1] : [];
 };
 
-const previouseWorkerFlag = ref(false);
+const previouseWorkerFlag = ref(true);
 
 const getPreviousWorker = (c:number[][]) => {
-  if (previouseWorkerFlag.value) return [];
+  if (!previouseWorkerFlag.value) return [];
   return c.length > 0 ? c[c.length - 1] : [];
 };
 
@@ -54,6 +54,8 @@ const getLastWorker = (idx: number, result: InnerOutput[], c:number[][]) => (
 
 const workOnceADayFlag = ref(true);
 
+const getAlreadyWorker = (c: number[][]) => (workOnceADayFlag.value ? c.flat() : []);
+
 const doAssign = (l:number, workdays: Workdays, workers: Worker[], s: Shift[]) => iterate(l).reduce((result, i) => {
   const date = i + 1;
   const type = findDayType(workdays, date);
@@ -62,6 +64,7 @@ const doAssign = (l:number, workdays: Workdays, workers: Worker[], s: Shift[]) =
     const filterd = workers
       .filter((e) => !e.avoidDays.includes(date))
       .filter((e) => !getLastWorker(idx, result, c).includes(e.id))
+      .filter((e) => !getAlreadyWorker(c).includes(e.id))
       .filter((e) => e[type][idx] > 0);
     const shuffled = shuffle(filterd);
     const assigned = shuffled.slice(0, shift.num);
@@ -147,11 +150,11 @@ const onClick = () => {
     <br />
     <label>
       <input v-model="previouseWorkerFlag" type="checkbox" />
-      연속으로 근무할 수 있음
+      연속 근무를 제한함
     </label>
     <br />
     <label>
-      <input type="checkbox" />
+      <input v-model="workOnceADayFlag" type="checkbox" />
       하루에 최대 한 번 근무함.
     </label>
     <br />
