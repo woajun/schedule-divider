@@ -10,7 +10,6 @@ import type {
 import { deepcopy, iterate, shuffle } from '../helper';
 import CalendarShape from './CalendarShape.vue';
 import type { InnerOutput, Output } from './interfaces';
-import { makeWorkdayArray } from '../DistributeWorking/makeWorkdayArray';
 import { fixWorker } from '../DistributeWorking/fixWorker';
 
 const props = defineProps<{
@@ -42,7 +41,7 @@ const lastdayWorkerFlag = ref(true);
 const getLastdayWorker = (result: InnerOutput[]) => {
   if (!lastdayWorkerFlag.value) return [];
   const lastOutput = result.length > 0 ? result[result.length - 1] : undefined;
-  return lastOutput ? lastOutput.shifts[lastOutput.shifts.length - 1] : [];
+  return lastOutput && lastOutput.shifts.length > 1 ? lastOutput.shifts[lastOutput.shifts.length - 1] : [];
 };
 
 const previouseWorkerFlag = ref(true);
