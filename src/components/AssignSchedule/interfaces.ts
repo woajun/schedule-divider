@@ -1,6 +1,8 @@
+import type { Worker } from '../../interfaces';
+
 export interface Output {
   date: number,
-  shifts: Array<string[]>,
+  shifts: Array<Worker[]>,
 }
 
 export interface InnerOutput {

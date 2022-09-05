@@ -103,23 +103,10 @@ const iterateDate = (workdays: Workdays, workers: Worker[], s: Shift[]) => {
   return result;
 };
 
-const convertIdToName = (schedule: InnerOutput[], workers:Worker[]): Output[] => {
-  const findID = (id:number) => {
+const convertIdToWorker = (schedule: InnerOutput[], workers:Worker[]) : Output[] => {
+  const findID = (id:number): Worker => {
     const found = workers.find((e) => e.id === id);
-    if (!found) return 'invalidID';
-    return found.name;
-  };
-  const idsToNames = (ids: number[]) => ids.map((id) => findID(id));
-  const shiftsToNames = (shifts: number[][]) => shifts.map((ids) => idsToNames(ids));
-  return schedule.map((e) => ({
-    date: e.date,
-    shifts: shiftsToNames(e.shifts),
-  }));
-};
-const convertIdToWorker = (schedule: InnerOutput[], workers:Worker[]) => {
-  const findID = (id:number) => {
-    const found = workers.find((e) => e.id === id);
-    if (!found) return 'invalidID';
+    if (!found) throw new Error('error');
     return found;
   };
   const idsToWorker = (ids: number[]) => ids.map((id) => findID(id));
@@ -145,10 +132,8 @@ const onClick = () => {
   const d = props.io.workdays;
   const s = props.io.shifts;
   const assigned = randomAssign(w, d, s);
-  const apple = convertIdToWorker(assigned, w);
-  console.log(apple);
-  const schedule = convertIdToName(assigned, w);
-  // output.value = makeOutput(schedule, d);
+  const schedule = convertIdToWorker(assigned, w);
+  output.value = makeOutput(schedule, d);
 };
 
 </script>

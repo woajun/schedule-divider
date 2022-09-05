@@ -23,8 +23,8 @@ const props = defineProps<{
               {{ day.date }}
             </div>
             <template v-if="day.shifts">
-              <div v-for="(names, idx2) in day.shifts" :key="idx2">
-                <span v-for="name in names" :key="name"> {{ name }} &nbsp;</span>
+              <div v-for="(workers, idx2) in day.shifts" :key="idx2">
+                <span v-for="w in workers" :key="w.id"> {{ w.name }} &nbsp;</span>
               </div>
             </template>
           </td>
