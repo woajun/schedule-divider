@@ -45,7 +45,8 @@ const doAssign = (l:number, workdays: Workdays, workers: Worker[], s: Shift[]) =
   const type = findDayType(workdays, date);
   const shifts = s.reduce((c, shift, idx) => {
     if (type === 'empty') return c;
-    const lastWorker = idx === 0 ? getLastdayWorker(result) : getLastWorker(c);
+    const lastDayWorker = lastdayWorkerFlag.value ? getLastdayWorker(result) : undefined;
+    const lastWorker = idx === 0 ? lastDayWorker : getLastWorker(c);
     const filterd = workers
       .filter((e) => !e.avoidDays.includes(date))
       .filter((e) => !lastWorker?.includes(e.id))
@@ -122,13 +123,15 @@ const onClick = () => {
   output.value = makeOutput(schedule, d);
 };
 
+const lastdayWorkerFlag = ref(true);
+
 </script>
 <template>
   <div>
     날짜분배옵션
     <br />
     <label>
-      <input type="checkbox" />
+      <input v-model="lastdayWorkerFlag" type="checkbox" />
       말번 다음 날 초번 제외
     </label>
     <br />
