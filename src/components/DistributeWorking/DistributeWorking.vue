@@ -20,13 +20,13 @@ const shifts = ref<Shift[]>([]);
 const onClick = () => {
   shifts.value = props.shifts;
 
-  const workers = props.workers.length;
-  const weekdays = props.workdays.weekday.length;
-  const weekends = props.workdays.weekend.length;
-  const shiftsLength = props.shifts.length;
-  const perShift = props.shifts[0].num;
-
-  const arr = makeWorkdayArray(workers, weekdays, weekends, shiftsLength, perShift);
+  const arr = makeWorkdayArray({
+    people: props.workers.length,
+    weekdays: props.workdays.weekday.length,
+    weekends: props.workdays.weekend.length,
+    shifts: props.shifts.length,
+    perShift: props.shifts[0].num,
+  });
 
   const shuffled = shuffle(props.workers);
 

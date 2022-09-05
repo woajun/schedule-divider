@@ -131,6 +131,7 @@ const onClick = () => {
   const w = deepcopy(props.io.workers);
   const d = props.io.workdays;
   const s = props.io.shifts;
+
   const assigned = randomAssign(w, d, s);
   const schedule = convertIdToWorker(assigned, w);
   output.value = makeOutput(schedule, d);
