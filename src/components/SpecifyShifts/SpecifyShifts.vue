@@ -1,5 +1,7 @@
 <script lang="ts" setup>
-import { reactive, ref, watchEffect } from 'vue';
+import {
+  reactive, ref, watch, watchEffect,
+} from 'vue';
 import type { Shift } from '@/interfaces';
 import { newID } from '../helper';
 
@@ -38,6 +40,18 @@ watchEffect(() => {
     return e;
   }));
 });
+
+const individual = ref(false);
+
+watch(individual, (v) => {
+  if (!v) {
+    shifts.map((e) => {
+      e.num = perShift.value;
+      return e;
+    });
+  }
+});
+
 </script>
 <template>
   <div>
@@ -48,7 +62,11 @@ watchEffect(() => {
   <div>
     <label>
       근무당 인원
-      <input v-model="perShift" type="number">
+      <input v-model="perShift" type="number" :disabled="individual">
+    </label>
+    <label>
+      <input v-model="individual" type="checkbox" />
+      개별
     </label>
   </div>
   <table>
@@ -66,6 +84,9 @@ watchEffect(() => {
           <button @click="()=>removeShift(shift.id)">
             삭제
           </button>
+        </td>
+        <td v-show="individual">
+          <input v-model="shift.num" type="number">
         </td>
       </tr>
     </tbody>

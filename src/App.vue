@@ -46,6 +46,8 @@ const total = computed(
   <hr>
   <SpecifyShifts @shifts="setShifts" />
   <hr>
+  {{ shifts }}
+  <hr>
   <SpecifyWorker
     :year="workdays.year"
     :month="workdays.month"
