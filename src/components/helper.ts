@@ -37,3 +37,13 @@ export function shuffle<T>(arr:Array<T>):Array<T> {
 export function deepcopy<T>(target:Array<T>):Array<T> {
   return JSON.parse(JSON.stringify(target));
 }
+
+export function spliteToInt(target:number, piece: number) {
+  const el = Math.floor(target / piece);
+  const rest = target % piece;
+  const splited = iterate(piece, el);
+  iterate(rest).forEach((i) => {
+    splited[i] += 1;
+  });
+  return splited;
+}
