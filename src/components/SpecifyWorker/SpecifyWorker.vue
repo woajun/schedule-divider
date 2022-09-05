@@ -123,6 +123,7 @@ const random = () => {
 };
 
 const up = (w:SpecifyWorker) => {
+  if (total.value >= props.total) return;
   w.times += 1;
 };
 const down = (w:SpecifyWorker) => {
