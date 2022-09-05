@@ -40,13 +40,20 @@ const reduceAllotment = (workers:Worker[], type:'weekday' | 'weekend', shift: nu
   });
 };
 
+const lastdayWorkerFlag = ref(true);
+
+const workOnceADayFlag = ref(true);
+
+const workContinuousFlag = ref(false);
+
 const doAssign = (l:number, workdays: Workdays, workers: Worker[], s: Shift[]) => iterate(l).reduce((result, i) => {
   const date = i + 1;
   const type = findDayType(workdays, date);
   const shifts = s.reduce((c, shift, idx) => {
     if (type === 'empty') return c;
     const lastDayWorker = lastdayWorkerFlag.value ? getLastdayWorker(result) : undefined;
-    const lastWorker = idx === 0 ? lastDayWorker : getLastWorker(c);
+    const previousWorker = workContinuousFlag.value ? undefined : getLastWorker(c);
+    const lastWorker = idx === 0 ? lastDayWorker : previousWorker;
     const filterd = workers
       .filter((e) => !e.avoidDays.includes(date))
       .filter((e) => !lastWorker?.includes(e.id))
@@ -123,8 +130,6 @@ const onClick = () => {
   output.value = makeOutput(schedule, d);
 };
 
-const lastdayWorkerFlag = ref(true);
-
 </script>
 <template>
   <div>
@@ -132,12 +137,17 @@ const lastdayWorkerFlag = ref(true);
     <br />
     <label>
       <input v-model="lastdayWorkerFlag" type="checkbox" />
-      말번 다음 날 초번 제외
+      말번 다음 날 초번을 제외함
+    </label>
+    <br />
+    <label>
+      <input v-model="workContinuousFlag" type="checkbox" />
+      연속으로 근무할 수 있음
     </label>
     <br />
     <label>
       <input type="checkbox" />
-      하루에 한 번 근무
+      하루에 최대 한 번 근무함.
     </label>
     <br />
     <br />
