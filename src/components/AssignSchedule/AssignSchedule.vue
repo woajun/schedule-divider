@@ -117,10 +117,7 @@ const convertIdToName = (schedule: InnerOutput[], workers:Worker[]): Output[] =>
   }));
 };
 
-const randomAssign = (workers:Worker[], workdays: Workdays, s: Shift[]) => {
-  const schedule = iterateDate(workdays, workers, s);
-  return convertIdToName(schedule, workers);
-};
+const randomAssign = (w:Worker[], d: Workdays, s: Shift[]) => iterateDate(d, w, s);
 
 const makeOutput = (schedule: Output[], { year, month }: Workdays) => {
   const merged = iterate<Output>(getMargin(year, month), { date: 0, shifts: [] }).concat(schedule);
@@ -134,7 +131,8 @@ const onClick = () => {
   const w = deepcopy(props.io.workers);
   const d = props.io.workdays;
   const s = props.io.shifts;
-  const schedule = randomAssign(w, d, s);
+  const assigned = randomAssign(w, d, s);
+  const schedule = convertIdToName(assigned, w);
   output.value = makeOutput(schedule, d);
 };
 
