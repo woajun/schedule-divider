@@ -27,8 +27,6 @@ const findDayType = (workdays: Workdays, i:number) => {
   return 'empty';
 };
 
-const getLastWorker = (c:number[][]) => (c.length > 0 ? c[c.length - 1] : undefined);
-
 const reduceAllotment = (workers:Worker[], type:'weekday' | 'weekend', shift: number) => {
   workers.forEach((e) => {
     e[type][shift] -= 1;
@@ -45,15 +43,18 @@ const getLastdayWorker = (result: InnerOutput[]) => {
 
 const workOnceADayFlag = ref(true);
 
-const workContinuousFlag = ref(false);
+const previouseWorkerFlag = ref(false);
+const getPreviousWorker = (c:number[][]) => {
+  if (previouseWorkerFlag.value) return undefined;
+  return c.length > 0 ? c[c.length - 1] : undefined;
+};
 
 const doAssign = (l:number, workdays: Workdays, workers: Worker[], s: Shift[]) => iterate(l).reduce((result, i) => {
   const date = i + 1;
   const type = findDayType(workdays, date);
   const shifts = s.reduce((c, shift, idx) => {
     if (type === 'empty') return c;
-    const previousWorker = workContinuousFlag.value ? undefined : getLastWorker(c);
-    const lastWorker = idx === 0 ? getLastdayWorker(result) : previousWorker;
+    const lastWorker = idx === 0 ? getLastdayWorker(result) : getPreviousWorker(c);
     const filterd = workers
       .filter((e) => !e.avoidDays.includes(date))
       .filter((e) => !lastWorker?.includes(e.id))
@@ -141,7 +142,7 @@ const onClick = () => {
     </label>
     <br />
     <label>
-      <input v-model="workContinuousFlag" type="checkbox" />
+      <input v-model="previouseWorkerFlag" type="checkbox" />
       연속으로 근무할 수 있음
     </label>
     <br />
