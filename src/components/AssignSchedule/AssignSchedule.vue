@@ -63,6 +63,7 @@ const onClick = () => {
 
   const assigned = randomAssign(w, d, s, flags);
   const schedule = convertIdToWorker(assigned, w);
+  console.log(schedule);
   output.value = makeOutput(schedule, d);
 
   y.value = d.year;

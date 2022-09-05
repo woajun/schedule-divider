@@ -38,6 +38,9 @@ const setWorkers = (n:Worker[]) => {
   <hr>
   <SpecifyShifts @shifts="setShifts" />
   <hr>
+  총 근무 횟수
+  {{ shifts.length * (workdays.weekday.length + workdays.weekend.length) * shifts[0].num }} 회
+  <hr>
   <SpecifyWorker :year="workdays.year" :month="workdays.month" @workers="setWorkers" />
   <hr>
   <AssignSchedule
