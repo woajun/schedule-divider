@@ -1,3 +1,4 @@
+<!-- eslint-disable operator-assignment -->
 <!-- eslint-disable no-return-assign -->
 <!-- eslint-disable no-param-reassign -->
 <script lang="ts" setup>
@@ -5,7 +6,7 @@ import {
   computed, reactive, watch, watchEffect,
 } from 'vue';
 import type { SpecifyWorker } from '@/interfaces';
-import { newID } from '../helper';
+import { iterate, newID, shuffle } from '../helper';
 
 const props = defineProps<{
   year: number,
@@ -107,6 +108,20 @@ watch([() => props.month, () => props.year], () => {
 
 const total = computed(() => workers.reduce((c, worker) => c += worker.times, 0));
 
+const random = () => {
+  const el = Math.floor(props.total / workers.length);
+  const rest = props.total % workers.length;
+  const arr = iterate(workers.length, el);
+  iterate(rest).forEach((i) => {
+    arr[i] = arr[i] + 1;
+  });
+  const shuffled = shuffle([...arr]);
+  iterate(workers.length).forEach((i) => {
+    workers[i].times = shuffled[i];
+  });
+  emitWorker();
+};
+
 </script>
 <template>
   <div>
@@ -126,7 +141,9 @@ const total = computed(() => workers.reduce((c, worker) => c += worker.times, 0)
             <th />
             <th />
             <th colspan="3">
-              근무수 <button>랜덤</button>
+              근무수 <button @click="random">
+                분배
+              </button>
             </th>
           </tr>
         </thead>

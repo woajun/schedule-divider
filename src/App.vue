@@ -53,6 +53,8 @@ const total = computed(
     @workers="setWorkers"
   />
   <hr>
+  {{ workers }}
+  <hr>
   <AssignSchedule
     :workers="workers"
     :shifts="shifts"
