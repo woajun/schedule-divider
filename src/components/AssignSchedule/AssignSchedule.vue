@@ -5,14 +5,18 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import type {
-  CalendarIO, Shift, Workdays, Worker,
+  Shift, Workdays, Worker,
 } from '@/interfaces';
 import { deepcopy, iterate, shuffle } from '../helper';
 import CalendarShape from './CalendarShape.vue';
 import type { InnerOutput, Output } from './interfaces';
+import { makeWorkdayArray } from '../DistributeWorking/makeWorkdayArray';
+import { fixWorker } from '../DistributeWorking/fixWorker';
 
 const props = defineProps<{
-  io:CalendarIO
+  workers: Worker[]
+  shifts: Shift[]
+  workdays: Workdays
 }>();
 
 const getMargin = (y:number, m:number) => new Date(y, m - 1, 1).getDay();
@@ -125,16 +129,21 @@ const makeOutput = (schedule: Output[], { year, month }: Workdays) => {
   return iterate(count).map((i) => merged.slice((i) * 7, (i + 1) * 7));
 };
 
+const y = ref<number>(0);
+const m = ref<number>(0);
 const output = ref<Output[][]>([]);
 
 const onClick = () => {
-  const w = deepcopy(props.io.workers);
-  const d = props.io.workdays;
-  const s = props.io.shifts;
+  const d = props.workdays;
+  const s = props.shifts;
+  const w = deepcopy(fixWorker(props.workers, d, s));
 
   const assigned = randomAssign(w, d, s);
   const schedule = convertIdToWorker(assigned, w);
   output.value = makeOutput(schedule, d);
+
+  y.value = d.year;
+  m.value = d.month;
 };
 
 </script>
@@ -162,7 +171,7 @@ const onClick = () => {
       날짜 분배
     </button>
     <br>
-    <h2>{{ props.io.workdays.year }} 년 {{ props.io.workdays.month }} 월 근무표</h2>
+    <h2>{{ y }} 년 {{ m }} 월 근무표</h2>
     <CalendarShape :output="output" />
   </div>
 </template>

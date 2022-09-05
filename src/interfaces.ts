@@ -18,9 +18,3 @@ export interface Worker {
   weekday: number[],
   weekend: number[],
 }
-
-export interface CalendarIO {
-  workers: Worker[]
-  workdays: Workdays
-  shifts: Shift[]
-}
