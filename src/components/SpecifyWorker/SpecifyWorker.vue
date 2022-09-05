@@ -1,13 +1,16 @@
+<!-- eslint-disable no-return-assign -->
+<!-- eslint-disable no-param-reassign -->
 <script lang="ts" setup>
 import {
   computed, reactive, watch, watchEffect,
 } from 'vue';
-import type { Worker } from '@/interfaces';
+import type { SpecifyWorker } from '@/interfaces';
 import { newID } from '../helper';
 
 const props = defineProps<{
   year: number,
   month: number,
+  total: number,
 }>();
 
 const range = computed(() => {
@@ -22,48 +25,42 @@ const range = computed(() => {
 });
 
 const emit = defineEmits(['workers']);
-const workers = reactive<Worker[]>([
+const workers = reactive<SpecifyWorker[]>([
   {
     id: newID(),
     name: '유재석',
     avoidDays: [],
-    weekday: [],
-    weekend: [],
+    times: 0,
   },
   {
     id: newID(),
     name: '박명수',
     avoidDays: [],
-    weekday: [],
-    weekend: [],
+    times: 0,
   },
   {
     id: newID(),
     name: '정준하',
     avoidDays: [],
-    weekday: [],
-    weekend: [],
+    times: 0,
   },
   {
     id: newID(),
     name: '하정우',
     avoidDays: [],
-    weekday: [],
-    weekend: [],
+    times: 0,
   },
   {
     id: newID(),
     name: '정형돈',
     avoidDays: [],
-    weekday: [],
-    weekend: [],
+    times: 0,
   },
   {
     id: newID(),
     name: '노홍철',
     avoidDays: [],
-    weekday: [],
-    weekend: [],
+    times: 0,
   },
 ]);
 
@@ -86,8 +83,7 @@ const addWorker = () => {
     id: newID(),
     name: '',
     avoidDays: [],
-    weekday: [],
-    weekend: [],
+    times: 0,
   });
 };
 
@@ -109,6 +105,8 @@ watch([() => props.month, () => props.year], () => {
   });
 });
 
+const total = computed(() => workers.reduce((c, worker) => c += worker.times, 0));
+
 </script>
 <template>
   <div>
@@ -125,6 +123,11 @@ watch([() => props.month, () => props.year], () => {
             <th>이름</th>
             <th />
             <th>피하고 싶은 날</th>
+            <th />
+            <th />
+            <th colspan="3">
+              근무수 <button>랜덤</button>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -143,6 +146,18 @@ watch([() => props.month, () => props.year], () => {
                 비우기
               </button>
             </td>
+            <td>{{ worker.times }}</td>
+            <td><button>▲</button></td>
+            <td><button>▼</button></td>
+          </tr>
+          <tr>
+            <td />
+            <td />
+            <td />
+            <td />
+            <td />
+            <td />
+            <td>{{ total }}/{{ props.total }}</td>
           </tr>
         </tbody>
       </table>

@@ -1,5 +1,6 @@
+<!-- eslint-disable vue/max-len -->
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import SpecifyDate from './components/SpecifyDate/SpecifyDate.vue';
 import SpecifyShifts from './components/SpecifyShifts/SpecifyShifts.vue';
 import SpecifyWorker from './components/SpecifyWorker/SpecifyWorker.vue';
@@ -31,6 +32,13 @@ const setWorkers = (n:Worker[]) => {
   workers.value = n;
 };
 
+const total = computed(
+  () => {
+    if (shifts.value.length < 1) return 0;
+    return shifts.value.length * (workdays.weekday.length + workdays.weekend.length) * shifts.value[0].num;
+  },
+);
+
 </script>
 
 <template>
@@ -38,10 +46,12 @@ const setWorkers = (n:Worker[]) => {
   <hr>
   <SpecifyShifts @shifts="setShifts" />
   <hr>
-  총 근무 횟수
-  {{ shifts.length * (workdays.weekday.length + workdays.weekend.length) * shifts[0].num }} 회
-  <hr>
-  <SpecifyWorker :year="workdays.year" :month="workdays.month" @workers="setWorkers" />
+  <SpecifyWorker
+    :year="workdays.year"
+    :month="workdays.month"
+    :total="total"
+    @workers="setWorkers"
+  />
   <hr>
   <AssignSchedule
     :workers="workers"

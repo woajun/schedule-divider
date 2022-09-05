@@ -18,3 +18,10 @@ export interface Worker {
   weekday: number[],
   weekend: number[],
 }
+
+export interface SpecifyWorker {
+  id: number,
+  name: string,
+  avoidDays: number[],
+  times: number,
+}
