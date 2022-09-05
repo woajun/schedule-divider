@@ -32,16 +32,6 @@ const setWorkers = (n:Worker[]) => {
   workers.value = n;
 };
 
-const total = computed(
-  () => {
-    if (shifts.value.length < 1) return 0;
-    return shifts.value.reduce(
-      (c, p) => c + (workdays.weekday.length + workdays.weekend.length) * p.num,
-      0,
-    );
-  },
-);
-
 </script>
 
 <template>
@@ -54,7 +44,8 @@ const total = computed(
   <SpecifyWorker
     :year="workdays.year"
     :month="workdays.month"
-    :total="total"
+    :shifts="shifts"
+    :workdays="workdays"
     @workers="setWorkers"
   />
   <hr>

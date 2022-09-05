@@ -5,14 +5,25 @@
 import {
   computed, reactive, watch, watchEffect,
 } from 'vue';
-import type { SpecifyWorker } from '@/interfaces';
+import type { Shift, SpecifyWorker, Workdays } from '@/interfaces';
 import { iterate, newID, shuffle } from '../helper';
 
 const props = defineProps<{
   year: number,
   month: number,
-  total: number,
+  workdays: Workdays,
+  shifts: Shift[],
 }>();
+
+const maximum = computed(
+  () => {
+    if (props.shifts.length < 1) return 0;
+    return props.shifts.reduce(
+      (c, p) => c + (props.workdays.weekday.length + props.workdays.weekend.length) * p.num,
+      0,
+    );
+  },
+);
 
 const range = computed(() => {
   const date = new Date(props.year, props.month, 0);
@@ -109,8 +120,8 @@ watch([() => props.month, () => props.year], () => {
 const total = computed(() => workers.reduce((c, worker) => c += worker.times, 0));
 
 const random = () => {
-  const el = Math.floor(props.total / workers.length);
-  const rest = props.total % workers.length;
+  const el = Math.floor(maximum.value / workers.length);
+  const rest = maximum.value % workers.length;
   const arr = iterate(workers.length, el);
   iterate(rest).forEach((i) => {
     arr[i] = arr[i] + 1;
@@ -123,7 +134,7 @@ const random = () => {
 };
 
 const up = (w:SpecifyWorker) => {
-  if (total.value >= props.total) return;
+  if (total.value >= maximum.value) return;
   w.times += 1;
 };
 const down = (w:SpecifyWorker) => {
@@ -191,7 +202,7 @@ const down = (w:SpecifyWorker) => {
             <td />
             <td />
             <td />
-            <td>{{ total }}/{{ props.total }}</td>
+            <td>{{ total }}/{{ maximum }}</td>
           </tr>
         </tbody>
       </table>
