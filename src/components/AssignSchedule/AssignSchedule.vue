@@ -116,6 +116,19 @@ const convertIdToName = (schedule: InnerOutput[], workers:Worker[]): Output[] =>
     shifts: shiftsToNames(e.shifts),
   }));
 };
+const convertIdToWorker = (schedule: InnerOutput[], workers:Worker[]) => {
+  const findID = (id:number) => {
+    const found = workers.find((e) => e.id === id);
+    if (!found) return 'invalidID';
+    return found;
+  };
+  const idsToWorker = (ids: number[]) => ids.map((id) => findID(id));
+  const shiftsToWorkers = (shifts: number[][]) => shifts.map((ids) => idsToWorker(ids));
+  return schedule.map((e) => ({
+    date: e.date,
+    shifts: shiftsToWorkers(e.shifts),
+  }));
+};
 
 const randomAssign = (w:Worker[], d: Workdays, s: Shift[]) => iterateDate(d, w, s);
 
@@ -132,8 +145,10 @@ const onClick = () => {
   const d = props.io.workdays;
   const s = props.io.shifts;
   const assigned = randomAssign(w, d, s);
+  const apple = convertIdToWorker(assigned, w);
+  console.log(apple);
   const schedule = convertIdToName(assigned, w);
-  output.value = makeOutput(schedule, d);
+  // output.value = makeOutput(schedule, d);
 };
 
 </script>
