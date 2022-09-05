@@ -122,6 +122,14 @@ const random = () => {
   emitWorker();
 };
 
+const up = (w:SpecifyWorker) => {
+  w.times += 1;
+};
+const down = (w:SpecifyWorker) => {
+  if (w.times < 1) return;
+  w.times -= 1;
+};
+
 </script>
 <template>
   <div>
@@ -164,8 +172,16 @@ const random = () => {
               </button>
             </td>
             <td>{{ worker.times }}</td>
-            <td><button>▲</button></td>
-            <td><button>▼</button></td>
+            <td>
+              <button @click="()=>up(worker)">
+                ▲
+              </button>
+            </td>
+            <td>
+              <button @click="()=>down(worker)">
+                ▼
+              </button>
+            </td>
           </tr>
           <tr>
             <td />
