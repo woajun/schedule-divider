@@ -10,11 +10,11 @@ const shifts = reactive<Shift[]>([
   {
     id: newID(),
     name: '오전근무',
-    num: 2,
+    num: 4,
   },
   {
     id: newID(),
-    name: '오후근무',
+    name: '새벽근무',
     num: 2,
   },
 ]);
@@ -41,7 +41,7 @@ watchEffect(() => {
   }));
 });
 
-const individual = ref(false);
+const individual = ref(true);
 
 watch(individual, (v) => {
   if (!v) {

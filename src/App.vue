@@ -49,8 +49,6 @@ const setWorkers = (n:Worker[]) => {
     @workers="setWorkers"
   />
   <hr>
-  {{ workers }}
-  <hr>
   <AssignSchedule
     :workers="workers"
     :shifts="shifts"

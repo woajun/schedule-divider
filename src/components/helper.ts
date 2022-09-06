@@ -47,3 +47,12 @@ export function spliteToInt(target:number, piece: number) {
   });
   return splited;
 }
+
+export function splitInt(target:number, piece: number) {
+  const el = Math.floor(target / piece);
+  return iterate(piece, el);
+}
+
+export function calcRest(target:number, piece: number) {
+  return target % piece;
+}

@@ -1,3 +1,4 @@
+<!-- eslint-disable no-console -->
 <!-- eslint-disable operator-assignment -->
 <!-- eslint-disable no-return-assign -->
 <!-- eslint-disable no-param-reassign -->
@@ -6,7 +7,10 @@ import {
   computed, reactive, watch, watchEffect,
 } from 'vue';
 import type { Shift, SpecifyWorker, Workdays } from '@/interfaces';
-import { iterate, newID, shuffle } from '../helper';
+import {
+  calcRest,
+  iterate, newID, shuffle, spliteToInt, splitInt,
+} from '../helper';
 import { randomTimes } from './randomTimes';
 
 const props = defineProps<{
@@ -38,44 +42,14 @@ const range = computed(() => {
 });
 
 const emit = defineEmits(['workers']);
-const workers = reactive<SpecifyWorker[]>([
-  {
+const workers = reactive<SpecifyWorker[]>(
+  ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'].map((name) => ({
     id: newID(),
-    name: '유재석',
+    name,
     avoidDays: [],
     times: 0,
-  },
-  {
-    id: newID(),
-    name: '박명수',
-    avoidDays: [],
-    times: 0,
-  },
-  {
-    id: newID(),
-    name: '정준하',
-    avoidDays: [],
-    times: 0,
-  },
-  {
-    id: newID(),
-    name: '하정우',
-    avoidDays: [],
-    times: 0,
-  },
-  {
-    id: newID(),
-    name: '정형돈',
-    avoidDays: [],
-    times: 0,
-  },
-  {
-    id: newID(),
-    name: '노홍철',
-    avoidDays: [],
-    times: 0,
-  },
-]);
+  })),
+);
 
 const removeWorker = (id: number) => {
   const i = workers.findIndex((w) => w.id === id);
@@ -121,23 +95,25 @@ watch([() => props.month, () => props.year], () => {
 const total = computed(() => workers.reduce((c, worker) => c += worker.times, 0));
 
 const random = () => {
-  randomTimes({
-    people: 6,
-    weekdays: 17,
-    weekends: 7,
-    shifts: [4, 2],
-  });
-  const el = Math.floor(maximum.value / workers.length);
-  const rest = maximum.value % workers.length;
-  const arr = iterate(workers.length, el);
-  iterate(rest).forEach((i) => {
-    arr[i] = arr[i] + 1;
-  });
-  const shuffled = shuffle([...arr]);
-  iterate(workers.length).forEach((i) => {
-    workers[i].times = shuffled[i];
-  });
-  emitWorker();
+  const w = workers;
+  const d = props.workdays;
+  const dd = d.weekday;
+  const de = d.weekend;
+  const s = props.shifts;
+
+  const ddTotal = s.map((e) => e.num * dd.length);
+  const ddInts = ddTotal.map((e) => splitInt(e, w.length));
+  const ddRests = ddTotal.map((e) => calcRest(e, w.length));
+
+  const deTotal = s.map((e) => e.num * de.length);
+  const deInts = deTotal.map((e) => splitInt(e, w.length));
+  const deRests = deTotal.map((e) => calcRest(e, w.length));
+
+  const ints = ddInts.concat(deInts);
+  const rests = ddRests.concat(deRests);
+
+  console.log(ints);
+  console.log(rests);
 };
 
 const up = (w:SpecifyWorker) => {
@@ -161,6 +137,15 @@ const down = (w:SpecifyWorker) => {
       <table>
         <thead>
           <tr>
+            <th colspan="9" />
+            <th colspan="2">
+              weekday
+            </th>
+            <th colspan="2">
+              weekend
+            </th>
+          </tr>
+          <tr>
             <th />
             <th>이름</th>
             <th />
@@ -172,6 +157,10 @@ const down = (w:SpecifyWorker) => {
                 분배
               </button>
             </th>
+            <th>오전근무</th>
+            <th>새벽근무</th>
+            <th>오전근무</th>
+            <th>새벽근무</th>
           </tr>
         </thead>
         <tbody>
@@ -209,6 +198,12 @@ const down = (w:SpecifyWorker) => {
             <td />
             <td />
             <td />
+            <td colspan="3">
+              {{ total }}/{{ maximum }}
+            </td>
+            <td>{{ total }}/{{ maximum }}</td>
+            <td>{{ total }}/{{ maximum }}</td>
+            <td>{{ total }}/{{ maximum }}</td>
             <td>{{ total }}/{{ maximum }}</td>
           </tr>
         </tbody>
