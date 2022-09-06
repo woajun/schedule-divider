@@ -102,13 +102,18 @@ const onClick = () => {
   emitWorker();
 };
 
-const up = (w:SpecifyWorker) => {
-  if (total.value >= maximum.value) return;
-  w.times += 1;
+const workdayTotal = (key: 'weekday' | 'weekend', i:number) => {
+  const result = workers.reduce((t, c) => t += c[key][i], 0);
+  return Number.isNaN(result) ? 0 : result;
 };
-const down = (w:SpecifyWorker) => {
-  if (w.times < 1) return;
-  w.times -= 1;
+
+const up = (key:'weekday' | 'weekend', i: number, arr: number[]) => {
+  if (workdayTotal(key, i) >= props.shifts[i].num * props.workdays[key].length) return;
+  arr[i] += 1;
+};
+const down = (arr:number[], i: number) => {
+  if (arr[i] < 1) return;
+  arr[i] -= 1;
 };
 
 const totals = (w:SpecifyWorker) => {
@@ -180,10 +185,10 @@ const totals = (w:SpecifyWorker) => {
                 {{ num }}
               </td>
               <td>
-                <button class="btn" @click="()=>up(worker)">
+                <button class="btn" @click="()=>up('weekday', i, worker.weekday)">
                   ▲
                 </button>
-                <button class="btn" @click="()=>down(worker)">
+                <button class="btn" @click="()=>down(worker.weekday, i)">
                   ▼
                 </button>
               </td>
@@ -193,10 +198,10 @@ const totals = (w:SpecifyWorker) => {
                 {{ num }}
               </td>
               <td>
-                <button class="btn" @click="()=>up(worker)">
+                <button class="btn" @click="()=>up('weekend', i, worker.weekend)">
                   ▲
                 </button>
-                <button class="btn" @click="()=>down(worker)">
+                <button class="btn" @click="()=>down(worker.weekend, i)">
                   ▼
                 </button>
               </td>
@@ -207,11 +212,11 @@ const totals = (w:SpecifyWorker) => {
             <td>
               {{ total }} / {{ maximum }}
             </td>
-            <td v-for="s in props.shifts" :key="s.id" colspan="2">
-              0 / {{ s.num * props.workdays.weekday.length }}
+            <td v-for="(s, i) in props.shifts" :key="s.id" colspan="2">
+              {{ workdayTotal('weekday', i) }} / {{ s.num * props.workdays.weekday.length }}
             </td>
-            <td v-for="s in props.shifts" :key="s.id" colspan="2">
-              0 / {{ s.num * props.workdays.weekend.length }}
+            <td v-for="(s, i) in props.shifts" :key="s.id" colspan="2">
+              {{ workdayTotal('weekend', i) }} / {{ s.num * props.workdays.weekend.length }}
             </td>
           </tr>
         </tbody>
