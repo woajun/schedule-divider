@@ -8,10 +8,8 @@ import {
 } from 'vue';
 import type { Shift, SpecifyWorker, Workdays } from '@/interfaces';
 import {
-  calcRest,
-  iterate, newID, shuffle, spliteToInt, splitInt,
+  calcRest, iterate, newID, shuffle, splitInt,
 } from '../helper';
-import { randomTimes } from './randomTimes';
 
 const props = defineProps<{
   year: number,
@@ -48,6 +46,8 @@ const workers = reactive<SpecifyWorker[]>(
     name,
     avoidDays: [],
     times: 0,
+    weekday: [],
+    weekend: [],
   })),
 );
 
@@ -71,6 +71,8 @@ const addWorker = () => {
     name: '',
     avoidDays: [],
     times: 0,
+    weekday: [],
+    weekend: [],
   });
 };
 
@@ -108,7 +110,7 @@ const distributeWork = (dd:number[], de: number[], p: number, s:Shift[]) => {
 
   let point = 0;
   const maped = rests.map((r, i) => {
-    const t = ints[i];
+    const t = [...ints[i]];
     iterate(r).forEach((idx) => {
       const index = (idx + point) % p;
       t[index] += 1;
@@ -117,19 +119,34 @@ const distributeWork = (dd:number[], de: number[], p: number, s:Shift[]) => {
     return t;
   });
 
-  console.log(ints);
-  console.log(rests);
   console.log('maped', maped);
+  return maped;
 };
 
-const random = () => {
+const onClick = () => {
   const w = workers;
   const d = props.workdays;
   const dd = d.weekday;
   const de = d.weekend;
   const s = props.shifts;
 
-  distributeWork(dd, de, w.length, s);
+  const distributed = distributeWork(dd, de, w.length, s);
+  const point = distributed.length / 2;
+  const wArr = distributed.slice(0, point);
+  const hArr = distributed.slice(point);
+
+  const result = iterate(w.length).map((i) => ({
+    weekday: wArr.map((e) => e[i]),
+    weekend: hArr.map((e) => e[i]),
+  }));
+  const shuffled = shuffle(result);
+
+  w.forEach((worker, i) => {
+    worker.weekday = shuffled[i].weekday;
+    worker.weekend = shuffled[i].weekend;
+  });
+
+  emitWorker();
 };
 
 const up = (w:SpecifyWorker) => {
@@ -153,7 +170,7 @@ const down = (w:SpecifyWorker) => {
       <table>
         <thead>
           <tr>
-            <th colspan="9" />
+            <th colspan="8" />
             <th colspan="2">
               weekday
             </th>
@@ -168,8 +185,8 @@ const down = (w:SpecifyWorker) => {
             <th>피하고 싶은 날</th>
             <th />
             <th />
-            <th colspan="3">
-              근무수 <button @click="random">
+            <th colspan="2">
+              근무수 <button @click="onClick">
                 분배
               </button>
             </th>
@@ -197,12 +214,10 @@ const down = (w:SpecifyWorker) => {
             </td>
             <td>{{ worker.times }}</td>
             <td>
-              <button @click="()=>up(worker)">
+              <button class="btn" @click="()=>up(worker)">
                 ▲
               </button>
-            </td>
-            <td>
-              <button @click="()=>down(worker)">
+              <button class="btn" @click="()=>down(worker)">
                 ▼
               </button>
             </td>
@@ -214,7 +229,7 @@ const down = (w:SpecifyWorker) => {
             <td />
             <td />
             <td />
-            <td colspan="3">
+            <td colspan="2">
               {{ total }}/{{ maximum }}
             </td>
             <td>{{ total }}/{{ maximum }}</td>
@@ -230,5 +245,9 @@ const down = (w:SpecifyWorker) => {
 <style scoped>
   .invalid {
     background-color: brown;
+  }
+  .btn {
+    width: 20px;
+    padding: 1px
   }
 </style>
