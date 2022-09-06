@@ -42,7 +42,7 @@ const range = computed(() => {
 
 const emit = defineEmits(['workers']);
 const workers = reactive<SpecifyWorker[]>(
-  ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'].map((name) => ({
+  ['일일일', '이이이', '삼삼삼', '사사사', '오오오', '육육육'].map((name) => ({
     id: newID(),
     name,
     avoidDays: [],
