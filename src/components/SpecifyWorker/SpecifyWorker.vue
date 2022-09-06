@@ -94,6 +94,34 @@ watch([() => props.month, () => props.year], () => {
 
 const total = computed(() => workers.reduce((c, worker) => c += worker.times, 0));
 
+const distributeWork = (dd:number[], de: number[], p: number, s:Shift[]) => {
+  const ddTotal = s.map((e) => e.num * dd.length);
+  const deTotal = s.map((e) => e.num * de.length);
+
+  const ddInts = ddTotal.map((e) => splitInt(e, p));
+  const deInts = deTotal.map((e) => splitInt(e, p));
+  const ints = ddInts.concat(deInts);
+
+  const ddRests = ddTotal.map((e) => calcRest(e, p));
+  const deRests = deTotal.map((e) => calcRest(e, p));
+  const rests = ddRests.concat(deRests);
+
+  let point = 0;
+  const maped = rests.map((r, i) => {
+    const t = ints[i];
+    iterate(r).forEach((idx) => {
+      const index = (idx + point) % p;
+      t[index] += 1;
+    });
+    point = point + r;
+    return t;
+  });
+
+  console.log(ints);
+  console.log(rests);
+  console.log('maped', maped);
+};
+
 const random = () => {
   const w = workers;
   const d = props.workdays;
@@ -101,19 +129,7 @@ const random = () => {
   const de = d.weekend;
   const s = props.shifts;
 
-  const ddTotal = s.map((e) => e.num * dd.length);
-  const ddInts = ddTotal.map((e) => splitInt(e, w.length));
-  const ddRests = ddTotal.map((e) => calcRest(e, w.length));
-
-  const deTotal = s.map((e) => e.num * de.length);
-  const deInts = deTotal.map((e) => splitInt(e, w.length));
-  const deRests = deTotal.map((e) => calcRest(e, w.length));
-
-  const ints = ddInts.concat(deInts);
-  const rests = ddRests.concat(deRests);
-
-  console.log(ints);
-  console.log(rests);
+  distributeWork(dd, de, w.length, s);
 };
 
 const up = (w:SpecifyWorker) => {
