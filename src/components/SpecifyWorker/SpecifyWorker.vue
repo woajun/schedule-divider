@@ -8,8 +8,9 @@ import {
 } from 'vue';
 import type { Shift, SpecifyWorker, Workdays } from '@/interfaces';
 import {
-  calcRest, iterate, newID, shuffle, splitInt,
+  newID,
 } from '../helper';
+import { distributeWorking } from './distributeWorking';
 
 const props = defineProps<{
   year: number,
@@ -96,56 +97,8 @@ watch([() => props.month, () => props.year], () => {
 
 const total = computed(() => workers.reduce((c, worker) => c += worker.times, 0));
 
-const distributeWork = (dd:number[], de: number[], p: number, s:Shift[]) => {
-  const ddTotal = s.map((e) => e.num * dd.length);
-  const deTotal = s.map((e) => e.num * de.length);
-
-  const ddInts = ddTotal.map((e) => splitInt(e, p));
-  const deInts = deTotal.map((e) => splitInt(e, p));
-  const ints = ddInts.concat(deInts);
-
-  const ddRests = ddTotal.map((e) => calcRest(e, p));
-  const deRests = deTotal.map((e) => calcRest(e, p));
-  const rests = ddRests.concat(deRests);
-
-  let point = 0;
-  const maped = rests.map((r, i) => {
-    const t = [...ints[i]];
-    iterate(r).forEach((idx) => {
-      const index = (idx + point) % p;
-      t[index] += 1;
-    });
-    point = point + r;
-    return t;
-  });
-
-  console.log('maped', maped);
-  return maped;
-};
-
 const onClick = () => {
-  const w = workers;
-  const d = props.workdays;
-  const dd = d.weekday;
-  const de = d.weekend;
-  const s = props.shifts;
-
-  const distributed = distributeWork(dd, de, w.length, s);
-  const point = distributed.length / 2;
-  const wArr = distributed.slice(0, point);
-  const hArr = distributed.slice(point);
-
-  const result = iterate(w.length).map((i) => ({
-    weekday: wArr.map((e) => e[i]),
-    weekend: hArr.map((e) => e[i]),
-  }));
-  const shuffled = shuffle(result);
-
-  w.forEach((worker, i) => {
-    worker.weekday = shuffled[i].weekday;
-    worker.weekend = shuffled[i].weekend;
-  });
-
+  distributeWorking(workers, props.workdays, props.shifts);
   emitWorker();
 };
 
@@ -256,9 +209,8 @@ const totals = (w:SpecifyWorker) => {
             <td />
             <td />
             <td />
-            <td colspan="2">
-              {{ total }}/{{ maximum }}
-            </td>
+            {{ total }}/{{ maximum }}
+            <td />
           </tr>
         </tbody>
       </table>
