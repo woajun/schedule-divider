@@ -158,6 +158,12 @@ const down = (w:SpecifyWorker) => {
   w.times -= 1;
 };
 
+const totals = (w:SpecifyWorker) => {
+  const dd = w.weekday.reduce((c, p) => c + p, 0);
+  const de = w.weekend.reduce((c, p) => c + p, 0);
+  return dd + de;
+};
+
 </script>
 <template>
   <div>
@@ -171,11 +177,11 @@ const down = (w:SpecifyWorker) => {
         <thead>
           <tr>
             <th colspan="8" />
-            <th colspan="2">
-              weekday
+            <th :colspan="props.shifts.length * 2">
+              평일근무
             </th>
-            <th colspan="2">
-              weekend
+            <th :colspan="props.shifts.length * 2">
+              주말근무
             </th>
           </tr>
           <tr>
@@ -185,15 +191,18 @@ const down = (w:SpecifyWorker) => {
             <th>피하고 싶은 날</th>
             <th />
             <th />
-            <th colspan="2">
-              근무수 <button @click="onClick">
+            <th>
+              근무수
+              <button @click="onClick">
                 분배
               </button>
             </th>
-            <th>오전근무</th>
-            <th>새벽근무</th>
-            <th>오전근무</th>
-            <th>새벽근무</th>
+            <th v-for="s in props.shifts" :key="s.id" colspan="2">
+              {{ s.name }}
+            </th>
+            <th v-for="s in props.shifts" :key="s.id" colspan="2">
+              {{ s.name }}
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -212,15 +221,33 @@ const down = (w:SpecifyWorker) => {
                 비우기
               </button>
             </td>
-            <td>{{ worker.times }}</td>
-            <td>
-              <button class="btn" @click="()=>up(worker)">
-                ▲
-              </button>
-              <button class="btn" @click="()=>down(worker)">
-                ▼
-              </button>
-            </td>
+            <td>{{ totals(worker) }}</td>
+            <template v-for="(num, i) in worker.weekday" :key="i">
+              <td>
+                {{ num }}
+              </td>
+              <td>
+                <button class="btn" @click="()=>up(worker)">
+                  ▲
+                </button>
+                <button class="btn" @click="()=>down(worker)">
+                  ▼
+                </button>
+              </td>
+            </template>
+            <template v-for="(num, i) in worker.weekend" :key="i">
+              <td>
+                {{ num }}
+              </td>
+              <td>
+                <button class="btn" @click="()=>up(worker)">
+                  ▲
+                </button>
+                <button class="btn" @click="()=>down(worker)">
+                  ▼
+                </button>
+              </td>
+            </template>
           </tr>
           <tr>
             <td />
@@ -232,10 +259,6 @@ const down = (w:SpecifyWorker) => {
             <td colspan="2">
               {{ total }}/{{ maximum }}
             </td>
-            <td>{{ total }}/{{ maximum }}</td>
-            <td>{{ total }}/{{ maximum }}</td>
-            <td>{{ total }}/{{ maximum }}</td>
-            <td>{{ total }}/{{ maximum }}</td>
           </tr>
         </tbody>
       </table>
