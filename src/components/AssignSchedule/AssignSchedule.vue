@@ -53,7 +53,7 @@ const workOnceADayFlag = ref(true);
 const onClick = () => {
   const d = props.workdays;
   const s = props.shifts;
-  const w = deepcopy(fixWorker(props.workers, d, s));
+  const w = deepcopy(props.workers);
   console.log('w', w);
 
   const flags = {
