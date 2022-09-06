@@ -203,14 +203,16 @@ const totals = (w:SpecifyWorker) => {
             </template>
           </tr>
           <tr>
-            <td />
-            <td />
-            <td />
-            <td />
-            <td />
-            <td />
-            {{ total }}/{{ maximum }}
-            <td />
+            <td colspan="6" />
+            <td>
+              {{ total }} / {{ maximum }}
+            </td>
+            <td v-for="s in props.shifts" :key="s.id" colspan="2">
+              0 / {{ s.num * props.workdays.weekday.length }}
+            </td>
+            <td v-for="s in props.shifts" :key="s.id" colspan="2">
+              0 / {{ s.num * props.workdays.weekend.length }}
+            </td>
           </tr>
         </tbody>
       </table>
