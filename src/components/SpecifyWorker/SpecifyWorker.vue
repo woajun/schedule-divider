@@ -23,13 +23,7 @@ const daylng = computed(() => props.workdays.weekday.length);
 const endlng = computed(() => props.workdays.weekend.length);
 
 const maximum = computed(
-  () => {
-    if (props.shifts.length < 1) return 0;
-    return props.shifts.reduce(
-      (total, shift) => total + (daylng.value + endlng.value) * shift.num,
-      0,
-    );
-  },
+  () => props.shifts.reduce((total, shift) => total + (daylng.value + endlng.value) * shift.num, 0),
 );
 
 const range = computed(() => {
@@ -41,16 +35,17 @@ const range = computed(() => {
 });
 
 const emit = defineEmits(['workers']);
-const workers = reactive<SpecifyWorker[]>(
-  ['일일일', '이이이', '삼삼삼', '사사사', '오오오', '육육육'].map((name) => ({
+
+const sample: SpecifyWorker[] = ['일일일', '이이이', '삼삼삼', '사사사', '오오오', '육육육']
+  .map((name) => ({
     id: newID(),
     name,
-    avoidDays: [],
-    times: 0,
-    weekday: [],
-    weekend: [],
-  })),
-);
+    avoidDays: Array<number>(),
+    weekday: Array<number>(),
+    weekend: Array<number>(),
+  }));
+
+const workers = reactive<SpecifyWorker[]>(sample);
 
 const removeWorker = (id: number) => {
   const i = workers.findIndex((w) => w.id === id);
