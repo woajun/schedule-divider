@@ -13,8 +13,6 @@ import {
 import { distributeWorking } from './distributeWorking';
 
 const props = defineProps<{
-  year: number,
-  month: number,
   workdays: Workdays,
   shifts: Shift[],
 }>();
@@ -30,7 +28,7 @@ const maximum = computed(
 );
 
 const range = computed(() => {
-  const date = new Date(props.year, props.month, 0);
+  const date = new Date(props.workdays.year, props.workdays.month, 0);
   const y = date.getFullYear();
   const m = date.getMonth() + 1;
   const mm = m < 10 ? `0${m}` : m;
@@ -81,6 +79,7 @@ const selectDate = (e:Event, arr: number[]) => {
   const date = parseInt(el.value.slice(8), 10);
   if (!arr.includes(date))arr.push(date);
   emitWorker();
+  el.value = '';
 };
 
 const empty = (arr: number[]) => {
@@ -88,7 +87,7 @@ const empty = (arr: number[]) => {
   emitWorker();
 };
 
-watch([() => props.month, () => props.year], () => {
+watch([() => props.workdays.month, () => props.workdays.year], () => {
   workers.forEach((e) => {
     empty(e.avoidDays);
   });

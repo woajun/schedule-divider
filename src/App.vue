@@ -40,8 +40,6 @@ const setWorkers = (n:Worker[]) => {
   <SpecifyShifts @shifts="setShifts" />
   <hr>
   <SpecifyWorker
-    :year="workdays.year"
-    :month="workdays.month"
     :shifts="shifts"
     :workdays="workdays"
     @workers="setWorkers"
