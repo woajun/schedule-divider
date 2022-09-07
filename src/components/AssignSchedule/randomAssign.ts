@@ -32,38 +32,32 @@ const reduceAllotment = (workers:Worker[], type:'weekday' | 'weekend', shift: nu
   });
 };
 
-const getPreviousWorker = (c:number[][], f:Flags) => {
-  if (!f.previouseWorkerFlag) return [];
-  return c.length > 0 ? c[c.length - 1] : [];
-};
-
-const getLastdayWorker = (result: DateMap, f:Flags) => {
-  if (!f.lastdayWorkerFlag) return [];
-  const lastOutput = result.size > 0 ? result.get(result.size - 1) : undefined;
-  console.log('lastOutput', lastOutput);
-  return lastOutput && lastOutput.shifts.length > 1 ? lastOutput.shifts[lastOutput.shifts.length - 1] : [];
-};
-
-const getLastWorker = (idx: number, result: DateMap, c:number[][], f:Flags) => (
-  idx === 0 ? getLastdayWorker(result, f) : getPreviousWorker(c, f)
-);
-
-const getAlreadyWorker = (c: number[][], f:Flags) => (f.workOnceADayFlag ? c.flat() : []);
-
-const doAssign = (l:number, workdays: Workdays, workers: Worker[], s: Shift[], f: Flags) => {
-  const b = 1 + 1;
-  return iterate(l).reduce((map, i) => {
-    const date = i + 1;
+// 1. 날짜를 배열로 만든다.
+// 2. 날짜의 전 날과 다음 날을 고른다.
+// 3. 필터링을 한다.
+// 4. 날짜에 근무자를 지정한다. (숫자가 많은 순)
+const doAssign = (l:number, workdays: Workdays, workers: Worker[], s: Shift[]) => {
+  const dates = shuffle(iterate(l).map((i) => i + 1));
+  return dates.reduce((map, date) => {
+    // console.log(date);
+    const lastdayLastWorkerIds = map.get(date - 1)?.shifts[s.length - 1] ?? [];
+    // console.log(`lastdayLastWorkerIds: ${date - 1}`, lastdayLastWorkerIds);
+    const nextdayFirstWorkerIds = map.get(date + 1)?.shifts[0] ?? [];
+    // console.log(`nextdayFirstWorkerIds: ${date + 1}`, nextdayFirstWorkerIds);
     const type = findDayType(workdays, date);
     const shifts = s.reduce((c, shift, idx) => {
       if (type === 'empty') return c;
-      const filterd = workers
-        .filter((e) => !e.avoidDays.includes(date))
-        .filter((e) => !getLastWorker(idx, map, c, f).includes(e.id))
-        .filter((e) => !getAlreadyWorker(c, f).includes(e.id))
-        .filter((e) => e[type][idx] > 0);
-      const shuffled = shuffle(filterd);
-      const assigned = shuffled.slice(0, shift.num);
+      let filtered = workers.filter((e) => !e.avoidDays.includes(date));
+      if (idx === 0) {
+        filtered = filtered.filter((e) => !lastdayLastWorkerIds.includes(e.id));
+      }
+      if (idx === s.length - 1) {
+        filtered = filtered.filter((e) => !nextdayFirstWorkerIds.includes(e.id));
+      }
+      filtered = filtered.filter((e) => !c.flat().includes(e.id));
+      filtered = filtered.filter((e) => e[type][idx] > 0);
+      filtered.sort((a, b) => b[type][idx] - a[type][idx]);
+      const assigned = filtered.slice(0, shift.num);
       reduceAllotment(assigned, type, idx);
       c.push(assigned.map((e) => e.id));
       return c;
@@ -85,13 +79,13 @@ export const randomAssign = (workers:Worker[], workdays: Workdays, s: Shift[], f
   let i = 0;
   do {
     const w = deepcopy(workers);
-    result = doAssign(length, workdays, w, s, f);
+    result = doAssign(length, workdays, w, s);
     error = w
       .map((e) => [...e.weekday, ...e.weekend])
       .flat()
       .reduce((p, c) => p + c, 0);
     i += 1;
-  } while (i < 1 && error !== 0);
+  } while (i < 1000 && error !== 0);
 
   if (error !== 0) {
     alert('1000가지 경우의 수에 실패했습니다. 조건을 변경하고 다시 시도해보세요!');

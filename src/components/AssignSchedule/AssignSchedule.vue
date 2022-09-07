@@ -37,7 +37,6 @@ const convertIdToWorker = (schedule: DateMap, workers:Worker[]) : Output[] => {
   const shiftsToWorkers = (shifts: number[][]) => shifts.map((ids) => idsToWorker(ids));
   const result = Array<Output>();
   schedule.forEach((e, k) => {
-    console.log(k);
     result.push({
       date: k,
       type: e.type,
@@ -74,6 +73,8 @@ const onClick = () => {
 
   const assigned = randomAssign(w, d, s, flags);
   const schedule = convertIdToWorker(assigned, w);
+  console.log(schedule);
+  schedule.sort((a, b) => a.date - b.date);
   output.value = makeOutput(schedule, d);
 
   y.value = d.year;
