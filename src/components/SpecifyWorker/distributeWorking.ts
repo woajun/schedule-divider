@@ -28,23 +28,27 @@ const distributeWork = (dd:number[], de: number[], p: number, s:Shift[]) => {
     return t;
   });
 
-  console.log('maped', maped);
   return maped;
 };
-export const distributeWorking = (workers: SpecifyWorker[], d: Workdays, s: Shift[]) => {
-  const dd = d.weekday;
-  const de = d.weekend;
 
-  const distributed = distributeWork(dd, de, workers.length, s);
+const perWorker = (distributed: number[][], workersLng: number) => {
   const point = distributed.length / 2;
-  const wArr = distributed.slice(0, point);
-  const hArr = distributed.slice(point);
+  const weekdays = distributed.slice(0, point);
+  const weekends = distributed.slice(point);
 
-  const result = iterate(workers.length).map((i) => ({
-    weekday: wArr.map((e) => e[i]),
-    weekend: hArr.map((e) => e[i]),
+  return iterate(workersLng).map((i) => ({
+    weekday: weekdays.map((e) => e[i]),
+    weekend: weekends.map((e) => e[i]),
   }));
-  const shuffled = shuffle(result);
+};
+
+export const distributeWorking = (
+  workers: SpecifyWorker[],
+  { weekday, weekend }: Workdays,
+  shifts: Shift[],
+) => {
+  const distributed = distributeWork(weekday, weekend, workers.length, shifts);
+  const shuffled = shuffle(perWorker(distributed, workers.length));
 
   workers.forEach((w, i) => {
     w.weekday = shuffled[i].weekday;
