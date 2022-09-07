@@ -36,16 +36,22 @@ const range = computed(() => {
 
 const emit = defineEmits(['workers']);
 
+const createWorker = (name:string) => ({
+  id: newID(),
+  name,
+  avoidDays: Array<number>(),
+  weekday: Array<number>(),
+  weekend: Array<number>(),
+});
+
 const sample: SpecifyWorker[] = ['일일일', '이이이', '삼삼삼', '사사사', '오오오', '육육육']
-  .map((name) => ({
-    id: newID(),
-    name,
-    avoidDays: Array<number>(),
-    weekday: Array<number>(),
-    weekend: Array<number>(),
-  }));
+  .map(createWorker);
 
 const workers = reactive<SpecifyWorker[]>(sample);
+
+const addWorker = () => {
+  workers.push(createWorker(''));
+};
 
 const removeWorker = (id: number) => {
   const i = workers.findIndex((w) => w.id === id);
@@ -60,16 +66,6 @@ const emitWorker = () => {
 watchEffect(() => {
   emitWorker();
 });
-
-const addWorker = () => {
-  workers.push({
-    id: newID(),
-    name: '',
-    avoidDays: [],
-    weekday: [],
-    weekend: [],
-  });
-};
 
 const selectDate = (e:Event, arr: number[]) => {
   const el = e.target as HTMLInputElement;
