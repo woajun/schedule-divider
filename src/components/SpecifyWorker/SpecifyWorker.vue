@@ -108,9 +108,15 @@ const btnUp = (key:'weekday' | 'weekend', i: number, arr: number[]) => {
   if (sumShiftWorkday(key, i) >= props.shifts[i].num * props.workdays[key].length) return;
   arr[i] += 1;
 };
+
 const btnDown = (arr:number[], i: number) => {
   if (arr[i] < 1) return;
   arr[i] -= 1;
+};
+
+const changeWorkday = (e: Event, key:'weekday' | 'weekend', i: number, arr: number[]) => {
+  const el = e.target as HTMLInputElement;
+  arr[i] = Number(el.value);
 };
 
 </script>
@@ -171,31 +177,20 @@ const btnDown = (arr:number[], i: number) => {
               </button>
             </td>
             <td>{{ getWorkerWorkday(worker) }}</td>
-            <template v-for="(num, idx) in worker.weekday" :key="idx">
-              <td>
-                {{ num }}
-              </td>
-              <td>
-                <button class="btn" @click="()=>btnUp('weekday', idx, worker.weekday)">
-                  ▲
-                </button>
-                <button class="btn" @click="()=>btnDown(worker.weekday, idx)">
-                  ▼
-                </button>
-              </td>
-            </template>
-            <template v-for="(num, idx) in worker.weekend" :key="idx">
-              <td>
-                {{ num }}
-              </td>
-              <td>
-                <button class="btn" @click="()=>btnUp('weekend', idx, worker.weekend)">
-                  ▲
-                </button>
-                <button class="btn" @click="()=>btnDown(worker.weekend, idx)">
-                  ▼
-                </button>
-              </td>
+            <template v-for="dayType in (['weekday', 'weekend'] as ['weekday', 'weekend'])" :key="dayType">
+              <template v-for="(num, idx) in worker[dayType]" :key="idx">
+                <td>
+                  <input :value="num" type="number" class="workday" @change="(e) => changeWorkday(e, dayType, idx, worker[dayType])">
+                </td>
+                <td>
+                  <button class="btn" @click="()=>btnUp(dayType, idx, worker[dayType])">
+                    ▲
+                  </button>
+                  <button class="btn" @click="()=>btnDown(worker[dayType], idx)">
+                    ▼
+                  </button>
+                </td>
+              </template>
             </template>
           </tr>
           <tr>
@@ -216,11 +211,20 @@ const btnDown = (arr:number[], i: number) => {
   </div>
 </template>
 <style scoped>
-  .invalid {
-    background-color: brown;
-  }
-  .btn {
-    width: 20px;
-    padding: 1px
-  }
+.invalid {
+  background-color: brown;
+}
+.btn {
+  width: 20px;
+  padding: 1px
+}
+.workday {
+  width: 20px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
 </style>
