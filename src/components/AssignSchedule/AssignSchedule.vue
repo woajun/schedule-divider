@@ -10,8 +10,14 @@ import type {
 import { deepcopy, iterate } from '../helper';
 import CalendarShape from './CalendarShape.vue';
 import type { InnerOutput, Output } from './interfaces';
-import { fixWorker } from '../DistributeWorking/fixWorker';
 import { randomAssign } from './randomAssign';
+
+interface Work {
+  type: string,
+  shifts: Array<number[]>,
+}
+
+type DateMap = Map<number, Work>;
 
 const props = defineProps<{
   workers: Worker[]
@@ -21,7 +27,7 @@ const props = defineProps<{
 
 const getMargin = (y:number, m:number) => new Date(y, m - 1, 1).getDay();
 
-const convertIdToWorker = (schedule: InnerOutput[], workers:Worker[]) : Output[] => {
+const convertIdToWorker = (schedule: DateMap, workers:Worker[]) : Output[] => {
   const findID = (id:number): Worker => {
     const found = workers.find((e) => e.id === id);
     if (!found) throw new Error('error');
@@ -29,11 +35,16 @@ const convertIdToWorker = (schedule: InnerOutput[], workers:Worker[]) : Output[]
   };
   const idsToWorker = (ids: number[]) => ids.map((id) => findID(id));
   const shiftsToWorkers = (shifts: number[][]) => shifts.map((ids) => idsToWorker(ids));
-  return schedule.map((e) => ({
-    date: e.date,
-    type: e.type,
-    shifts: shiftsToWorkers(e.shifts),
-  }));
+  const result = Array<Output>();
+  schedule.forEach((e, k) => {
+    console.log(k);
+    result.push({
+      date: k,
+      type: e.type,
+      shifts: shiftsToWorkers(e.shifts),
+    });
+  });
+  return result;
 };
 
 const makeOutput = (schedule: Output[], { year, month }: Workdays) => {
@@ -54,7 +65,6 @@ const onClick = () => {
   const d = props.workdays;
   const s = props.shifts;
   const w = deepcopy(props.workers);
-  console.log('w', w);
 
   const flags = {
     lastdayWorkerFlag: lastdayWorkerFlag.value,
@@ -64,7 +74,6 @@ const onClick = () => {
 
   const assigned = randomAssign(w, d, s, flags);
   const schedule = convertIdToWorker(assigned, w);
-  console.log(schedule);
   output.value = makeOutput(schedule, d);
 
   y.value = d.year;
