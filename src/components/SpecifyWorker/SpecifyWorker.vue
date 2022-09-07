@@ -9,6 +9,7 @@ import {
 import type { Shift, SpecifyWorker, Workdays } from '@/interfaces';
 import {
   dateFormat,
+  iterate,
   newID,
 } from '../helper';
 import { distributeWorking } from './distributeWorking';
@@ -67,44 +68,44 @@ watchEffect(() => {
   emitWorker();
 });
 
-const selectDate = (e:Event, arr: number[]) => {
+const selectAvoidDay = (e:Event, arr: number[]) => {
   const el = e.target as HTMLInputElement;
-  const date = parseInt(el.value.slice(8), 10);
-  if (!arr.includes(date))arr.push(date);
+  const selected = parseInt(el.value.slice(8), 10);
+
+  if (!arr.includes(selected)) arr.push(selected);
+
   emitWorker();
   el.value = '';
 };
 
-const empty = (arr: number[]) => {
+const emptyAvoidDays = (arr: number[]) => {
   while (arr.pop());
   emitWorker();
 };
 
 watch([() => props.workdays.month, () => props.workdays.year], () => {
-  workers.forEach((e) => {
-    empty(e.avoidDays);
-  });
+  workers.forEach((e) => emptyAvoidDays(e.avoidDays));
 });
 
-const total = computed(() => workers.reduce((t, worker) => {
-  const dt = worker.weekday.reduce((r, c) => r += c, 0);
-  const et = worker.weekend.reduce((r, c) => r += c, 0);
-  t += dt + et;
-  return t;
-}, 0));
+const sumWorkday = (key: 'weekday' | 'weekend', i:number) => {
+  const result = workers.reduce((t, c) => t += c[key][i], 0);
+  return Number.isNaN(result) ? 0 : result;
+};
+
+const workdayTotal = computed(
+  () => iterate(props.shifts.length).reduce(
+    (total, i) => total + sumWorkday('weekday', i) + sumWorkday('weekend', i),
+    0,
+  ),
+);
 
 const onClick = () => {
   distributeWorking(workers, props.workdays, props.shifts);
   emitWorker();
 };
 
-const workdayTotal = (key: 'weekday' | 'weekend', i:number) => {
-  const result = workers.reduce((t, c) => t += c[key][i], 0);
-  return Number.isNaN(result) ? 0 : result;
-};
-
 const up = (key:'weekday' | 'weekend', i: number, arr: number[]) => {
-  if (workdayTotal(key, i) >= props.shifts[i].num * props.workdays[key].length) return;
+  if (sumWorkday(key, i) >= props.shifts[i].num * props.workdays[key].length) return;
   arr[i] += 1;
 };
 const down = (arr:number[], i: number) => {
@@ -168,10 +169,10 @@ const totals = (w:SpecifyWorker) => {
                 삭제
               </button>
             </td>
-            <td><input type="date" :min="range.min" :max="range.max" @change="(e) => selectDate(e, worker.avoidDays)"></td>
+            <td><input type="date" :min="range.min" :max="range.max" @change="(e) => selectAvoidDay(e, worker.avoidDays)"></td>
             <td>{{ worker.avoidDays }}</td>
             <td>
-              <button @click="()=>empty(worker.avoidDays)">
+              <button @click="()=>emptyAvoidDays(worker.avoidDays)">
                 비우기
               </button>
             </td>
@@ -206,13 +207,13 @@ const totals = (w:SpecifyWorker) => {
           <tr>
             <td colspan="6" />
             <td>
-              {{ total }} / {{ maximum }}
+              {{ workdayTotal }} / {{ maximum }}
             </td>
             <td v-for="(s, i) in props.shifts" :key="s.id" colspan="2">
-              {{ workdayTotal('weekday', i) }} / {{ s.num * daylng }}
+              {{ sumWorkday('weekday', i) }} / {{ s.num * daylng }}
             </td>
             <td v-for="(s, i) in props.shifts" :key="s.id" colspan="2">
-              {{ workdayTotal('weekend', i) }} / {{ s.num * endlng }}
+              {{ sumWorkday('weekend', i) }} / {{ s.num * endlng }}
             </td>
           </tr>
         </tbody>
