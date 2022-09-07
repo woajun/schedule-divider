@@ -9,7 +9,6 @@ import {
 import type { Shift, SpecifyWorker, Workdays } from '@/interfaces';
 import {
   dateFormat,
-  iterate,
   newID,
 } from '../helper';
 import { distributeWorking } from './distributeWorking';
@@ -92,14 +91,12 @@ const sumShiftWorkday = (key: 'weekday' | 'weekend', shiftIndex:number) => {
   return Number.isNaN(result) ? 0 : result;
 };
 
-const sumWorkerWorkday = (w:SpecifyWorker) => {
-  const dd = w.weekday.reduce((c, p) => c + p, 0);
-  const de = w.weekend.reduce((c, p) => c + p, 0);
-  return dd + de;
-};
+const sumWorkerWorkday = (w: SpecifyWorker, key: 'weekday' | 'weekend') => w[key].reduce((c, p) => c + p, 0);
+
+const getWorkerWorkday = (w:SpecifyWorker) => sumWorkerWorkday(w, 'weekday') + sumWorkerWorkday(w, 'weekend');
 
 const workerWorkdayTotal = computed(
-  () => workers.reduce((t, w) => t + sumWorkerWorkday(w), 0),
+  () => workers.reduce((t, w) => t + getWorkerWorkday(w), 0),
 );
 
 const btnDistribute = () => {
@@ -173,29 +170,29 @@ const btnDown = (arr:number[], i: number) => {
                 비우기
               </button>
             </td>
-            <td>{{ sumWorkerWorkday(worker) }}</td>
-            <template v-for="(num, i) in worker.weekday" :key="i">
+            <td>{{ getWorkerWorkday(worker) }}</td>
+            <template v-for="(num, idx) in worker.weekday" :key="idx">
               <td>
                 {{ num }}
               </td>
               <td>
-                <button class="btn" @click="()=>btnUp('weekday', i, worker.weekday)">
+                <button class="btn" @click="()=>btnUp('weekday', idx, worker.weekday)">
                   ▲
                 </button>
-                <button class="btn" @click="()=>btnDown(worker.weekday, i)">
+                <button class="btn" @click="()=>btnDown(worker.weekday, idx)">
                   ▼
                 </button>
               </td>
             </template>
-            <template v-for="(num, i) in worker.weekend" :key="i">
+            <template v-for="(num, idx) in worker.weekend" :key="idx">
               <td>
                 {{ num }}
               </td>
               <td>
-                <button class="btn" @click="()=>btnUp('weekend', i, worker.weekend)">
+                <button class="btn" @click="()=>btnUp('weekend', idx, worker.weekend)">
                   ▲
                 </button>
-                <button class="btn" @click="()=>btnDown(worker.weekend, i)">
+                <button class="btn" @click="()=>btnDown(worker.weekend, idx)">
                   ▼
                 </button>
               </td>
