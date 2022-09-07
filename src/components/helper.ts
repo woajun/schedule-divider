@@ -56,3 +56,12 @@ export function splitInt(target:number, piece: number) {
 export function calcRest(target:number, piece: number) {
   return target % piece;
 }
+
+export function dateFormat(date:Date) {
+  const y = date.getFullYear();
+  const m = date.getMonth() + 1;
+  const mm = m < 10 ? `0${m}` : m;
+  const d = date.getDate();
+  const dd = d < 10 ? `0${d}` : d;
+  return `${y}-${mm}-${dd}`;
+}

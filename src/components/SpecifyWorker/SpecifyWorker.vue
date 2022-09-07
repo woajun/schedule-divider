@@ -8,6 +8,7 @@ import {
 } from 'vue';
 import type { Shift, SpecifyWorker, Workdays } from '@/interfaces';
 import {
+  dateFormat,
   newID,
 } from '../helper';
 import { distributeWorking } from './distributeWorking';
@@ -17,25 +18,24 @@ const props = defineProps<{
   shifts: Shift[],
 }>();
 
+const daylng = computed(() => props.workdays.weekday.length);
+
+const endlng = computed(() => props.workdays.weekend.length);
+
 const maximum = computed(
   () => {
     if (props.shifts.length < 1) return 0;
     return props.shifts.reduce(
-      (c, p) => c + (props.workdays.weekday.length + props.workdays.weekend.length) * p.num,
+      (total, shift) => total + (daylng.value + endlng.value) * shift.num,
       0,
     );
   },
 );
 
 const range = computed(() => {
-  const date = new Date(props.workdays.year, props.workdays.month, 0);
-  const y = date.getFullYear();
-  const m = date.getMonth() + 1;
-  const mm = m < 10 ? `0${m}` : m;
-  const d = date.getDate();
-  const dd = d < 10 ? `0${d}` : d;
-
-  return { min: `${y}-${mm}-0${1}`, max: `${y}-${mm}-${dd}` };
+  const max = new Date(props.workdays.year, props.workdays.month, 0);
+  const min = new Date(props.workdays.year, props.workdays.month - 1, 1);
+  return { min: dateFormat(min), max: dateFormat(max) };
 });
 
 const emit = defineEmits(['workers']);
@@ -216,10 +216,10 @@ const totals = (w:SpecifyWorker) => {
               {{ total }} / {{ maximum }}
             </td>
             <td v-for="(s, i) in props.shifts" :key="s.id" colspan="2">
-              {{ workdayTotal('weekday', i) }} / {{ s.num * props.workdays.weekday.length }}
+              {{ workdayTotal('weekday', i) }} / {{ s.num * daylng }}
             </td>
             <td v-for="(s, i) in props.shifts" :key="s.id" colspan="2">
-              {{ workdayTotal('weekend', i) }} / {{ s.num * props.workdays.weekend.length }}
+              {{ workdayTotal('weekend', i) }} / {{ s.num * endlng }}
             </td>
           </tr>
         </tbody>
