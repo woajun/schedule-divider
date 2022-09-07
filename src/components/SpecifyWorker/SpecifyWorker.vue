@@ -33,9 +33,11 @@ const maximum = computed(
 );
 
 const range = computed(() => {
-  const max = new Date(props.workdays.year, props.workdays.month, 0);
-  const min = new Date(props.workdays.year, props.workdays.month - 1, 1);
-  return { min: dateFormat(min), max: dateFormat(max) };
+  const { year, month } = props.workdays;
+  return {
+    max: dateFormat(new Date(year, month, 0)),
+    min: dateFormat(new Date(year, month - 1, 1)),
+  };
 });
 
 const emit = defineEmits(['workers']);
