@@ -87,36 +87,33 @@ watch([() => props.workdays.month, () => props.workdays.year], () => {
   workers.forEach((e) => emptyAvoidDays(e.avoidDays));
 });
 
-const sumWorkday = (key: 'weekday' | 'weekend', i:number) => {
-  const result = workers.reduce((t, c) => t += c[key][i], 0);
+const sumShiftWorkday = (key: 'weekday' | 'weekend', shiftIndex:number) => {
+  const result = workers.reduce((t, c) => t += c[key][shiftIndex], 0);
   return Number.isNaN(result) ? 0 : result;
 };
 
-const workdayTotal = computed(
-  () => iterate(props.shifts.length).reduce(
-    (total, i) => total + sumWorkday('weekday', i) + sumWorkday('weekend', i),
-    0,
-  ),
+const sumWorkerWorkday = (w:SpecifyWorker) => {
+  const dd = w.weekday.reduce((c, p) => c + p, 0);
+  const de = w.weekend.reduce((c, p) => c + p, 0);
+  return dd + de;
+};
+
+const workerWorkdayTotal = computed(
+  () => workers.reduce((t, w) => t + sumWorkerWorkday(w), 0),
 );
 
-const onClick = () => {
+const btnDistribute = () => {
   distributeWorking(workers, props.workdays, props.shifts);
   emitWorker();
 };
 
-const up = (key:'weekday' | 'weekend', i: number, arr: number[]) => {
-  if (sumWorkday(key, i) >= props.shifts[i].num * props.workdays[key].length) return;
+const btnUp = (key:'weekday' | 'weekend', i: number, arr: number[]) => {
+  if (sumShiftWorkday(key, i) >= props.shifts[i].num * props.workdays[key].length) return;
   arr[i] += 1;
 };
-const down = (arr:number[], i: number) => {
+const btnDown = (arr:number[], i: number) => {
   if (arr[i] < 1) return;
   arr[i] -= 1;
-};
-
-const totals = (w:SpecifyWorker) => {
-  const dd = w.weekday.reduce((c, p) => c + p, 0);
-  const de = w.weekend.reduce((c, p) => c + p, 0);
-  return dd + de;
 };
 
 </script>
@@ -148,7 +145,7 @@ const totals = (w:SpecifyWorker) => {
             <th />
             <th>
               근무수
-              <button @click="onClick">
+              <button @click="btnDistribute">
                 분배
               </button>
             </th>
@@ -176,16 +173,16 @@ const totals = (w:SpecifyWorker) => {
                 비우기
               </button>
             </td>
-            <td>{{ totals(worker) }}</td>
+            <td>{{ sumWorkerWorkday(worker) }}</td>
             <template v-for="(num, i) in worker.weekday" :key="i">
               <td>
                 {{ num }}
               </td>
               <td>
-                <button class="btn" @click="()=>up('weekday', i, worker.weekday)">
+                <button class="btn" @click="()=>btnUp('weekday', i, worker.weekday)">
                   ▲
                 </button>
-                <button class="btn" @click="()=>down(worker.weekday, i)">
+                <button class="btn" @click="()=>btnDown(worker.weekday, i)">
                   ▼
                 </button>
               </td>
@@ -195,10 +192,10 @@ const totals = (w:SpecifyWorker) => {
                 {{ num }}
               </td>
               <td>
-                <button class="btn" @click="()=>up('weekend', i, worker.weekend)">
+                <button class="btn" @click="()=>btnUp('weekend', i, worker.weekend)">
                   ▲
                 </button>
-                <button class="btn" @click="()=>down(worker.weekend, i)">
+                <button class="btn" @click="()=>btnDown(worker.weekend, i)">
                   ▼
                 </button>
               </td>
@@ -207,13 +204,13 @@ const totals = (w:SpecifyWorker) => {
           <tr>
             <td colspan="6" />
             <td>
-              {{ workdayTotal }} / {{ maximum }}
+              {{ workerWorkdayTotal }} / {{ maximum }}
             </td>
             <td v-for="(s, i) in props.shifts" :key="s.id" colspan="2">
-              {{ sumWorkday('weekday', i) }} / {{ s.num * daylng }}
+              {{ sumShiftWorkday('weekday', i) }} / {{ s.num * daylng }}
             </td>
             <td v-for="(s, i) in props.shifts" :key="s.id" colspan="2">
-              {{ sumWorkday('weekend', i) }} / {{ s.num * endlng }}
+              {{ sumShiftWorkday('weekend', i) }} / {{ s.num * endlng }}
             </td>
           </tr>
         </tbody>
