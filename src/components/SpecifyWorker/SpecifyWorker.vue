@@ -71,7 +71,6 @@ const addWorker = () => {
     id: newID(),
     name: '',
     avoidDays: [],
-    times: 0,
     weekday: [],
     weekend: [],
   });
@@ -95,7 +94,12 @@ watch([() => props.month, () => props.year], () => {
   });
 });
 
-const total = computed(() => workers.reduce((c, worker) => c += worker.times, 0));
+const total = computed(() => workers.reduce((t, worker) => {
+  const dt = worker.weekday.reduce((r, c) => r += c, 0);
+  const et = worker.weekend.reduce((r, c) => r += c, 0);
+  t += dt + et;
+  return t;
+}, 0));
 
 const onClick = () => {
   distributeWorking(workers, props.workdays, props.shifts);

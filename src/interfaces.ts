@@ -23,7 +23,6 @@ export interface SpecifyWorker {
   id: number,
   name: string,
   avoidDays: number[],
-  times: number,
   weekday: number[],
   weekend: number[],
 }
