@@ -33,37 +33,37 @@ const setWorkers = (n:Worker[]) => {
   workers.value = n;
 };
 
+const currentPage = ref(1);
 </script>
 
 <template>
-  <BookLayout :page-length="4">
+  <BookLayout :page-length="4" :current-page="currentPage">
     <template #page1>
-      <SinglePage>
-        <SpecifyDate @workdays="setWorkdays" />
-      </SinglePage>
+      <SpecifyDate @workdays="setWorkdays" />
     </template>
     <template #page2>
-      <SinglePage>
-        <SpecifyShifts @shifts="setShifts" />
-      </SinglePage>
+      <SpecifyShifts @shifts="setShifts" />
     </template>
     <template #page3>
-      <SinglePage>
-        <SpecifyWorker
-          :shifts="shifts"
-          :workdays="workdays"
-          @workers="setWorkers"
-        />
-      </SinglePage>
+      <SpecifyWorker
+        :shifts="shifts"
+        :workdays="workdays"
+        @workers="setWorkers"
+      />
     </template>
     <template #page4>
-      <SinglePage>
-        <AssignSchedule
-          :workers="workers"
-          :shifts="shifts"
-          :workdays="workdays"
-        />
-      </SinglePage>
+      <AssignSchedule
+        :workers="workers"
+        :shifts="shifts"
+        :workdays="workdays"
+      />
     </template>
   </BookLayout>
+  현재페이지 : {{ currentPage }}
+  <button @click="currentPage--">
+    이전
+  </button>
+  <button @click="currentPage++">
+    다음
+  </button>
 </template>

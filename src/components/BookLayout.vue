@@ -9,9 +9,8 @@ import { ref } from 'vue';
  */
 const props = defineProps<{
   pageLength: number
+  currentPage: number
 }>();
-
-const currentPage = ref(1);
 
 function toNumberArray(length: number) {
   const result: number[] = [];
@@ -27,11 +26,4 @@ function toNumberArray(length: number) {
       <slot :name="`page${page}`" />
     </div>
   </div>
-  현재페이지 : {{ currentPage }}
-  <button @click="currentPage--">
-    이전
-  </button>
-  <button @click="currentPage++">
-    다음
-  </button>
 </template>
