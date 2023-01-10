@@ -65,3 +65,11 @@ export function dateFormat(date:Date) {
   const dd = d < 10 ? `0${d}` : d;
   return `${y}-${mm}-${dd}`;
 }
+
+export function getMonthLength(y:number, m: number) {
+  return new Date(y, m, 0).getDate();
+}
+
+export function getDatesArray(y:number, m: number) {
+  return iterate(getMonthLength(y, m)).map((i) => i + 1);
+}

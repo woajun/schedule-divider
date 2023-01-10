@@ -3,14 +3,14 @@
 <!-- eslint-disable prefer-destructuring -->
 <!-- eslint-disable vue/max-len -->
 <script setup lang="ts">
-import { ref } from 'vue';
+import { reactive, ref } from 'vue';
 import type {
   Shift, Workdays, Worker,
 } from '@/interfaces';
 import { deepcopy, iterate } from '../helper';
 import CalendarShape from './CalendarShape.vue';
-import type { InnerOutput, Output } from './interfaces';
-import { randomAssign } from './randomAssign';
+import type { Output } from './interfaces';
+import { assignIterate } from './randomAssign';
 
 interface Work {
   type: string,
@@ -56,22 +56,18 @@ const y = ref<number>(0);
 const m = ref<number>(0);
 const output = ref<Output[][]>([]);
 
-const lastdayWorkerFlag = ref(true);
-const previouseWorkerFlag = ref(true);
-const workOnceADayFlag = ref(true);
+const flags = reactive({
+  lastWorkerBanFirstWork: true,
+  banContinuousWork: true,
+  workOnceADayFlag: true,
+});
 
-const onClick = () => {
+const doDivision = () => {
   const d = props.workdays;
   const s = props.shifts;
   const w = deepcopy(props.workers);
 
-  const flags = {
-    lastdayWorkerFlag: lastdayWorkerFlag.value,
-    previouseWorkerFlag: previouseWorkerFlag.value,
-    workOnceADayFlag: workOnceADayFlag.value,
-  };
-
-  const assigned = randomAssign(w, d, s, flags);
+  const assigned = assignIterate(w, d, s, flags);
   const schedule = convertIdToWorker(assigned, w);
   console.log(schedule);
   schedule.sort((a, b) => a.date - b.date);
@@ -87,22 +83,22 @@ const onClick = () => {
     날짜분배옵션
     <br />
     <label>
-      <input v-model="lastdayWorkerFlag" type="checkbox" />
+      <input v-model="flags.lastWorkerBanFirstWork" type="checkbox" />
       말번 다음 날 초번을 제외함
     </label>
     <br />
     <label>
-      <input v-model="previouseWorkerFlag" type="checkbox" />
+      <input v-model="flags.banContinuousWork" type="checkbox" />
       연속 근무를 제한함
     </label>
     <br />
     <label>
-      <input v-model="workOnceADayFlag" type="checkbox" />
+      <input v-model="flags.workOnceADayFlag" type="checkbox" />
       하루에 최대 한 번 근무함.
     </label>
     <br />
     <br />
-    <button @click="onClick">
+    <button @click="doDivision">
       날짜 분배
     </button>
     <br>

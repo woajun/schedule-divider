@@ -5,9 +5,3 @@ export interface Output {
   type: string,
   shifts: Array<Worker[]>,
 }
-
-export interface InnerOutput {
-  date: number,
-  type: string,
-  shifts: Array<number[]>,
-}
