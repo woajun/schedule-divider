@@ -60,7 +60,7 @@ const currentPage = ref(1);
     </template>
   </BookLayout>
   현재페이지 : {{ currentPage }}
-  <button @click="currentPage--">
+  <button class="rounded-full" @click="currentPage--">
     이전
   </button>
   <button @click="currentPage++">

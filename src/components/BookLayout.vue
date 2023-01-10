@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 
 /**
  * TODO
@@ -22,7 +21,7 @@ function toNumberArray(length: number) {
 </script>
 <template>
   <div v-for="page in toNumberArray(pageLength)" :key="page">
-    <div v-show="!!(page === currentPage)">
+    <div v-show="!!(page === currentPage)" class="container mx-auto">
       <slot :name="`page${page}`" />
     </div>
   </div>

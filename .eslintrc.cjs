@@ -21,5 +21,5 @@ module.exports = {
     'vue/html-button-has-type': 'off',
     'vuejs-accessibility/label-has-for': 'off',
   },
-  ignorePatterns: ['dist/**', 'debug.js'],
+  ignorePatterns: ['dist/**', 'debug.js', 'tailwind.config.js'],
 };
