@@ -34,15 +34,25 @@ const setWorkers = (n:Worker[]) => {
 };
 
 const currentPage = ref(1);
+/**
+ * USER FLOW
+ * 날짜분배옵션 (마지막 근무 다음 날 첫번째 근무 제외 / 연속 근무 제한 / 한 사람이 하루에 최대 한 번 근무)
+ * 근무 총 인원 입력
+ * 근무 기간 선택
+ * 기간 디테일 선택 (중간에 빼는 날, 주말, 평일)
+ * 평일 / 주말 하루 당 근무 수와 근무 인원,
+ * --계산--
+ */
 </script>
-
 <template>
   <BookLayout :page-length="4" :current-page="currentPage">
     <template #page1>
       <SpecifyDate @workdays="setWorkdays" />
+      기간을 선택해주세요.
     </template>
     <template #page2>
       <SpecifyShifts @shifts="setShifts" />
+      근무수와 근무인원을 입력해주세요.
     </template>
     <template #page3>
       <SpecifyWorker
@@ -50,6 +60,7 @@ const currentPage = ref(1);
         :workdays="workdays"
         @workers="setWorkers"
       />
+      근무자를 입력해주세요.
     </template>
     <template #page4>
       <AssignSchedule
