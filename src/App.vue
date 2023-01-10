@@ -8,6 +8,7 @@ import AssignSchedule from './components/AssignSchedule/AssignSchedule.vue';
 import type {
   Worker, Shift, Workdays,
 } from './interfaces';
+import BookLayout from './components/BookLayout.vue';
 
 const workdays = reactive<Workdays>({
   year: 0,
@@ -35,19 +36,26 @@ const setWorkers = (n:Worker[]) => {
 </script>
 
 <template>
-  <SpecifyDate @workdays="setWorkdays" />
-  <hr>
-  <SpecifyShifts @shifts="setShifts" />
-  <hr>
-  <SpecifyWorker
-    :shifts="shifts"
-    :workdays="workdays"
-    @workers="setWorkers"
-  />
-  <hr>
-  <AssignSchedule
-    :workers="workers"
-    :shifts="shifts"
-    :workdays="workdays"
-  />
+  <BookLayout :page-length="4">
+    <template #page1>
+      <SpecifyDate @workdays="setWorkdays" />
+    </template>
+    <template #page2>
+      <SpecifyShifts @shifts="setShifts" />
+    </template>
+    <template #page3>
+      <SpecifyWorker
+        :shifts="shifts"
+        :workdays="workdays"
+        @workers="setWorkers"
+      />
+    </template>
+    <template #page4>
+      <AssignSchedule
+        :workers="workers"
+        :shifts="shifts"
+        :workdays="workdays"
+      />
+    </template>
+  </BookLayout>
 </template>
