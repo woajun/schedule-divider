@@ -38,24 +38,32 @@ const setWorkers = (n:Worker[]) => {
 <template>
   <BookLayout :page-length="4">
     <template #page1>
-      <SpecifyDate @workdays="setWorkdays" />
+      <SinglePage>
+        <SpecifyDate @workdays="setWorkdays" />
+      </SinglePage>
     </template>
     <template #page2>
-      <SpecifyShifts @shifts="setShifts" />
+      <SinglePage>
+        <SpecifyShifts @shifts="setShifts" />
+      </SinglePage>
     </template>
     <template #page3>
-      <SpecifyWorker
-        :shifts="shifts"
-        :workdays="workdays"
-        @workers="setWorkers"
-      />
+      <SinglePage>
+        <SpecifyWorker
+          :shifts="shifts"
+          :workdays="workdays"
+          @workers="setWorkers"
+        />
+      </SinglePage>
     </template>
     <template #page4>
-      <AssignSchedule
-        :workers="workers"
-        :shifts="shifts"
-        :workdays="workdays"
-      />
+      <SinglePage>
+        <AssignSchedule
+          :workers="workers"
+          :shifts="shifts"
+          :workdays="workdays"
+        />
+      </SinglePage>
     </template>
   </BookLayout>
 </template>

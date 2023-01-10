@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+
 /**
  * TODO
  * 페이지 받기
@@ -8,6 +10,8 @@
 const props = defineProps<{
   pageLength: number
 }>();
+
+const currentPage = ref(1);
 
 function toNumberArray(length: number) {
   const result: number[] = [];
@@ -19,7 +23,15 @@ function toNumberArray(length: number) {
 </script>
 <template>
   <div v-for="page in toNumberArray(pageLength)" :key="page">
-    <slot :name="`page${page}`" />
-    <hr />
+    <div v-show="!!(page === currentPage)">
+      <slot :name="`page${page}`" />
+    </div>
   </div>
+  현재페이지 : {{ currentPage }}
+  <button @click="currentPage--">
+    이전
+  </button>
+  <button @click="currentPage++">
+    다음
+  </button>
 </template>
